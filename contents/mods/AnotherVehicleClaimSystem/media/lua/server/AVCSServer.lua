@@ -14,7 +14,7 @@ Since vehicles ID are created on runtime and we store the SQL ID
 It is impossible to obtain the vehicle ID despite having SQL ID, no method to do that
 So ideally we get ID as it get loaded into the world but you can't get all the vehicle ID either because it only get loaded when people are at that place
 So the best we could do is get last known location
-We could overwrite the vehicle part functions to include our coordinate update function
+We could override the vehicle part functions to include our coordinate update function
 --]]
 
 --[[

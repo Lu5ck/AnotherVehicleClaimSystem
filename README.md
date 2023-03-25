@@ -8,7 +8,7 @@ Work in Process (WIP)
 - Allow public users to hitch ride as this mod only block access to driver seat instead of all the seats
 - Allow public users to repair vehicles, who doesn't love free repairs? We block uninstalling and dismantling parts
 ## To do list
-1. Copy & overwrite the remaining vanilla functions to block unauthorized vehicle utilization actions, such as siphoning fuel, dismantling vehicles, opening truck etc.
+1. Copy & override the remaining vanilla functions to block unauthorized vehicle utilization actions, such as siphoning fuel, dismantling vehicles, opening truck etc.
 2. Figure out a least expensive last known location tracking. The game doesn't provide access to their DB containing the vehicle locations. Need a way to track location without much overhead on server
 3. UI to display users' claimed vehicles, showing last known locations, preview car models and allow unclaiming remotely from there
 4. Expand UI to also include safehouse and factions tabs, also allow members to unclaim each others' vehicles from there

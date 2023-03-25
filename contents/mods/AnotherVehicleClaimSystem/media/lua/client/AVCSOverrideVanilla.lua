@@ -42,7 +42,7 @@ local function unclaimCfmDialog(player, vehicle)
     modal:addToUIManager();
 end
 
--- Copy and overwrite the vanilla menu to add our context menu in
+-- Copy and override the vanilla menu to add our context menu in
 function AVCS.addOptionToMenuOutsideVehicle(player, context, vehicle)
 	-- Ignore wrecks
 	if string.match(string.lower(vehicle:getScript():getName()), "burnt") or string.match(string.lower(vehicle:getScript():getName()), "smashed") then
@@ -107,7 +107,7 @@ function ISVehicleMenu.FillMenuOutsideVehicle(player, context, vehicle, test)
     AVCS.addOptionToMenuOutsideVehicle(getSpecificPlayer(player), context, vehicle)
 end
 
--- Copy and overwrite the vanilla ISEnterVehicle to block unauthorized users
+-- Copy and override the vanilla ISEnterVehicle to block unauthorized users
 if not AVCS.oIsEnterVehicle then
     AVCS.oIsEnterVehicle = ISEnterVehicle.isValid
 end
@@ -132,7 +132,7 @@ function ISEnterVehicle:isValid()
 	return false
 end
 
--- Copy and overwrite the vanilla ISSwitchVehicleSeat to block unauthorized users
+-- Copy and override the vanilla ISSwitchVehicleSeat to block unauthorized users
 if not AVCS.oISSwitchVehicleSeat then
     AVCS.oISSwitchVehicleSeat = ISSwitchVehicleSeat.isValid
 end
@@ -157,7 +157,7 @@ function ISSwitchVehicleSeat:isValid()
 	end
 end
 
--- Copy and overwrite the vanilla ISAttachTrailerToVehicle to block unauthorized users
+-- Copy and override the vanilla ISAttachTrailerToVehicle to block unauthorized users
 -- ISAttachTrailerToVehicle:isValid loops like mad, not good. No choice but to use this
 if not AVCS.oISAttachTrailerToVehicle then
     AVCS.oISAttachTrailerToVehicle = ISAttachTrailerToVehicle.perform
@@ -191,7 +191,7 @@ function ISAttachTrailerToVehicle:perform()
 	end
 end
 
--- Copy and overwrite the vanilla ISDetachTrailerFromVehicle to block unauthorized users
+-- Copy and override the vanilla ISDetachTrailerFromVehicle to block unauthorized users
 -- ISDetachTrailerFromVehicle:isValid loops like mad, not good. No choice but to use this
 if not AVCS.oISDetachTrailerFromVehicle then
     AVCS.oISDetachTrailerFromVehicle = ISDetachTrailerFromVehicle.perform
