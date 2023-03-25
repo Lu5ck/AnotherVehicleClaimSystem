@@ -1,0 +1,4 @@
+ContextMenu_EN = {
+    ContextMenu_AVCS_ClaimVehicle = "Claim",
+	ContextMenu_AVCS_UnclaimVehicle = "Unclaim"
+}
