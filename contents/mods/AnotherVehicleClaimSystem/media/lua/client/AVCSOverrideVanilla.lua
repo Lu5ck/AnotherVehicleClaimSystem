@@ -215,3 +215,27 @@ function ISDetachTrailerFromVehicle:perform()
 		ISBaseTimedAction.stop(self)
 	end
 end
+
+-- Copy and override the vanilla ISUninstallVehiclePart to block unauthorized users
+if not AVCS.oISUninstallVehiclePart then
+    AVCS.oISUninstallVehiclePart = ISUninstallVehiclePart.isValid
+end
+
+function ISUninstallVehiclePart:isValid()
+	local checkResult = AVCS.checkPermission(self.character, self.vehicle)
+
+	if type(checkResult) ~= "boolean" then
+		if checkResult.permissions == true then
+			checkResult = true
+		else
+			checkResult = false
+		end
+	end
+
+	if checkResult then
+		return AVCS.oISUninstallVehiclePart(self)
+	else
+		self.character:setHaloNote(getText("IGUI_AVCS_Vehicle_No_Permission"), 250, 250, 250, 300)
+		return false
+	end
+end
