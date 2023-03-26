@@ -154,8 +154,6 @@ function ISSwitchVehicleSeat:isValid()
 end
 
 -- Copy and override the vanilla ISAttachTrailerToVehicle to block unauthorized users
--- Non instant action will always be validated per tick at isValid thus code will be called continuously
--- So, we check at perform, right before it is executed
 if not AVCS.oISAttachTrailerToVehicle then
     AVCS.oISAttachTrailerToVehicle = ISAttachTrailerToVehicle.new
 end
