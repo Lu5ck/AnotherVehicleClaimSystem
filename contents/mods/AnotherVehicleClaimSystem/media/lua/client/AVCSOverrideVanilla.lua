@@ -240,7 +240,7 @@ if not AVCS.oISTakeEngineParts then
 end
 
 function ISTakeEngineParts:new(character, part, item, time)
-	local checkResult = AVCS.checkPermission(self.character, self.vehicle)
+	local checkResult = AVCS.checkPermission(character, part:getVehicle())
 	checkResult = AVCS.getSimpleBooleanPermission(checkResult)
 
 	if checkResult then
