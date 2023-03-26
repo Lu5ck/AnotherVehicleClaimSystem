@@ -336,3 +336,26 @@ function ISOpenVehicleDoor:new(character, vehicle, partOrSeat)
 		return temp
 	end
 end
+
+-- Copy and override the Vehicle Repair Overhaul ISVehicleSalvage to block unauthorized users
+-- https://steamcommunity.com/sharedfiles/filedetails/?id=2757712197
+if ISVehicleSalvage then
+	if not AVCS.oISVehicleSalvage then
+		AVCS.oISVehicleSalvage = ISVehicleSalvage.new
+	end
+
+	function ISVehicleSalvage:new(character, vehicle)
+		local checkResult = AVCS.checkPermission(character, vehicle)
+		checkResult = AVCS.getSimpleBooleanPermission(checkResult)
+	
+		if checkResult then
+			return AVCS.oISVehicleSalvage(self, character, vehicle)
+		else
+			character:setHaloNote(getText("IGUI_AVCS_Vehicle_No_Permission"), 250, 250, 250, 300)
+			local temp = {
+				ignoreAction = true
+			}
+			return temp
+		end
+	end
+end
