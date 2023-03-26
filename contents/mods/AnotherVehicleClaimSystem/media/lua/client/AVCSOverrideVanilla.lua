@@ -261,7 +261,7 @@ if not AVCS.oISDeflateTire then
 end
 
 function ISDeflateTire:new(character, part, psi, time)
-	local checkResult = AVCS.checkPermission(self.character, self.vehicle)
+	local checkResult = AVCS.checkPermission(character, part:getVehicle())
 	checkResult = AVCS.getSimpleBooleanPermission(checkResult)
 
 	if checkResult then
