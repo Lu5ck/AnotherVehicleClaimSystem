@@ -214,7 +214,6 @@ function ISUninstallVehiclePart:new(character, part, time)
 end
 
 -- Copy and override the vanilla ISTakeGasolineFromVehicle to block unauthorized users
--- There's no follow up call on this action thus we can override new without error
 if not AVCS.oISTakeGasolineFromVehicle then
     AVCS.oISTakeGasolineFromVehicle = ISTakeGasolineFromVehicle.new
 end
@@ -235,7 +234,6 @@ function ISTakeGasolineFromVehicle:new(character, part, item, time)
 end
 
 -- Copy and override the vanilla ISTakeEngineParts to block unauthorized users
--- There's no follow up call on this action thus we can override new without error
 if not AVCS.oISTakeEngineParts then
     AVCS.oISTakeEngineParts = ISTakeEngineParts.new
 end
@@ -256,7 +254,6 @@ function ISTakeEngineParts:new(character, part, item, time)
 end
 
 -- Copy and override the vanilla ISDeflateTire to block unauthorized users
--- There's no follow up call on this action thus we can override new without error
 if not AVCS.oISDeflateTire then
     AVCS.oISDeflateTire = ISDeflateTire.new
 end
@@ -277,7 +274,6 @@ function ISDeflateTire:new(character, part, psi, time)
 end
 
 -- Copy and override the vanilla ISSmashVehicleWindow to block unauthorized users
--- There's no follow up call on this action thus we can override new without error
 if not AVCS.oISSmashVehicleWindow then
     AVCS.oISSmashVehicleWindow = ISSmashVehicleWindow.new
 end
@@ -298,7 +294,6 @@ function ISSmashVehicleWindow:new(character, part, open)
 end
 
 -- Copy and override the vanilla ISOpenVehicleDoor to block unauthorized users
--- There's no follow up call on this action thus we can override new without error
 if not AVCS.oISOpenVehicleDoor then
     AVCS.oISOpenVehicleDoor = ISOpenVehicleDoor.new
 end
