@@ -203,7 +203,6 @@ function ISUninstallVehiclePart:new(character, part, time)
 	checkResult = AVCS.getSimpleBooleanPermission(checkResult)
 
 	if checkResult then
-		print("permitted")
 		return AVCS.oISUninstallVehiclePart(self, character, part, time)
 	else
 		character:setHaloNote(getText("IGUI_AVCS_Vehicle_No_Permission"), 250, 250, 250, 300)
