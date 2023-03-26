@@ -167,6 +167,7 @@ function AVCS.updateVehicleCoordinate(vehicleObj)
 			if tempDB[vehicleObj:getSqlId()].LastLocationX ~= math.floor(vehicleObj:getX()) or tempDB[vehicleObj:getSqlId()].LastLocationY ~= math.floor(vehicleObj:getY()) then
 				tempDB[vehicleObj:getSqlId()].LastLocationX = math.floor(vehicleObj:getX())
 				tempDB[vehicleObj:getSqlId()].LastLocationY = math.floor(vehicleObj:getY())
+				tempDB[vehicleObj:getSqlId()].LastLocationUpdateDateTime = getTimestamp()
 				ModData.add("AVCSByVehicleSQLID", tempDB)
 				local tempArr = {
 					VehicleID = vehicleObj:getSqlId(),
