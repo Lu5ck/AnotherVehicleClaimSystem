@@ -132,23 +132,26 @@ end
 
 -- Copy and override the vanilla ISSwitchVehicleSeat to block unauthorized users
 if not AVCS.oISSwitchVehicleSeat then
-    AVCS.oISSwitchVehicleSeat = ISSwitchVehicleSeat.isValid
+    AVCS.oISSwitchVehicleSeat = ISSwitchVehicleSeat.new
 end
 
-function ISSwitchVehicleSeat:isValid()
+function ISSwitchVehicleSeat:new(character, seatTo)
 	-- 0 is driver seat, I think
 	-- We only care about driver seat
-    if self.seat ~= 0 then
-		return AVCS.oISSwitchVehicleSeat(self)
+    if seatTo ~= 0 then
+		return AVCS.oISSwitchVehicleSeat(self, character, seatTo)
 	else
-		local checkResult = AVCS.checkPermission(self.character, self.vehicle)
+		local checkResult = AVCS.checkPermission(character, character:getVehicle())
 		checkResult = AVCS.getSimpleBooleanPermission(checkResult)
 
 		if checkResult then
-			return AVCS.oISSwitchVehicleSeat(self)
+			return AVCS.oISSwitchVehicleSeat(self, character, seatTo)
 		else
 			self.character:setHaloNote(getText("IGUI_AVCS_Vehicle_No_Permission"), 250, 250, 250, 300)
-			return false
+			local temp = {
+				ignoreAction = true
+			}
+			return temp
 		end
 	end
 end
