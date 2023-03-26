@@ -154,7 +154,8 @@ function ISSwitchVehicleSeat:isValid()
 end
 
 -- Copy and override the vanilla ISAttachTrailerToVehicle to block unauthorized users
--- ISAttachTrailerToVehicle:isValid loops like mad, not good. No choice but to use this
+-- Non instant action will always be validated per tick at isValid thus code will be called continuously
+-- So, we check at perform, right before it is executed
 if not AVCS.oISAttachTrailerToVehicle then
     AVCS.oISAttachTrailerToVehicle = ISAttachTrailerToVehicle.perform
 end
@@ -174,7 +175,8 @@ function ISAttachTrailerToVehicle:perform()
 end
 
 -- Copy and override the vanilla ISDetachTrailerFromVehicle to block unauthorized users
--- ISDetachTrailerFromVehicle:isValid loops like mad, not good. No choice but to use this
+-- Non instant action will always be validated per tick at isValid thus code will be called continuously
+-- So, we check at perform, right before it is executed
 if not AVCS.oISDetachTrailerFromVehicle then
     AVCS.oISDetachTrailerFromVehicle = ISDetachTrailerFromVehicle.perform
 end
@@ -192,18 +194,20 @@ function ISDetachTrailerFromVehicle:perform()
 end
 
 -- Copy and override the vanilla ISUninstallVehiclePart to block unauthorized users
+-- Non instant action will always be validated per tick at isValid thus code will be called continuously
+-- So, we check at perform, right before it is executed
 if not AVCS.oISUninstallVehiclePart then
-    AVCS.oISUninstallVehiclePart = ISUninstallVehiclePart.isValid
+    AVCS.oISUninstallVehiclePart = ISUninstallVehiclePart.perform
 end
 
-function ISUninstallVehiclePart:isValid()
+function ISUninstallVehiclePart:perform()
 	local checkResult = AVCS.checkPermission(self.character, self.vehicle)
 	checkResult = AVCS.getSimpleBooleanPermission(checkResult)
 
 	if checkResult then
-		return AVCS.oISUninstallVehiclePart(self)
+		AVCS.oISUninstallVehiclePart(self)
 	else
 		self.character:setHaloNote(getText("IGUI_AVCS_Vehicle_No_Permission"), 250, 250, 250, 300)
-		return false
+		ISBaseTimedAction.stop(self)
 	end
 end
