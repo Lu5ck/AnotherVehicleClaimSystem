@@ -165,7 +165,7 @@ function ISAttachTrailerToVehicle:new(character, vehicleA, vehicleB, attachmentA
 	checkResultB = AVCS.getSimpleBooleanPermission(checkResultB)
 
 	if checkResultA and checkResultB then
-		AVCS.oISAttachTrailerToVehicle(self, character, vehicleA, vehicleB, attachmentA, attachmentB)
+		return AVCS.oISAttachTrailerToVehicle(self, character, vehicleA, vehicleB, attachmentA, attachmentB)
 	else
 		character:setHaloNote(getText("IGUI_AVCS_Vehicle_No_Permission"), 250, 250, 250, 300)
 		local temp = {
