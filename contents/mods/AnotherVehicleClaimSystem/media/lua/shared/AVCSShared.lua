@@ -182,3 +182,7 @@ function AVCS.updateVehicleCoordinate(vehicleObj)
 	else
 	end
 end
+
+function AVCS.getFormattedDateTimeLog(unixmstime)
+	return os.date("%d-%m-%y %H:%M:%S.%3N", unixmstime/1000)
+end

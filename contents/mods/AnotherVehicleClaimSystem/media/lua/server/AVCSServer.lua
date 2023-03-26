@@ -66,6 +66,12 @@ function AVCS.claimVehicle(playerObj, vehicleID)
 	-- Make sure is not already claimed
 	-- Only SQL ID is persistent, vehicleID is created on runtime
 	if tempDB[vehicleObj:getSqlId()] then
+		-- Using vanilla logging function, write to a log with suffix AVCS
+		-- Datetime, Unix Time, Warning message, offender username, vehicle full name, coordinate
+		-- [26-03-23 22:23:36.671] [1679840616] Warning: Attempting to claim already owned vehicle [Username] [Base.ExtremeCar] [13026,1215]
+		if playerObj ~= nil then
+			writeLog("AVCS", "[" .. getTimestamp() .. "] Warning: Attempting to claim already owned vehicle [" .. playerObj:getUsername() .. "] [" .. vehicleObj:getScript():getFullName() .. "] [" .. math.floor(vehicleObj:getX()) .. "," .. math.floor(vehicleObj:getY()) .. "]")
+		end
 		-- Desync has occurred, force sync everyone
 		--ModData.transmit("AVCSByVehicleSQLID")
 		--ModData.transmit("AVCSByPlayerID")
@@ -164,10 +170,18 @@ AVCS.onClientCommand = function(moduleName, command, playerObj, vehicleID)
 			local checkResult = AVCS.checkPermission(playerObj, getVehicleById(vehicleID.vehicle))
 			if type(checkResult) == "boolean" then
 				if checkResult == false then
-					return
+					-- Using vanilla logging function, write to a log with suffix AVCS
+					-- Datetime, Unix Time, Warning message, offender username, vehicle full name, coordinate
+					-- [26-03-23 22:23:36.671] [1679840616] Warning: Attempting to unclaim without permission [Username] [Base.ExtremeCar] [13026,1215]
+					local vehicleObj = getVehicleById(vehicleID.vehicle)
+					writeLog("AVCS", "[" .. getTimestamp() .. "] Warning: Attempting to unclaim without permission [" .. playerObj:getUsername() .. "] [" .. vehicleObj:getScript():getFullName() .. "] [" .. math.floor(vehicleObj:getX()) .. "," .. math.floor(vehicleObj:getY()) .. "]")
 				end
 			elseif checkResult.permissions == false then
-				return
+				-- Using vanilla logging function, write to a log with suffix AVCS
+				-- Datetime, Unix Time, Warning message, offender username, vehicle full name, coordinate
+				-- [26-03-23 22:23:36.671] [1679840616] Warning: Attempting to unclaim without permission [Username] [Base.ExtremeCar] [13026,1215]
+				local vehicleObj = getVehicleById(vehicleID.vehicle)
+				writeLog("AVCS", "[" .. getTimestamp() .. "] Warning: Attempting to unclaim without permission [" .. playerObj:getUsername() .. "] [" .. vehicleObj:getScript():getFullName() .. "] [" .. math.floor(vehicleObj:getX()) .. "," .. math.floor(vehicleObj:getY()) .. "]")
 			end
 		end
 		AVCS.unclaimVehicle(playerObj, vehicleID)
