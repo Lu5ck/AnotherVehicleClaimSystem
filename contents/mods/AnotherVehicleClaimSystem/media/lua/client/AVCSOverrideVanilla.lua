@@ -318,7 +318,6 @@ function ISOpenVehicleDoor:new(character, vehicle, partOrSeat)
 	end
 
 	if checkResult then
-		print("permitted")
 		return AVCS.oISOpenVehicleDoor(self, character, vehicle, partOrSeat)
 	else
 		character:setHaloNote(getText("IGUI_AVCS_Vehicle_No_Permission"), 250, 250, 250, 300)
