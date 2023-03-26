@@ -157,20 +157,23 @@ end
 -- Non instant action will always be validated per tick at isValid thus code will be called continuously
 -- So, we check at perform, right before it is executed
 if not AVCS.oISAttachTrailerToVehicle then
-    AVCS.oISAttachTrailerToVehicle = ISAttachTrailerToVehicle.perform
+    AVCS.oISAttachTrailerToVehicle = ISAttachTrailerToVehicle.new
 end
 
-function ISAttachTrailerToVehicle:perform()
-	local checkResultA = AVCS.checkPermission(self.character, self.vehicleA)
-	local checkResultB = AVCS.checkPermission(self.character, self.vehicleB)
+function ISAttachTrailerToVehicle:new(character, vehicleA, vehicleB, attachmentA, attachmentB)
+	local checkResultA = AVCS.checkPermission(character, vehicleA)
+	local checkResultB = AVCS.checkPermission(character, vehicleB)
 	checkResultA = AVCS.getSimpleBooleanPermission(checkResultA)
 	checkResultB = AVCS.getSimpleBooleanPermission(checkResultB)
 
 	if checkResultA and checkResultB then
-		AVCS.oISAttachTrailerToVehicle(self)
+		AVCS.oISAttachTrailerToVehicle(self, character, vehicleA, vehicleB, attachmentA, attachmentB)
 	else
-		self.character:setHaloNote(getText("IGUI_AVCS_Vehicle_No_Permission"), 250, 250, 250, 300)
-		ISBaseTimedAction.stop(self)
+		character:setHaloNote(getText("IGUI_AVCS_Vehicle_No_Permission"), 250, 250, 250, 300)
+		local temp = {
+			ignoreAction = true
+		}
+		return temp
 	end
 end
 
