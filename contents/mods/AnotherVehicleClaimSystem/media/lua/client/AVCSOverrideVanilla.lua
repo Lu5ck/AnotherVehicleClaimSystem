@@ -185,7 +185,7 @@ function ISDetachTrailerFromVehicle:new(character, vehicle, attachment)
 	checkResult = AVCS.getSimpleBooleanPermission(checkResult)
 
 	if checkResult then
-		AVCS.oISDetachTrailerFromVehicle(self, character, vehicle, attachment)
+		return AVCS.oISDetachTrailerFromVehicle(self, character, vehicle, attachment)
 	else
 		character:setHaloNote(getText("IGUI_AVCS_Vehicle_No_Permission"), 250, 250, 250, 300)
 		local temp = {
