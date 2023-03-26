@@ -219,7 +219,7 @@ if not AVCS.oISTakeGasolineFromVehicle then
 end
 
 function ISTakeGasolineFromVehicle:new(character, part, item, time)
-	local checkResult = AVCS.checkPermission(self.character, self.vehicle)
+	local checkResult = AVCS.checkPermission(character, part:getVehicle())
 	checkResult = AVCS.getSimpleBooleanPermission(checkResult)
 
 	if checkResult then
