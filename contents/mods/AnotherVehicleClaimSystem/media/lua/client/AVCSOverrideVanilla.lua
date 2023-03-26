@@ -282,7 +282,7 @@ if not AVCS.oISSmashVehicleWindow then
 end
 
 function ISSmashVehicleWindow:new(character, part, open)
-	local checkResult = AVCS.checkPermission(self.character, self.vehicle)
+	local checkResult = AVCS.checkPermission(character, part:getVehicle())
 	checkResult = AVCS.getSimpleBooleanPermission(checkResult)
 
 	if checkResult then
@@ -295,3 +295,4 @@ function ISSmashVehicleWindow:new(character, part, open)
 		return temp
 	end
 end
+
