@@ -9,14 +9,13 @@ if isClient() and not isServer() then
 	return
 end
 --[[
-It seems impossible to get the real time coordinate of vehicles
-Since vehicles ID are created on runtime and we store the SQL ID
-It is impossible to obtain the vehicle ID despite having SQL ID, no method to do that
-So ideally we get ID as it get loaded into the world but you can't get all the vehicle ID either because it only get loaded when people are at that place
-So the best we could do is get last known location
-We could override the vehicle part functions to include our coordinate update function
+It is impossible to get real time coordinate of vehicles
+Vehicle object is not readily obtainable and vehicle DB is not accessible via mod codes
+Vehicles.LowerCondition is the only function that simply make sense
+All vehicles will have conditions losses as you use it thus this will be called
 --]]
 
+-- Location tracking, I think is the most reliable way to track it
 if not AVCS.oLowerCondition then
     AVCS.oLowerCondition = Vehicles.LowerCondition
 end
