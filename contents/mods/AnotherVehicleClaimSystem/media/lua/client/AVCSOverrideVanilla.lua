@@ -178,21 +178,22 @@ function ISAttachTrailerToVehicle:new(character, vehicleA, vehicleB, attachmentA
 end
 
 -- Copy and override the vanilla ISDetachTrailerFromVehicle to block unauthorized users
--- Non instant action will always be validated per tick at isValid thus code will be called continuously
--- So, we check at perform, right before it is executed
 if not AVCS.oISDetachTrailerFromVehicle then
-    AVCS.oISDetachTrailerFromVehicle = ISDetachTrailerFromVehicle.perform
+    AVCS.oISDetachTrailerFromVehicle = ISDetachTrailerFromVehicle.new
 end
 
-function ISDetachTrailerFromVehicle:perform()
-	local checkResult = AVCS.checkPermission(self.character, self.vehicle)
+function ISDetachTrailerFromVehicle:new(character, vehicle, attachment)
+	local checkResult = AVCS.checkPermission(character, vehicle)
 	checkResult = AVCS.getSimpleBooleanPermission(checkResult)
 
 	if checkResult then
-		AVCS.oISDetachTrailerFromVehicle(self)
+		AVCS.oISDetachTrailerFromVehicle(self, character, vehicle, attachment)
 	else
-		self.character:setHaloNote(getText("IGUI_AVCS_Vehicle_No_Permission"), 250, 250, 250, 300)
-		ISBaseTimedAction.stop(self)
+		character:setHaloNote(getText("IGUI_AVCS_Vehicle_No_Permission"), 250, 250, 250, 300)
+		local temp = {
+			ignoreAction = true
+		}
+		return temp
 	end
 end
 
