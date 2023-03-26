@@ -107,6 +107,11 @@ function ISVehicleMenu.FillMenuOutsideVehicle(player, context, vehicle, test)
     AVCS.addOptionToMenuOutsideVehicle(getSpecificPlayer(player), context, vehicle)
 end
 
+--[[
+Overriding vanilla actions functions by copying the orginal functions then check permissions before calling the original
+Avoid overriding isValid as that function is called on every validation which happen on every tick until action is complete
+--]]
+
 -- Copy and override the vanilla ISEnterVehicle to block unauthorized users
 if not AVCS.oIsEnterVehicle then
     AVCS.oIsEnterVehicle = ISEnterVehicle.new
