@@ -14,8 +14,6 @@ Vehicle object is not readily obtainable and vehicle DB is not accessible via mo
 Vehicles.LowerCondition is the only function that simply make sense
 All vehicles will have conditions losses as you use it thus this will be called
 --]]
-
--- Location tracking, I think is the most reliable way to track it
 if not AVCS.oLowerCondition then
     AVCS.oLowerCondition = Vehicles.LowerCondition
 end
