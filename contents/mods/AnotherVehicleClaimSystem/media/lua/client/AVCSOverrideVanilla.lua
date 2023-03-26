@@ -194,21 +194,23 @@ function ISDetachTrailerFromVehicle:perform()
 end
 
 -- Copy and override the vanilla ISUninstallVehiclePart to block unauthorized users
--- Non instant action will always be validated per tick at isValid thus code will be called continuously
--- So, we check at perform, right before it is executed
 if not AVCS.oISUninstallVehiclePart then
-    AVCS.oISUninstallVehiclePart = ISUninstallVehiclePart.perform
+    AVCS.oISUninstallVehiclePart = ISUninstallVehiclePart.new
 end
 
-function ISUninstallVehiclePart:perform()
-	local checkResult = AVCS.checkPermission(self.character, self.vehicle)
+function ISUninstallVehiclePart:new(character, part, time)
+	local checkResult = AVCS.checkPermission(character, part:getVehicle())
 	checkResult = AVCS.getSimpleBooleanPermission(checkResult)
 
 	if checkResult then
-		AVCS.oISUninstallVehiclePart(self)
+		print("permitted")
+		return AVCS.oISUninstallVehiclePart(self, character, part, time)
 	else
-		self.character:setHaloNote(getText("IGUI_AVCS_Vehicle_No_Permission"), 250, 250, 250, 300)
-		ISBaseTimedAction.stop(self)
+		character:setHaloNote(getText("IGUI_AVCS_Vehicle_No_Permission"), 250, 250, 250, 300)
+		local temp = {
+			ignoreAction = true
+		}
+		return temp
 	end
 end
 
