@@ -177,6 +177,7 @@ function AVCS.updateVehicleCoordinate(vehicleObj)
 			end
 		end
 	-- Client call
+	-- No plan to do client call as server seems sufficient for now
 	else
 	end
 end
