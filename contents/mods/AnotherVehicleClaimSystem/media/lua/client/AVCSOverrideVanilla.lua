@@ -109,23 +109,26 @@ end
 
 -- Copy and override the vanilla ISEnterVehicle to block unauthorized users
 if not AVCS.oIsEnterVehicle then
-    AVCS.oIsEnterVehicle = ISEnterVehicle.isValid
+    AVCS.oIsEnterVehicle = ISEnterVehicle.new
 end
 
-function ISEnterVehicle:isValid()
+function ISEnterVehicle:new(character, vehicle, seat)
 	-- 0 is driver seat, I think
 	-- We only care about driver seat
-    if self.seat ~= 0 then
-		return AVCS.oIsEnterVehicle(self)
+    if seat ~= 0 then
+		return AVCS.oIsEnterVehicle(self, character, vehicle, seat)
 	else
-		local checkResult = AVCS.checkPermission(self.character, self.vehicle)
+		local checkResult = AVCS.checkPermission(character, vehicle)
 		checkResult = AVCS.getSimpleBooleanPermission(checkResult)
 
 		if checkResult then
-			return AVCS.oIsEnterVehicle(self)
+			return AVCS.oIsEnterVehicle(self, character, vehicle, seat)
 		else
 			self.character:setHaloNote(getText("IGUI_AVCS_Vehicle_No_Permission"), 250, 250, 250, 300)
-			return false
+			local temp = {
+				ignoreAction = true
+			}
+			return temp
 		end
 	end
 end
