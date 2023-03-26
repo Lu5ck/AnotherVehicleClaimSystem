@@ -173,7 +173,7 @@ function AVCS.updateVehicleCoordinate(vehicleObj)
 					LastLocationX = math.floor(vehicleObj:getX()),
 					LastLocationY = math.floor(vehicleObj:getY())
 				}
-				sendServerCommand("AVCS", "updateVehicleCoordinate", tempArr)
+				sendServerCommand("AVCS", "updateClientVehicleCoordinate", tempArr)
 			end
 		end
 	-- Client call

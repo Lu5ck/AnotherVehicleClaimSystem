@@ -112,7 +112,7 @@ function AVCS.claimVehicle(playerObj, vehicleID)
 		So, we will send the bare minimum instead. We hope this won't be desynced
 		Clients will always obtain be latest global ModData onConnected
 		--]] 
-		sendServerCommand("AVCS", "updateClaimVehicle", tempArr)
+		sendServerCommand("AVCS", "updateClientClaimVehicle", tempArr)
 	end
 end
 
@@ -148,7 +148,7 @@ function AVCS.unclaimVehicle(playerObj, vehicleID)
 		Clients will always obtain be latest global ModData onConnected
 		--]]
 		
-		sendServerCommand("AVCS", "updateUnclaimVehicle", tempArr)
+		sendServerCommand("AVCS", "updateClientUnclaimVehicle", tempArr)
 	else
 		-- Desync has occurred, force sync everyone
 		--ModData.transmit("AVCSByVehicleSQLID")
