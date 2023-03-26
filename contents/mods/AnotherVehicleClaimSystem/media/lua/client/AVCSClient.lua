@@ -25,7 +25,8 @@ function AVCS.updateClientClaimVehicle(arg)
 		ClaimDateTime = arg.ClaimDateTime,
 		CarModel = arg.CarModel,
 		LastLocationX = arg.LastLocationX,
-		LastLocationY = arg.LastLocationY
+		LastLocationY = arg.LastLocationY,
+		LastLocationUpdateDateTime = arg.LastLocationUpdateDateTime
 	}
 	-- Store the updated ModData --
 	ModData.add("AVCSByVehicleSQLID", tempDB)
@@ -91,6 +92,7 @@ function AVCS.updateClientVehicleCoordinate(arg)
 
 	tempDB[arg.VehicleID].LastLocationX = arg.LastLocationX
 	tempDB[arg.VehicleID].LastLocationY = arg.LastLocationY
+	tempDB[arg.VehicleID].LastLocationUpdateDateTime = arg.LastLocationUpdateDateTime
 
 	-- Store the updated ModData --
 	ModData.add("AVCSByVehicleSQLID", tempDB)

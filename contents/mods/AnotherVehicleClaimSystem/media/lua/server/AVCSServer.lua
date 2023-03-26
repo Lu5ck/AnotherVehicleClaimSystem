@@ -74,20 +74,22 @@ function AVCS.claimVehicle(playerObj, vehicleID)
 	else
 		tempDB[vehicleObj:getSqlId()] = {
 			OwnerPlayerID = playerObj:getUsername(),
-			ClaimDateTime = getTimestampMs(),
+			ClaimDateTime = getTimestamp(),
 			CarModel = vehicleObj:getScript():getFullName(),
 			LastLocationX = math.floor(vehicleObj:getX()),
-			LastLocationY = math.floor(vehicleObj:getY())
+			LastLocationY = math.floor(vehicleObj:getY()),
+			LastLocationUpdateDateTime = getTimestamp()
 		}
 		
 		-- Minimum data to send to clients
 		local tempArr = {
 			VehicleID = vehicleObj:getSqlId(),
 			OwnerPlayerID = playerObj:getUsername(),
-			ClaimDateTime = getTimestampMs(),
+			ClaimDateTime = getTimestamp(),
 			CarModel = vehicleObj:getScript():getFullName(),
 			LastLocationX = math.floor(vehicleObj:getX()),
-			LastLocationY = math.floor(vehicleObj:getY())
+			LastLocationY = math.floor(vehicleObj:getY()),
+			LastLocationUpdateDateTime = getTimestamp()
 		}
 		
 		-- Store the updated ModData --
