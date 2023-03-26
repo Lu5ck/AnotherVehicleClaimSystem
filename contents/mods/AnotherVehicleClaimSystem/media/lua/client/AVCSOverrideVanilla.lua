@@ -211,3 +211,24 @@ function ISUninstallVehiclePart:perform()
 		ISBaseTimedAction.stop(self)
 	end
 end
+
+-- Copy and override the vanilla ISTakeGasolineFromVehicle to block unauthorized users
+-- There's no follow up call on this action thus we can override new without error
+if not AVCS.oISTakeGasolineFromVehicle then
+    AVCS.oISTakeGasolineFromVehicle = ISTakeGasolineFromVehicle.new
+end
+
+function ISTakeGasolineFromVehicle:new(character, part, item, time)
+	local checkResult = AVCS.checkPermission(self.character, self.vehicle)
+	checkResult = AVCS.getSimpleBooleanPermission(checkResult)
+
+	if checkResult then
+		return AVCS.oISTakeGasolineFromVehicle(self, character, part, item, time)
+	else
+		self.character:setHaloNote(getText("IGUI_AVCS_Vehicle_No_Permission"), 250, 250, 250, 300)
+		local temp = {
+			ignoreAction = true
+		}
+		return temp
+	end
+end

@@ -59,18 +59,20 @@ table / array = owned and permission
 
 function AVCS.checkPermission(playerObj, vehicleObj)
 	local tempPart = AVCS.getMulePart(vehicleObj)
-	local vehicleSQL = tempPart:getModData().SQLID
-	local vehicleDB = ModData.get("AVCSByVehicleSQLID")
 
 	-- Vehicle claiming not supported on this vehicle, likely a modded vehicle with non standard parts
 	if tempPart == false or tempPart == nil then
 		return false
 	end
 
+	local vehicleSQL = tempPart:getModData().SQLID
+
 	-- If doesn't contain server-side SQL ID ModData,  it means yet to be imprinted therefore naturally unclaimed
 	if vehicleSQL == nil then
 		return true
 	end
+
+	local vehicleDB = ModData.get("AVCSByVehicleSQLID")
 
 	-- Ownerless
 	if vehicleDB[vehicleSQL] == nil then
