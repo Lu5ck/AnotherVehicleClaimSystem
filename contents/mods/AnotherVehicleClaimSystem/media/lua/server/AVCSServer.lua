@@ -17,6 +17,15 @@ So the best we could do is get last known location
 We could override the vehicle part functions to include our coordinate update function
 --]]
 
+if not AVCS.oLowerCondition then
+    AVCS.oLowerCondition = Vehicles.LowerCondition
+end
+
+function Vehicles.LowerCondition(vehicle, part, elapsedMinutes)
+	AVCS.oLowerCondition(vehicle, part, elapsedMinutes)
+	AVCS.updateVehicleCoordinate(vehicle)
+end
+
 --[[
 The global modData is basically the database for this vehicle claiming mod
 This global moddata is actively shared with the clients
@@ -68,8 +77,8 @@ function AVCS.claimVehicle(playerObj, vehicleID)
 			OwnerPlayerID = playerObj:getUsername(),
 			ClaimDateTime = getTimestampMs(),
 			CarModel = vehicleObj:getScript():getFullName(),
-			LastLocationX = vehicleObj:getX(),
-			LastLocationY = vehicleObj:getY()
+			LastLocationX = math.floor(vehicleObj:getX()),
+			LastLocationY = math.floor(vehicleObj:getY())
 		}
 		
 		-- Minimum data to send to clients
@@ -78,8 +87,8 @@ function AVCS.claimVehicle(playerObj, vehicleID)
 			OwnerPlayerID = playerObj:getUsername(),
 			ClaimDateTime = getTimestampMs(),
 			CarModel = vehicleObj:getScript():getFullName(),
-			LastLocationX = vehicleObj:getX(),
-			LastLocationY = vehicleObj:getY()
+			LastLocationX = math.floor(vehicleObj:getX()),
+			LastLocationY = math.floor(vehicleObj:getY())
 		}
 		
 		-- Store the updated ModData --

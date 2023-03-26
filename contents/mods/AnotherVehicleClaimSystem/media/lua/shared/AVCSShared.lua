@@ -157,3 +157,26 @@ function AVCS.getSimpleBooleanPermission(details)
 	end
 	return details
 end
+
+function AVCS.updateVehicleCoordinate(vehicleObj)
+	-- Server call, must be extreme efficient as this is called extreme frequently
+	-- Do not use loop here
+	if isServer() and not isClient() then
+		local tempDB = ModData.get("AVCSByVehicleSQLID")
+		if tempDB[vehicleObj:getSqlId()] ~= nil then
+			if tempDB[vehicleObj:getSqlId()].LastLocationX ~= math.floor(vehicleObj:getX()) or tempDB[vehicleObj:getSqlId()].LastLocationY ~= math.floor(vehicleObj:getY()) then
+				tempDB[vehicleObj:getSqlId()].LastLocationX = math.floor(vehicleObj:getX())
+				tempDB[vehicleObj:getSqlId()].LastLocationY = math.floor(vehicleObj:getY())
+				ModData.add("AVCSByVehicleSQLID", tempDB)
+				local tempArr = {
+					VehicleID = vehicleObj:getSqlId(),
+					LastLocationX = math.floor(vehicleObj:getX()),
+					LastLocationY = math.floor(vehicleObj:getY())
+				}
+				sendServerCommand("AVCS", "updateVehicleCoordinate", tempArr)
+			end
+		end
+	-- Client call
+	else
+	end
+end

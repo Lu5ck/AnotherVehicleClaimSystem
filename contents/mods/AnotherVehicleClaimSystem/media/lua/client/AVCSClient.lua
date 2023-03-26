@@ -9,7 +9,7 @@ if not isClient() and isServer() then
 	return
 end
 
-function AVCS.updateClaimVehicle(arg)
+function AVCS.updateClientClaimVehicle(arg)
 	local tempDB = ModData.get("AVCSByVehicleSQLID")
 	
 	-- A desync has occurred, this shouldn't happen
@@ -43,7 +43,7 @@ function AVCS.updateClaimVehicle(arg)
 	ModData.add("AVCSByPlayerID", tempDB)
 end
 
-function AVCS.updateUnclaimVehicle(arg)
+function AVCS.updateClientUnclaimVehicle(arg)
 	local tempDB = ModData.get("AVCSByVehicleSQLID")
 	
 	-- A desync has occurred, this shouldn't happen
@@ -72,13 +72,37 @@ function AVCS.updateUnclaimVehicle(arg)
 	ModData.add("AVCSByPlayerID", tempDB)
 end
 
+function AVCS.updateClientVehicleCoordinate(arg)
+	local tempDB = ModData.get("AVCSByVehicleSQLID")
+
+	-- A desync has occurred, this shouldn't happen
+	-- We will request full data from server
+	if tempDB == nil then
+		ModData.request("AVCSByVehicleSQLID")
+		ModData.request("AVCSByPlayerID")
+		return
+	end
+
+	if tempDB[arg.VehicleID] == nil then
+		ModData.request("AVCSByVehicleSQLID")
+		ModData.request("AVCSByPlayerID")
+		return
+	end
+
+	tempDB[arg.VehicleID].LastLocationX = arg.LastLocationX
+	tempDB[arg.VehicleID].LastLocationY = arg.LastLocationY
+
+	-- Store the updated ModData --
+	ModData.add("AVCSByVehicleSQLID", tempDB)
+end
+
 AVCS.OnServerCommand = function(moduleName, command, arg)
-	if moduleName == "AVCS" and command == "updateClaimVehicle" then
-		print(command)
-		AVCS.updateClaimVehicle(arg)
-	elseif moduleName == "AVCS" and command == "updateUnclaimVehicle" then
-		print(command)
-		AVCS.updateUnclaimVehicle(arg)
+	if moduleName == "AVCS" and command == "updateClientClaimVehicle" then
+		AVCS.updateClientClaimVehicle(arg)
+	elseif moduleName == "AVCS" and command == "updateClientUnclaimVehicle" then
+		AVCS.updateClientUnclaimVehicle(arg)
+	elseif moduleName == "AVCS" and command == "updateClientVehicleCoordinate" then
+		AVCS.updateClientVehicleCoordinate(arg)
 	end
 end
 
