@@ -119,17 +119,15 @@ function ISEnterVehicle:isValid()
 		return AVCS.oIsEnterVehicle(self)
 	else
 		local checkResult = AVCS.checkPermission(self.character, self.vehicle)
-		if type(checkResult) == "boolean" then
-			if checkResult == true then
-				return AVCS.oIsEnterVehicle(self)
-			end
-		elseif checkResult.permissions == true then
+		checkResult = AVCS.getSimpleBooleanPermission(checkResult)
+
+		if checkResult then
 			return AVCS.oIsEnterVehicle(self)
+		else
+			self.character:setHaloNote(getText("IGUI_AVCS_Vehicle_No_Permission"), 250, 250, 250, 300)
+			return false
 		end
 	end
-
-	self.character:setHaloNote(getText("IGUI_AVCS_Vehicle_No_Permission"), 250, 250, 250, 300)
-	return false
 end
 
 -- Copy and override the vanilla ISSwitchVehicleSeat to block unauthorized users
@@ -140,20 +138,18 @@ end
 function ISSwitchVehicleSeat:isValid()
 	-- 0 is driver seat, I think
 	-- We only care about driver seat
-	if self.seatTo == 0 then
+    if self.seat ~= 0 then
+		return AVCS.oISSwitchVehicleSeat(self)
+	else
 		local checkResult = AVCS.checkPermission(self.character, self.vehicle)
-		if type(checkResult) == "boolean" then
-			if checkResult == true then
-				return AVCS.oISSwitchVehicleSeat(self)
-			end
-		elseif checkResult.permissions == true then
+		checkResult = AVCS.getSimpleBooleanPermission(checkResult)
+
+		if checkResult then
 			return AVCS.oISSwitchVehicleSeat(self)
 		else
 			self.character:setHaloNote(getText("IGUI_AVCS_Vehicle_No_Permission"), 250, 250, 250, 300)
 			return false
 		end
-	else
-		return AVCS.oISSwitchVehicleSeat(self)
 	end
 end
 
@@ -166,22 +162,8 @@ end
 function ISAttachTrailerToVehicle:perform()
 	local checkResultA = AVCS.checkPermission(self.character, self.vehicleA)
 	local checkResultB = AVCS.checkPermission(self.character, self.vehicleB)
-
-	if type(checkResultA) ~= "boolean" then
-		if checkResultA.permissions == true then
-			checkResultA = true
-		else
-			checkResultA = false
-		end
-	end
-
-	if type(checkResultB) ~= "boolean" then
-		if checkResultB.permissions == true then
-			checkResultB = true
-		else
-			checkResultB = false
-		end
-	end
+	checkResultA = AVCS.getSimpleBooleanPermission(checkResultA)
+	checkResultB = AVCS.getSimpleBooleanPermission(checkResultB)
 
 	if checkResultA and checkResultB then
 		AVCS.oISAttachTrailerToVehicle(self)
@@ -199,14 +181,7 @@ end
 
 function ISDetachTrailerFromVehicle:perform()
 	local checkResult = AVCS.checkPermission(self.character, self.vehicle)
-
-	if type(checkResult) ~= "boolean" then
-		if checkResult.permissions == true then
-			checkResult = true
-		else
-			checkResult = false
-		end
-	end
+	checkResult = AVCS.getSimpleBooleanPermission(checkResult)
 
 	if checkResult then
 		AVCS.oISDetachTrailerFromVehicle(self)
@@ -223,14 +198,7 @@ end
 
 function ISUninstallVehiclePart:isValid()
 	local checkResult = AVCS.checkPermission(self.character, self.vehicle)
-
-	if type(checkResult) ~= "boolean" then
-		if checkResult.permissions == true then
-			checkResult = true
-		else
-			checkResult = false
-		end
-	end
+	checkResult = AVCS.getSimpleBooleanPermission(checkResult)
 
 	if checkResult then
 		return AVCS.oISUninstallVehiclePart(self)

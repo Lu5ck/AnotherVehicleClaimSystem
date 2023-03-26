@@ -51,6 +51,10 @@ end
 Was thinking if this should be a simple boolean function or more
 Then, I wanted to show the owner name as tooltip in the context menu
 So I decided to make it more...
+
+false = unsupported vehicle
+true = unowned
+table / array = owned and permission
 --]]
 
 function AVCS.checkPermission(playerObj, vehicleObj)
@@ -130,5 +134,24 @@ function AVCS.checkPermission(playerObj, vehicleObj)
 		permissions = false,
 		ownerid = vehicleDB[vehicleSQL].OwnerPlayerID
 	}
+	return details
+end
+
+-- Simple function to convert detailed result of checkPermission into simple true or false
+-- Mainly used by override functions to check basic access to vehicle
+-- false which is to indicate unsupported vehicle is always returned as true in this case
+function AVCS.getSimpleBooleanPermission(details)
+	if type(details) == "boolean" then
+		if details == false then
+			details = true
+		end
+	end
+	if type(details) ~= "boolean" then
+		if details.permissions == true then
+			return true
+		else
+			return false
+		end
+	end
 	return details
 end
