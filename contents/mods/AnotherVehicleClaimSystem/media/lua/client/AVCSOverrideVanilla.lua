@@ -246,7 +246,7 @@ function ISTakeEngineParts:new(character, part, item, time)
 	if checkResult then
 		return AVCS.oISTakeEngineParts(self, character, part, item, time)
 	else
-		self.character:setHaloNote(getText("IGUI_AVCS_Vehicle_No_Permission"), 250, 250, 250, 300)
+		character:setHaloNote(getText("IGUI_AVCS_Vehicle_No_Permission"), 250, 250, 250, 300)
 		local temp = {
 			ignoreAction = true
 		}
