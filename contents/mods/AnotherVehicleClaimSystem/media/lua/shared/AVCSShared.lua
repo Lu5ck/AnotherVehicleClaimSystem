@@ -171,7 +171,8 @@ function AVCS.updateVehicleCoordinate(vehicleObj)
 				local tempArr = {
 					VehicleID = vehicleObj:getSqlId(),
 					LastLocationX = math.floor(vehicleObj:getX()),
-					LastLocationY = math.floor(vehicleObj:getY())
+					LastLocationY = math.floor(vehicleObj:getY()),
+					LastLocationUpdateDateTime = getTimestamp()
 				}
 				sendServerCommand("AVCS", "updateClientVehicleCoordinate", tempArr)
 			end
