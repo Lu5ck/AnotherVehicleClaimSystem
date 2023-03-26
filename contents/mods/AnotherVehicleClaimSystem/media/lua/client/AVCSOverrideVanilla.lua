@@ -267,7 +267,7 @@ function ISDeflateTire:new(character, part, psi, time)
 	if checkResult then
 		return AVCS.oISDeflateTire(self, character, part, psi, time)
 	else
-		self.character:setHaloNote(getText("IGUI_AVCS_Vehicle_No_Permission"), 250, 250, 250, 300)
+		character:setHaloNote(getText("IGUI_AVCS_Vehicle_No_Permission"), 250, 250, 250, 300)
 		local temp = {
 			ignoreAction = true
 		}
