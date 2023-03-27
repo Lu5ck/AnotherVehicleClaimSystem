@@ -52,48 +52,45 @@ function AVCS.addOptionToMenuOutsideVehicle(player, context, vehicle)
 	local checkResult = AVCS.checkPermission(player, vehicle)
 	local option
 	local toolTip
+	toolTip = ISToolTip:new()
+	toolTip:initialise()
+	toolTip:setVisible(false)
+	option.toolTip = toolTip
 	if type(checkResult) == "boolean" then
 		if checkResult == true then
+			local playerInv = player:getInventory()
 			-- Free car
 			option = context:addOption(getText("ContextMenu_AVCS_ClaimVehicle"), player, claimCfmDialog, vehicle)
-			toolTip = ISToolTip:new()
-			toolTip:initialise()
-			toolTip:setVisible(false)
+
+			if playerInv:getItemCount("Base.AVCSClaimForm") < 1 then
+				tooltip.description = getText("Tooltip_AVCS_Needs") .. " <RGB:1,0,0>" .. getItemNameFromFullType("Base.AVCSClaimForm") .. " " .. playerInv:getItemCount("Base.AVCSClaimForm") .. "/1"
+				option.notAvailable = true
+			else
+				tooltip.description = getText("Tooltip_AVCS_Needs") .. " <RGB:0,1,0>" .. getItemNameFromFullType("Base.AVCSClaimForm") .. " " .. playerInv:getItemCount("Base.AVCSClaimForm") .. "/1"
+				option.notAvailable = false
+			end
 			option.toolTip = toolTip
-			option.notAvailable = false
-			
-			--if not player:getInventory():containsTypeRecurse("AVCSClaimForm") then
-			--	option.notAvailable = true
-			--end
 		elseif checkResult == false then
 			-- Not supported vehicle
-			option = context:addOption(getText("ContextMenu_AVCS_ClaimVehicle"), player, claimCfmDialog, vehicle)
-			toolTip = ISToolTip:new()
-			toolTip:initialise()
-			toolTip:setVisible(false)
-			option.toolTip = toolTip
+			option = context:addOption(getText("ContextMenu_AVCS_UnsupportedVehicle"), player, claimCfmDialog, vehicle)
+			tooltip.description = getText("Tooltip_AVCS_Unsupported")
 			option.notAvailable = true
 		end
 	elseif checkResult.permissions == true then
 		-- Owned car
 		option = context:addOption(getText("ContextMenu_AVCS_UnclaimVehicle"), player, unclaimCfmDialog, vehicle)
-		toolTip = ISToolTip:new()
-		toolTip:initialise()
-		toolTip:setVisible(false)
-		option.toolTip = toolTip
+		tooltip.description = getText("Tooltip_AVCS_Owner") .. ": " .. checkResult.ownerid
 		option.notAvailable = false
 	elseif checkResult.permissions == false then
 		-- Owned car
 		option = context:addOption(getText("ContextMenu_AVCS_UnclaimVehicle"), player, unclaimCfmDialog, vehicle)
-		toolTip = ISToolTip:new()
-		toolTip:initialise()
-		toolTip:setVisible(false)
-		option.toolTip = toolTip
+		tooltip.description = getText("Tooltip_AVCS_Owner") .. ": " .. checkResult.ownerid
 		option.notAvailable = true
 	end
 
 	-- Must not be towing or towed
 	if vehicle:getVehicleTowedBy() ~= nil or vehicle:getVehicleTowing() ~= nil then
+		tooltip.description = getText("Tooltip_AVCS_Towed")
 		option.notAvailable = true
 	end
 end
@@ -109,7 +106,7 @@ end
 
 --[[
 Overriding vanilla actions functions by copying the orginal functions then check permissions before calling the original
-Avoid overriding isValid as that function is called on every validation which happen on every tick until action is complete
+Avoid overriding isValid as that function is called on every validation which happen on every tick until action is completed
 --]]
 
 -- Copy and override the vanilla ISEnterVehicle to block unauthorized users
