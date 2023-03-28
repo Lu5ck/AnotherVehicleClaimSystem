@@ -1,0 +1,36 @@
+module Base {
+    item AVCSClaimForm
+    {
+        DisplayCategory = AVCS,
+        Weight  = 0.1,
+        Type    = Normal,
+        Icon    = AVCSClaimForm,
+        DisplayName = Vehicle Claim Registration Form,
+        WorldStaticModel = AVCS.ClaimForm,
+    }
+}
+
+module AVCS
+{
+    model ClaimForm
+	{
+		mesh = WorldItems/INeedMesh,
+		texture = WorldItems/INeedTexture,
+		scale = 0.02,
+	}
+
+}
+
+module
+{
+	sound AVCSClaimSoundM
+    {
+        clip { file = media/sound/i_need_sounds1.ogg, }
+        clip { file = media/sound/i_need_sounds2.ogg, }
+    }
+	sound AVCSClaimSoundF
+    {
+        clip { file = media/sound/i_need_sounds3.ogg, }
+        clip { file = media/sound/i_need_sounds4.ogg, }
+    }
+}
