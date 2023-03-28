@@ -47,11 +47,8 @@ function AVCSItemsListViewer:initList()
     local playerClaimedCars = ModData.get("AVCSByPlayerID")
     local serverClaimedCars = ModData.get("AVCSByVehicleSQLID")
 
-
     local playerName = getPlayer():getUsername()
     local specificPlayerClaimedCars = playerClaimedCars[playerName]
-
-
 
     self.items = {}
 
@@ -68,14 +65,13 @@ function AVCSItemsListViewer:initList()
 
         print(self.items[index].carModel)
         index = index + 1
-        
+
     end
 
 
-    local listBox = AVCSItemsListTable:new(0, 0, self.panel.width, self.panel.height - self.panel.tabHeight, self);
+    local listBox = AVCSItemsListTable:new(0, 0, self.panel.width, self.panel.height - self.panel.tabHeight, self)
     listBox:initialise()
-    self.panel:addView(playerName, listBox);
---    listBox.parent = self;
+    self.panel:addView(playerName, listBox)
     listBox:initList(self.items)
     self.panel:activateView(playerName)
 end
