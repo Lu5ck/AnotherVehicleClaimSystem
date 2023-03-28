@@ -48,12 +48,12 @@ function AVCSItemsListViewer:initList()
     local serverClaimedCars = ModData.get("AVCSByVehicleSQLID")
 
 
+    local playerName = getPlayer():getUsername()
+    local specificPlayerClaimedCars = playerClaimedCars[playerName]
 
-    local specificPlayerClaimedCars = playerClaimedCars[getPlayer():getUsername()]
 
 
-
-    local carsTable = {}
+    self.items = {}
 
     print("Loading vehicles list")
 
@@ -61,57 +61,22 @@ function AVCSItemsListViewer:initList()
     for x in pairs(specificPlayerClaimedCars) do
         local singleCar = serverClaimedCars[x]
 
-        carsTable[index] = {
+        self.items[index] = {
             carModel = singleCar.CarModel,
             location = {singleCar.LastLocationX, singleCar.LastLocationY}
         }
 
-        print(carsTable[index].carModel)
+        print(self.items[index].carModel)
         index = index + 1
         
     end
 
-    self.items = getAllItems()
-
-    -- we gonna separate items by module
-    self.module = {};
-    local moduleNames = {}
-    local allItems = {}
-    for i=0,self.items:size()-1 do
-        local item = self.items:get(i);
-        --The following code is used to generate a list of all items in the game
-        --in a format that allows for easier conversion into an excel / google sheets
-        --compatible layout. IN THE OUTPUT, replace <<<>>> with a tab.
-
-        --if (item:getDisplayCategory() ~= nil) then
-        --    print("<<<>>>" .. item:getName() .. "<<<>>>" .. item:getDisplayCategory())
-        --else
-        --    print("<<<>>>" .. item:getName() .. "<<<>>>")
-        --end
-
-        --The above code activates as soon as the item list viewer is activated.
-        if not item:getObsolete() and not item:isHidden() then
-            if not self.module[item:getModuleName()] then
-                self.module[item:getModuleName()] = {}
-                table.insert(moduleNames, item:getModuleName())
-            end
-            table.insert(self.module[item:getModuleName()], item);
-            table.insert(allItems, item)
-        end
-    end
-
-    table.sort(moduleNames, function(a,b) return not string.sort(a, b) end)
 
     local listBox = AVCSItemsListTable:new(0, 0, self.panel.width, self.panel.height - self.panel.tabHeight, self);
     listBox:initialise()
-
-
-    local playerName = getPlayer():getUsername()
-
-
     self.panel:addView(playerName, listBox);
 --    listBox.parent = self;
-    listBox:initList(allItems)
+    listBox:initList(self.items)
     self.panel:activateView(playerName)
 end
 

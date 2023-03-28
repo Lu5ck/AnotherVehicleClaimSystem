@@ -96,24 +96,13 @@ function AVCSItemsListTable:onAddItem(button, item)
 end
 
 function AVCSItemsListTable:initList(module)
-    self.totalResult = 0;
+
     local categoryNames = {}
-    local displayCategoryNames = {}
-    local categoryMap = {}
-    local displayCategoryMap = {}
-    for x,v in ipairs(module) do
-        self.datas:addItem(v:getDisplayName(), v);
-        if not categoryMap[v:getTypeString()] then
-            categoryMap[v:getTypeString()] = true
-            table.insert(categoryNames, v:getTypeString())
-        end
-        if not displayCategoryMap[v:getDisplayCategory()] then
-            displayCategoryMap[v:getDisplayCategory()] = true
-            table.insert(displayCategoryNames, v:getDisplayCategory())
-        end
-        self.totalResult = self.totalResult + 1;
+    for _, v in ipairs(module) do
+        self.datas:addItem(v.carModel, v)
     end
-    table.sort(self.datas.items, function(a,b) return not string.sort(a.item:getDisplayName(), b.item:getDisplayName()); end);
+
+    table.sort(self.datas.items, function(a,b) return not string.sort(a.item.carModel, b.item.carModel); end);
     table.sort(categoryNames, function(a,b) return not string.sort(a, b) end)
 
 end
@@ -206,19 +195,19 @@ function AVCSItemsListTable:drawDatas(y, item, alt)
     local clipY2 = math.min(self.height, y + self:getYScroll() + self.itemheight)
     
     self:setStencilRect(clipX, clipY, clipX2 - clipX, clipY2 - clipY)
-    self:drawText(item.item:getName(), xoffset, y + 4, 1, 1, 1, a, self.font);
+    self:drawText("iCON", xoffset, y + 4, 1, 1, 1, a, self.font);
     self:clearStencilRect()
 
     clipX = self.columns[2].size
     clipX2 = self.columns[3].size
     self:setStencilRect(clipX, clipY, clipX2 - clipX, clipY2 - clipY)
-    self:drawText(item.item:getDisplayName(), self.columns[2].size + iconX + iconSize + 4, y + 4, 1, 1, 1, a, self.font);
+    self:drawText(item.item.carModel, self.columns[2].size + iconX + iconSize + 4, y + 4, 1, 1, 1, a, self.font);
     self:clearStencilRect()
 
     clipX = self.columns[3].size
     clipX2 = self.columns[4].size
     self:setStencilRect(clipX, clipY, clipX2 - clipX, clipY2 - clipY)
-    self:drawText(item.item:getTypeString(), self.columns[3].size + xoffset, y + 4, 1, 1, 1, a, self.font);
+    self:drawText(item.item.location[1] .. " " .. item.item.location[2], self.columns[3].size + xoffset, y + 4, 1, 1, 1, a, self.font);
     self:clearStencilRect()
 
     if item.item:getDisplayCategory() ~= nil then
