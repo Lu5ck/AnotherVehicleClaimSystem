@@ -1,7 +1,3 @@
---***********************************************************
---**                    ROBERT JOHNSON                     **
---***********************************************************
-
 require "ISUI/ISPanel"
 
 AVCSItemsListTable = ISPanel:derive("AVCSItemsListTable");
@@ -18,30 +14,7 @@ end
 
 
 function AVCSItemsListTable:render()
-    ISPanel.render(self);
-    
-    local y = self.datas.y + self.datas.height + 5
-    self:drawText(getText("IGUI_DbViewer_TotalResult") .. self.totalResult, 0, y, 1,1,1,1,UIFont.Small)
-    self:drawText(getText("IGUI_ItemList_Info"), 0, y + FONT_HGT_SMALL, 1,1,1,1,UIFont.Small)
-
-    y = self.filters:getBottom()
-    
-    self:drawRectBorder(self.datas.x, y, self.datas:getWidth(), HEADER_HGT, 1, self.borderColor.r, self.borderColor.g, self.borderColor.b);
-    self:drawRect(self.datas.x, y+1, self.datas:getWidth(), HEADER_HGT, self.listHeaderColor.a, self.listHeaderColor.r, self.listHeaderColor.g, self.listHeaderColor.b);
-
-    local x = 0;
-    for i,v in ipairs(self.datas.columns) do
-        local size;
-        if i == #self.datas.columns then
-            size = self.datas.width - x
-        else
-            size = self.datas.columns[i+1].size - self.datas.columns[i].size
-        end
---        print(v.name, x, v.size)
-        self:drawText(v.name, x+10+3, y+2, 1,1,1,1,UIFont.Small);
-        self:drawRectBorder(self.datas.x + x, y, 1, self.datas.itemheight + 1, 1, self.borderColor.r, self.borderColor.g, self.borderColor.b);
-        x = x + size;
-    end
+    ISPanel.render(self)
 end
 
 function AVCSItemsListTable:new (x, y, width, height, viewer)
@@ -61,13 +34,8 @@ end
 
 function AVCSItemsListTable:createChildren()
     ISPanel.createChildren(self);
-    
-    local btnWid = 100
-    local btnHgt = math.max(25, FONT_HGT_SMALL + 3 * 2)
-    local entryHgt = FONT_HGT_MEDIUM + 2 * 2
-    local bottomHgt = 5 + FONT_HGT_SMALL * 2 + 5 + btnHgt + 20 + FONT_HGT_LARGE + HEADER_HGT + entryHgt
 
-    self.datas = ISScrollingListBox:new(0, HEADER_HGT, self.width, self.height - bottomHgt - HEADER_HGT);
+    self.datas = ISScrollingListBox:new(0, HEADER_HGT, self.width, self.height - HEADER_HGT);
     self.datas:initialise();
     self.datas:instantiate();
     self.datas.itemheight = FONT_HGT_SMALL + 4 * 2
@@ -77,100 +45,17 @@ function AVCSItemsListTable:createChildren()
     self.datas.doDrawItem = self.drawDatas;
     self.datas.drawBorder = true;
 --    self.datas.parent = self;
-    self.datas:addColumn("Type", 0);
+
+    self.datas:addColumn("Car", 0);
     self.datas:addColumn("Name", 200);
-    self.datas:addColumn("Category", 450);
-    self.datas:addColumn("DisplayCategory", 650)
+    self.datas:addColumn("Location", 450);
+    self.datas:addColumn("Unclaim", 650)
     self.datas:setOnMouseDoubleClick(self, AVCSItemsListTable.addItem);
     self:addChild(self.datas);
 
     local btnY = self.datas.y + self.datas.height + 5 + FONT_HGT_SMALL * 2 + 5
-        
-    self.buttonAdd1 = ISButton:new(0, btnY, btnWid, btnHgt, "Add 1", self, AVCSItemsListTable.onOptionMouseDown);
-    self.buttonAdd1.internal = "ADDITEM1";
-    self.buttonAdd1.enable = false;
---    self.buttonAdd1.parent = self;
-    self.buttonAdd1.borderColor = self.buttonBorderColor;
-    self:addChild(self.buttonAdd1);
-        
-    self.buttonAdd2 = ISButton:new(self.buttonAdd1:getRight() + 10, btnY, btnWid, btnHgt, "Add 2", self, AVCSItemsListTable.onOptionMouseDown);
-    self.buttonAdd2.internal = "ADDITEM2";
-    self.buttonAdd2.enable = false;
---    self.buttonAdd2.parent = self;
-    self.buttonAdd2.borderColor = self.buttonBorderColor;
-    self:addChild(self.buttonAdd2);
-        
-    self.buttonAdd5 = ISButton:new(self.buttonAdd2:getRight() + 10, btnY, btnWid, btnHgt, "Add 5", self, AVCSItemsListTable.onOptionMouseDown);
-    self.buttonAdd5.internal = "ADDITEM5";
-    self.buttonAdd5.enable = false;
---    self.buttonAdd5.parent = self;
-    self.buttonAdd5.borderColor = self.buttonBorderColor;
-    self:addChild(self.buttonAdd5);
 
-    self.buttonAddMultiple = ISButton:new(self.buttonAdd5:getRight() + 10, btnY, btnWid, btnHgt, "Add Multiple...", self, AVCSItemsListTable.onOptionMouseDown);
-    self.buttonAddMultiple.internal = "ADDITEM";
-    self.buttonAddMultiple:initialise();
-    self.buttonAddMultiple:instantiate();
-    self.buttonAddMultiple.enable = false;
---    self.buttonAddMultiple.parent = self;
-    self.buttonAddMultiple.borderColor = self.buttonBorderColor;
-    self:addChild(self.buttonAddMultiple);
 
-    self.filters = ISLabel:new(0, self.buttonAddMultiple:getBottom() + 20, FONT_HGT_LARGE, getText("IGUI_DbViewer_Filters"), 1, 1, 1, 1, UIFont.Large, true)
-    self.filters:initialise()
-    self.filters:instantiate()
-    self:addChild(self.filters)
-    
-    local x = 0;
-    local entryY = self.filters:getBottom() + self.datas.itemheight
-    for i,column in ipairs(self.datas.columns) do
-        local size;
-        if i == #self.datas.columns then -- last column take all the remaining width
-            size = self.datas:getWidth() - x;
-        else
-            size = self.datas.columns[i+1].size - self.datas.columns[i].size
-        end
-        if column.name == "Category" then
-            local combo = ISComboBox:new(x, entryY, size, entryHgt)
-            combo.font = UIFont.Medium
-            combo:initialise()
-            combo:instantiate()
-            combo.columnName = column.name
-            combo.target = combo
-            combo.onChange = self.onFilterChange
-            combo.itemsListFilter = self.filterCategory
-            self:addChild(combo)
-            table.insert(self.filterWidgets, combo)
-            self.filterWidgetMap[column.name] = combo
-        elseif column.name == "DisplayCategory" then
-            local combo = ISComboBox:new(x, entryY, size, entryHgt)
-            combo.font = UIFont.Medium
-            combo:initialise()
-            combo:instantiate()
-            combo.columnName = column.name
-            combo.target = combo
-            combo.onChange = self.onFilterChange
-            combo.itemsListFilter = self.filterDisplayCategory
-            self:addChild(combo)
-            table.insert(self.filterWidgets, combo)
-            self.filterWidgetMap[column.name] = combo
-        else
-            local entry = ISTextEntryBox:new("", x, entryY, size, entryHgt);
-            entry.font = UIFont.Medium
-            entry:initialise();
-            entry:instantiate();
-            entry.columnName = column.name;
-            entry.itemsListFilter = self['filter'..column.name]
-            entry.onTextChange = AVCSItemsListTable.onFilterChange;
-            entry.onOtherKey = function(entry, key) AVCSItemsListTable.onOtherKey(entry, key) end
-            entry.target = self;
-            entry:setClearButton(true)
-            self:addChild(entry);
-            table.insert(self.filterWidgets, entry);
-            self.filterWidgetMap[column.name] = entry
-        end
-        x = x + size;
-    end
 end
 
 function AVCSItemsListTable:addItem(item)
@@ -230,33 +115,12 @@ function AVCSItemsListTable:initList(module)
         self.totalResult = self.totalResult + 1;
     end
     table.sort(self.datas.items, function(a,b) return not string.sort(a.item:getDisplayName(), b.item:getDisplayName()); end);
-
-    local combo = self.filterWidgetMap.Category
     table.sort(categoryNames, function(a,b) return not string.sort(a, b) end)
-    combo:addOption("<Any>")
-    for _,categoryName in ipairs(categoryNames) do
-        combo:addOption(categoryName)
-    end
 
-    local combo = self.filterWidgetMap.DisplayCategory
-    table.sort(displayCategoryNames, function(a,b) return not string.sort(a, b) end)
-    combo:addOption("<Any>")
-    combo:addOption("<No category set>")
-    for _,displayCategoryName in ipairs(displayCategoryNames) do
-        combo:addOption(displayCategoryName)
-    end
 end
 
 function AVCSItemsListTable:update()
-    local playerNum = self.viewer.playerSelect.selected - 1
-    local playerObj = getSpecificPlayer(playerNum)
-    local hasPlayer = playerObj ~= nil
-
-    self.buttonAdd1.enable = self.datas.selected > 0 and hasPlayer;
-    self.buttonAdd2.enable = self.datas.selected > 0 and hasPlayer;
-    self.buttonAdd5.enable = self.datas.selected > 0 and hasPlayer;
-    self.buttonAddMultiple.enable = self.datas.selected > 0 and hasPlayer;
-    self.datas.doDrawItem = self.drawDatas;
+    self.datas.doDrawItem = self.drawDatas
 end
 
 function AVCSItemsListTable:filterDisplayCategory(widget, scriptItem)

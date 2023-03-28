@@ -1,9 +1,5 @@
---***********************************************************
---**              	  ROBERT JOHNSON                       **
---***********************************************************
-
-AVCSItemsListViewer = ISPanel:derive("AVCSItemsListViewer");
-AVCSItemsListViewer.messages = {};
+AVCSItemsListViewer = ISPanel:derive("AVCSItemsListViewer")
+AVCSItemsListViewer.messages = {}
 
 local FONT_HGT_SMALL = getTextManager():getFontHeight(UIFont.Small)
 
@@ -29,7 +25,7 @@ function AVCSItemsListViewer:initialise()
     local top = 50
     self.panel = ISTabPanel:new(10, top, self.width - 10 * 2, self.height - padBottom - btnHgt - padBottom - top);
     self.panel:initialise();
-    self.panel.borderColor = { r = 0, g = 0, b = 0, a = 0};
+    self.panel.borderColor = { r = 0, g = 0, b = 0, a = 0}
     self.panel.target = self;
     self.panel.equalTabWidth = false
     self:addChild(self.panel);
@@ -119,7 +115,7 @@ function AVCSItemsListViewer:setKeyboardFocus()
     local view = self.panel:getActiveView()
     if not view then return end
     Core.UnfocusActiveTextEntryBox()
-    view.filterWidgetMap.Type:focus()
+    --view.filterWidgetMap.Type:focus()
 end
 
 function AVCSItemsListViewer:close()
