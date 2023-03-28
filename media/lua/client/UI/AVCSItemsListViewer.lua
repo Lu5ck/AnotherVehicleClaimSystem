@@ -2,32 +2,39 @@
 --**              	  ROBERT JOHNSON                       **
 --***********************************************************
 
-AVCS_ItemsListViewer = ISPanel:derive("AVCS_ItemsListViewer");
-AVCS_ItemsListViewer.messages = {};
+AVCSItemsListViewer = ISPanel:derive("AVCSItemsListViewer");
+AVCSItemsListViewer.messages = {};
 
 local FONT_HGT_SMALL = getTextManager():getFontHeight(UIFont.Small)
 
 --************************************************************************--
---** AVCS_ItemsListViewer:initialise
+--** AVCSItemsListViewer:initialise
 --**
 --************************************************************************--
 
-function AVCS_ItemsListViewer:initialise()
+function AVCSItemsListViewer:initialise()
     ISPanel.initialise(self);
     local btnWid = 100
     local btnHgt = math.max(25, FONT_HGT_SMALL + 3 * 2)
     local padBottom = 10
 
-    local top = 100
-    self.panel = ISTabPanel:new(0, top, self.width - 10 * 2, self.height - padBottom - btnHgt - padBottom - top);
-    self.panel:initialise()
+    self.playerSelect = ISComboBox:new(self.width - 10 - btnWid, 10, btnWid, btnHgt, self, self.onSelectPlayer)
+    self.playerSelect:initialise()
+    self.playerSelect:addOption("Player 1")
+    self.playerSelect:addOption("Player 2")
+    self.playerSelect:addOption("Player 3")
+    self.playerSelect:addOption("Player 4")
+    self:addChild(self.playerSelect)
+
+    local top = 50
+    self.panel = ISTabPanel:new(10, top, self.width - 10 * 2, self.height - padBottom - btnHgt - padBottom - top);
+    self.panel:initialise();
     self.panel.borderColor = { r = 0, g = 0, b = 0, a = 0};
     self.panel.target = self;
     self.panel.equalTabWidth = false
-    self.panel:setTabsTransparency(0)       -- Hacky way to hide it
-    self:addChild(self.panel)
+    self:addChild(self.panel);
 
-    self.ok = ISButton:new(10, self:getHeight() - padBottom - btnHgt, btnWid, btnHgt, getText("IGUI_CraftUI_Close"), self, AVCS_ItemsListViewer.onClick);
+    self.ok = ISButton:new(10, self:getHeight() - padBottom - btnHgt, btnWid, btnHgt, getText("IGUI_CraftUI_Close"), self, AVCSItemsListViewer.onClick);
     self.ok.internal = "CLOSE";
     self.ok.anchorTop = false
     self.ok.anchorBottom = true
@@ -39,7 +46,7 @@ function AVCS_ItemsListViewer:initialise()
     self:initList();
 end
 
-function AVCS_ItemsListViewer:initList()
+function AVCSItemsListViewer:initList()
     self.items = getAllItems();
 
     -- we gonna separate items by module
@@ -71,72 +78,73 @@ function AVCS_ItemsListViewer:initList()
 
     table.sort(moduleNames, function(a,b) return not string.sort(a, b) end)
 
-    -- FIXME: something broke the X position, not sure what. So i fixed it by just putting a +10 to the X. 
-    local listBox = AVCS_ItemsListTable:new(10, 0, self.panel.width, self.panel.height, self)
-    
+    local listBox = AVCSItemsListTable:new(0, 0, self.panel.width, self.panel.height - self.panel.tabHeight, self);
     listBox:initialise();
-    self.panel:addView("", listBox)
+    self.panel:addView("All", listBox);
+--    listBox.parent = self;
     listBox:initList(allItems)
 
+    for _,moduleName in ipairs(moduleNames) do
+        -- we ignore the "Moveables" module
+        if moduleName ~= "Moveables" then
+            local cat1 = AVCSItemsListTable:new(0, 0, self.panel.width, self.panel.height - self.panel.tabHeight, self);
+            cat1:initialise();
+            self.panel:addView(moduleName, cat1);
+--            cat1.parent = self;
+            cat1:initList(self.module[moduleName])
+        end
+    end
+    self.panel:activateView("All");
 end
 
-function AVCS_ItemsListViewer:prerender()
+function AVCSItemsListViewer:prerender()
     local z = 20;
     local splitPoint = 100;
     local x = 10;
     self:drawRect(0, 0, self.width, self.height, self.backgroundColor.a, self.backgroundColor.r, self.backgroundColor.g, self.backgroundColor.b);
-    self:drawRectBorder(0, 0, self.width, self.height, self.borderColor.a, self.borderColor.r, self.borderColor.g, self.borderColor.b)
-
-
-
-    -- TODO: DON'T FORGET TO REMOVE THIS!!!
-    local tempString = "Claim Vehicles"
-
-
-
-
-    self:drawText(tempString, self.width/2 - (getTextManager():MeasureStringX(UIFont.Medium, tempString) / 2), z, 1,1,1,1, UIFont.Medium);
+    self:drawRectBorder(0, 0, self.width, self.height, self.borderColor.a, self.borderColor.r, self.borderColor.g, self.borderColor.b);
+    self:drawText(getText("IGUI_AdminPanel_ItemList"), self.width/2 - (getTextManager():MeasureStringX(UIFont.Medium, getText("IGUI_AdminPanel_ItemList")) / 2), z, 1,1,1,1, UIFont.Medium);
 end
 
-function AVCS_ItemsListViewer:onClick(button)
+function AVCSItemsListViewer:onClick(button)
     if button.internal == "CLOSE" then
         self:close();
     end
 end
 
-function AVCS_ItemsListViewer:onSelectPlayer()
+function AVCSItemsListViewer:onSelectPlayer()
 end
 
-function AVCS_ItemsListViewer:setKeyboardFocus()
+function AVCSItemsListViewer:setKeyboardFocus()
     local view = self.panel:getActiveView()
     if not view then return end
     Core.UnfocusActiveTextEntryBox()
-    --view.filterWidgetMap.Type:focus()
+    view.filterWidgetMap.Type:focus()
 end
 
-function AVCS_ItemsListViewer:close()
+function AVCSItemsListViewer:close()
     self:setVisible(false);
     self:removeFromUIManager();
 end
 
-function AVCS_ItemsListViewer.OnOpenPanel()
-    if AVCS_ItemsListViewer.instance then
-        AVCS_ItemsListViewer.instance:setVisible(true)
-        AVCS_ItemsListViewer.instance:addToUIManager()
-        AVCS_ItemsListViewer.instance:setKeyboardFocus()
+function AVCSItemsListViewer.OnOpenPanel()
+    if AVCSItemsListViewer.instance then
+        AVCSItemsListViewer.instance:setVisible(true)
+        AVCSItemsListViewer.instance:addToUIManager()
+        AVCSItemsListViewer.instance:setKeyboardFocus()
         return
     end
-    local modal = AVCS_ItemsListViewer:new(50, 200, 850 * 2, 650 * 2)
+    local modal = AVCSItemsListViewer:new(50, 200, 850, 650)
     modal:initialise();
     modal:addToUIManager();
     modal.instance:setKeyboardFocus()
 end
 
 --************************************************************************--
---** AVCS_ItemsListViewer:new
+--** AVCSItemsListViewer:new
 --**
 --************************************************************************--
-function AVCS_ItemsListViewer:new(x, y, width, height)
+function AVCSItemsListViewer:new(x, y, width, height)
     local o = {}
     x = getCore():getScreenWidth() / 2 - (width / 2);
     y = getCore():getScreenHeight() / 2 - (height / 2);
@@ -145,10 +153,10 @@ function AVCS_ItemsListViewer:new(x, y, width, height)
     self.__index = self
     o.borderColor = {r=0.4, g=0.4, b=0.4, a=1};
     o.backgroundColor = {r=0, g=0, b=0, a=0.8};
-    o.width = width
-    o.height = height
+    o.width = width;
+    o.height = height;
     o.moveWithMouse = true;
-    AVCS_ItemsListViewer.instance = o;
+    AVCSItemsListViewer.instance = o;
     ISDebugMenu.RegisterClass(self);
     return o;
 end
