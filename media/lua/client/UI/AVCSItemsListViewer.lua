@@ -43,7 +43,35 @@ function AVCSItemsListViewer:initialise()
 end
 
 function AVCSItemsListViewer:initList()
-    self.items = getAllItems();
+
+    local playerClaimedCars = ModData.get("AVCSByPlayerID")
+    local serverClaimedCars = ModData.get("AVCSByVehicleSQLID")
+
+
+
+    local specificPlayerClaimedCars = playerClaimedCars[getPlayer():getUsername()]
+
+
+
+    local carsTable = {}
+
+    print("Loading vehicles list")
+
+    local index = 1
+    for x in pairs(specificPlayerClaimedCars) do
+        local singleCar = serverClaimedCars[x]
+
+        carsTable[index] = {
+            carModel = singleCar.CarModel,
+            location = {singleCar.LastLocationX, singleCar.LastLocationY}
+        }
+
+        print(carsTable[index].carModel)
+        index = index + 1
+        
+    end
+
+    self.items = getAllItems()
 
     -- we gonna separate items by module
     self.module = {};

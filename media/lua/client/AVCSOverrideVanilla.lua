@@ -55,42 +55,42 @@ function AVCS.addOptionToMenuOutsideVehicle(player, context, vehicle)
 	toolTip = ISToolTip:new()
 	toolTip:initialise()
 	toolTip:setVisible(false)
-	option.toolTip = toolTip
-	if type(checkResult) == "boolean" then
+	--option.toolTip = toolTip		-- FIXME option is not init
+	if type(checkResult) == "boolean" then		
 		if checkResult == true then
 			local playerInv = player:getInventory()
 			-- Free car
 			option = context:addOption(getText("ContextMenu_AVCS_ClaimVehicle"), player, claimCfmDialog, vehicle)
 
 			if playerInv:getItemCount("Base.AVCSClaimForm") < 1 then
-				tooltip.description = getText("Tooltip_AVCS_Needs") .. " <RGB:1,0,0>" .. getItemNameFromFullType("Base.AVCSClaimForm") .. " " .. playerInv:getItemCount("Base.AVCSClaimForm") .. "/1"
+				toolTip.description = getText("Tooltip_AVCS_Needs") .. " <RGB:1,0,0>" .. getItemNameFromFullType("Base.AVCSClaimForm") .. " " .. playerInv:getItemCount("Base.AVCSClaimForm") .. "/1"
 				option.notAvailable = true
 			else
-				tooltip.description = getText("Tooltip_AVCS_Needs") .. " <RGB:0,1,0>" .. getItemNameFromFullType("Base.AVCSClaimForm") .. " " .. playerInv:getItemCount("Base.AVCSClaimForm") .. "/1"
+				toolTip.description = getText("Tooltip_AVCS_Needs") .. " <RGB:0,1,0>" .. getItemNameFromFullType("Base.AVCSClaimForm") .. " " .. playerInv:getItemCount("Base.AVCSClaimForm") .. "/1"
 				option.notAvailable = false
 			end
 			option.toolTip = toolTip
 		elseif checkResult == false then
 			-- Not supported vehicle
 			option = context:addOption(getText("ContextMenu_AVCS_UnsupportedVehicle"), player, claimCfmDialog, vehicle)
-			tooltip.description = getText("Tooltip_AVCS_Unsupported")
+			toolTip.description = getText("Tooltip_AVCS_Unsupported")
 			option.notAvailable = true
 		end
 	elseif checkResult.permissions == true then
 		-- Owned car
 		option = context:addOption(getText("ContextMenu_AVCS_UnclaimVehicle"), player, unclaimCfmDialog, vehicle)
-		tooltip.description = getText("Tooltip_AVCS_Owner") .. ": " .. checkResult.ownerid
+		toolTip.description = getText("Tooltip_AVCS_Owner") .. ": " .. checkResult.ownerid
 		option.notAvailable = false
 	elseif checkResult.permissions == false then
 		-- Owned car
 		option = context:addOption(getText("ContextMenu_AVCS_UnclaimVehicle"), player, unclaimCfmDialog, vehicle)
-		tooltip.description = getText("Tooltip_AVCS_Owner") .. ": " .. checkResult.ownerid
+		toolTip.description = getText("Tooltip_AVCS_Owner") .. ": " .. checkResult.ownerid
 		option.notAvailable = true
 	end
 
 	-- Must not be towing or towed
 	if vehicle:getVehicleTowedBy() ~= nil or vehicle:getVehicleTowing() ~= nil then
-		tooltip.description = getText("Tooltip_AVCS_Towed")
+		toolTip.description = getText("Tooltip_AVCS_Towed")
 		option.notAvailable = true
 	end
 end
