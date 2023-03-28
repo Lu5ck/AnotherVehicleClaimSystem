@@ -36,16 +36,16 @@ function AVCSItemsListTable:createChildren()
     ISPanel.createChildren(self);
 
     self.datas = ISScrollingListBox:new(0, HEADER_HGT, self.width, self.height - HEADER_HGT);
-    self.datas:initialise();
-    self.datas:instantiate();
+    self.datas:initialise()
+    self.datas:instantiate()
     self.datas.itemheight = FONT_HGT_SMALL + 4 * 2
-    self.datas.selected = 0;
-    self.datas.joypadParent = self;
-    self.datas.font = UIFont.NewSmall;
-    self.datas.doDrawItem = self.drawDatas;
-    self.datas.drawBorder = true;
---    self.datas.parent = self;
+    self.datas.selected = 0
+    self.datas.joypadParent = self
+    self.datas.font = UIFont.NewSmall
+    self.datas.doDrawItem = self.drawDatas
+    self.datas.drawBorder = true
 
+    
     self.datas:addColumn("Car", 0);
     self.datas:addColumn("Name", 200);
     self.datas:addColumn("Location", 450);
@@ -53,7 +53,6 @@ function AVCSItemsListTable:createChildren()
     self.datas:setOnMouseDoubleClick(self, AVCSItemsListTable.addItem);
     self:addChild(self.datas);
 
-    local btnY = self.datas.y + self.datas.height + 5 + FONT_HGT_SMALL * 2 + 5
 
 
 end
