@@ -1,7 +1,12 @@
 require "ISUI/ISPanel"
 
+-- TODO Add on select to change the preview
 
 --local previewBtnTexture = getTexture("media/textures/ShopUI_Preview.png")
+
+
+local panelContainers = {}
+
 
 
 AVCSItemsListTable = ISPanel:derive("AVCSItemsListTable")
@@ -21,7 +26,7 @@ function AVCSItemsListTable:render()
     ISPanel.render(self)
 end
 
-function AVCSItemsListTable:new(x, y, width, height, viewer)
+function AVCSItemsListTable:new(x, y, width, height, previewPanel)
     local o = ISPanel:new(x, y, width, height)
     setmetatable(o, self);
     o.listHeaderColor = {r=0.4, g=0.4, b=0.4, a=0.3}
@@ -31,7 +36,7 @@ function AVCSItemsListTable:new(x, y, width, height, viewer)
     o.totalResult = 0
     o.filterWidgets = {}
     o.filterWidgetMap = {}
-    o.viewer = viewer
+    panelContainers.previewPanel = previewPanel
     AVCSItemsListTable.instance = o
     return o
 end
@@ -39,7 +44,7 @@ end
 function AVCSItemsListTable:createChildren()
     ISPanel.createChildren(self)
 
-    self.datas = ISScrollingListBox:new(0, HEADER_HGT, self.width, self.height - HEADER_HGT - 10)
+    self.datas = ISScrollingListBox:new(0, HEADER_HGT, self.width, self.height - HEADER_HGT)
     self.datas:initialise()
     self.datas:instantiate()
     self.datas.itemheight = FONT_HGT_SMALL + 4 * 2
@@ -50,11 +55,8 @@ function AVCSItemsListTable:createChildren()
     self.datas.drawBorder = true
 
 
-    self.datas:addColumn("Show Car", 0)
-    self.datas:addColumn("Name", 200)
-    self.datas:addColumn("Location", 450)
-    self.datas:addColumn("Unclaim", 650)
-    self.datas:setOnMouseDoubleClick(self, AVCSItemsListTable.previewCar)
+    self.datas:addColumn("Car", 0)
+    --self.datas:setOnMouseDoubleClick(self, AVCSItemsListTable.previewCar)
     self:addChild(self.datas)
 
 end
@@ -68,10 +70,10 @@ end
 
 
 function AVCSItemsListTable:addItem(item)
-    local playerNum = self.viewer.playerSelect.selected - 1
-    local playerObj = getSpecificPlayer(playerNum)
-    if not playerObj or playerObj:isDead() then return end
-    playerObj:getInventory():AddItem(item:getFullName())
+    --local playerNum = self.viewer.playerSelect.selected - 1
+    --local playerObj = getSpecificPlayer(playerNum)
+    --if not playerObj or playerObj:isDead() then return end
+    --playerObj:getInventory():AddItem(item:getFullName())
 end
 
 
@@ -94,8 +96,11 @@ function AVCSItemsListTable:initList(module)
         self.datas:addItem(v.carModel, v)
     end
 
+
+
+
     table.sort(self.datas.items, function(a,b) return not string.sort(a.item.carModel, b.item.carModel); end);
-    table.sort(categoryNames, function(a,b) return not string.sort(a, b) end)
+    --table.sort(categoryNames, function(a,b) return not string.sort(a, b) end)
 
 end
 
@@ -111,7 +116,16 @@ function AVCSItemsListTable:drawDatas(y, item, alt)
     local a = 0.9;
 
     if self.selected == item.index then
-        self:drawRect(0, (y), self:getWidth(), self.itemheight, 0.3, 0.7, 0.35, 0.15);
+
+        self:drawRect(0, (y), self:getWidth(), self.itemheight, 0.3, 0.7, 0.35, 0.15)
+        --print(item.item.carModel)
+
+        panelContainers.previewPanel.javaObject:fromLua2("setVehicleScript", "previewVeh", item.item.carModel)
+        AVCSItemsListViewer.messages.owner = "Owner: " .. getPlayer():getUsername()
+
+        --self:drawText("Owner: " .. tostring(ZombRand(1,100)), 200, 10, 1, 1, 1, 1, UIFont.Medium)
+        --self:drawText("Location: ...", 10, 40, 1, 1, 1, 1, UIFont.Medium)
+
     end
 
     if alt then
@@ -125,25 +139,18 @@ function AVCSItemsListTable:drawDatas(y, item, alt)
     local xoffset = 10;
 
     local clipX = self.columns[1].size
-    local clipX2 = self.columns[2].size
+    local clipX2 = self.columns[1].size
     local clipY = math.max(0, y + self:getYScroll())
     local clipY2 = math.min(self.height, y + self:getYScroll() + self.itemheight)
 
-    self:setStencilRect(clipX, clipY, clipX2 - clipX, clipY2 - clipY)
-    self:drawText("iCON", xoffset, y + 4, 1, 1, 1, a, self.font);
-    self:clearStencilRect()
+    --self:setStencilRect(clipX, clipY, clipX2 - clipX, clipY2 - clipY)
 
-    clipX = self.columns[2].size
-    clipX2 = self.columns[3].size
-    self:setStencilRect(clipX, clipY, clipX2 - clipX, clipY2 - clipY)
-    self:drawText(item.item.carModel, self.columns[2].size + iconX + iconSize + 4, y + 4, 1, 1, 1, a, self.font);
-    self:clearStencilRect()
+    local carName = item.item.carModel:gsub("Base.", "")        -- TODO Won't work with custom cars necessarily.
 
-    clipX = self.columns[3].size
-    clipX2 = self.columns[4].size
-    self:setStencilRect(clipX, clipY, clipX2 - clipX, clipY2 - clipY)
-    self:drawText(item.item.location[1] .. " " .. item.item.location[2], self.columns[3].size + xoffset, y + 4, 1, 1, 1, a, self.font);
-    self:clearStencilRect()
+
+
+    self:drawText(getText("IGUI_VehicleName" .. carName), xoffset, y + 4, 1, 1, 1, a, self.font)
+
 
     -- if item.item:getDisplayCategory() ~= nil then
     --     self:drawText(getText("IGUI_ItemCat_" .. item.item:getDisplayCategory()), self.columns[4].size + xoffset, y + 4, 1, 1, 1, a, self.font);
