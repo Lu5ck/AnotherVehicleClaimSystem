@@ -1,4 +1,7 @@
-AVCSItemsListViewer = ISPanel:derive("AVCSItemsListViewer")
+require "ISUI/ISCollapsableWindow"
+
+
+AVCSItemsListViewer = ISCollapsableWindow:derive("AVCSItemsListViewer")
 AVCSItemsListViewer.messages = {}
 
 
@@ -15,7 +18,10 @@ local FONT_HGT_SMALL = getTextManager():getFontHeight(UIFont.Small)
 --************************************************************************--
 
 function AVCSItemsListViewer:initialise()
-    ISPanel.initialise(self)
+
+	ISCollapsableWindow.initialise(self)
+
+
     local btnWid = 100
     local btnHgt = math.max(25, FONT_HGT_SMALL + 3 * 2)
     local padBottom = 10
@@ -29,14 +35,55 @@ function AVCSItemsListViewer:initialise()
     -- self:addChild(self.playerSelect)
 
     local top = 50
-    self.leftPanel = ISTabPanel:new(10, top, self.width/3, self.height - padBottom - btnHgt - padBottom - top)
+    self.leftPanel = ISTabPanel:new(20, top, self.width/3, self.height - padBottom - btnHgt - padBottom - top)
     self.leftPanel:initialise()
     self.leftPanel.borderColor = { r = 0, g = 0, b = 0, a = 0}
     self.leftPanel.target = self
     self.leftPanel.equalTabWidth = false
     self:addChild(self.leftPanel)
 
-    self.previewPanel = AVCSPreviewScene:new(self.width/2, top + 50, 380, 380)
+
+
+    local unclaimBtnX = self.leftPanel.width + 50
+    local unclaimBtnY = top + 200
+    local unclaimBtnImg = getTexture("media/ui/emotes/no.png")
+
+    -- media/ui/emotes/no.png
+        
+    self.unclaimBtn = ISButton:new(unclaimBtnX, unclaimBtnY, 50, 50, "", self, AVCSItemsListViewer.onClick)
+    self.unclaimBtn.internal = "UNCLAIM"
+    self.unclaimBtn.anchorTop = false
+    self.unclaimBtn.anchorBottom = true
+    self.unclaimBtn.borderColor = {r=1, g=1, b=1, a=1}
+    self.unclaimBtn.backgroundColor = {r=0, g=0, b=0, a=1}
+    self.unclaimBtn.displayBackground = true
+	self.unclaimBtn:setImage(unclaimBtnImg)
+	self.unclaimBtn:setTextureRGBA(1, 0, 0, 1)
+    self.unclaimBtn:initialise()
+    self.unclaimBtn:instantiate()
+    self:addChild(self.unclaimBtn)
+
+
+    local updateBtnX = self.leftPanel.width + 50
+    local updateBtnY = unclaimBtnY + 100
+    local updateBtnImg = getTexture("media/ui/emotes/gears_green.png")
+
+    self.updateBtn = ISButton:new(updateBtnX, updateBtnY, 50, 50, "", self, AVCSItemsListViewer.onClick)
+    self.updateBtn.internal = "UNCLAIM"
+    self.updateBtn.anchorTop = false
+    self.updateBtn.anchorBottom = true
+    self.updateBtn.borderColor = {r=1, g=1, b=1, a=1}
+    self.updateBtn.backgroundColor = {r=0, g=0, b=0, a=1}
+    self.updateBtn.displayBackground = true
+	self.updateBtn:setImage(updateBtnImg)
+	--self.updateBtn:setTextureRGBA(1, 1, 1, 1)
+    self.updateBtn:initialise()
+    self.updateBtn:instantiate()
+    self:addChild(self.updateBtn)
+
+
+
+    self.previewPanel = AVCSPreviewScene:new(self.width/2, top, 400, 400)
     self.previewPanel:initialise()
     self.previewPanel:instantiate()
     self.previewPanel:setAnchorTop(false)
@@ -58,20 +105,16 @@ function AVCSItemsListViewer:initialise()
     self.infoPanel.target = self
     self.infoPanel.equalTabWidth = false
     self:addChild(self.infoPanel)
-
-
-
-
-    self.ok = ISButton:new(10, self:getHeight() - padBottom - btnHgt, btnWid, btnHgt, getText("IGUI_CraftUI_Close"), self, AVCSItemsListViewer.onClick)
-    self.ok.internal = "CLOSE"
-    self.ok.anchorTop = false
-    self.ok.anchorBottom = true
-    self.ok:initialise()
-    self.ok:instantiate()
-    self.ok.borderColor = {r=1, g=1, b=1, a=0.1}
-    self:addChild(self.ok)
     
     self:initList()
+
+
+	self:addToUIManager()
+	self:setVisible(true)
+	self:update()
+	self:bringToTop()
+	ISLayoutManager.RegisterWindow('AVCSItemsListViewer', AVCSItemsListViewer, self)
+
 end
 
 function AVCSItemsListViewer:initList()
@@ -138,49 +181,47 @@ function AVCSItemsListViewer:initList()
 end
 
 function AVCSItemsListViewer:render()
+	ISCollapsableWindow.render(self)
 
-
+    
     -- TODO We must allign this to the left
     self.infoPanel:drawText(AVCSItemsListViewer.messages.owner, 10, 10, 1,1,1,1, UIFont.Medium)
     self.infoPanel:drawText(AVCSItemsListViewer.messages.location, 10, 40, 1,1,1,1, UIFont.Medium)
+    
+    
 
+
+end
+
+function AVCSItemsListViewer:update()
 
 end
 
 
 function AVCSItemsListViewer:prerender()
+	ISCollapsableWindow.prerender(self)
 
-
-    -- TITLE SETUP --
-
-    local z = 20
-    self:drawRect(0, 0, self.width, self.height, self.backgroundColor.a, self.backgroundColor.r, self.backgroundColor.g, self.backgroundColor.b);
-    self:drawRectBorder(0, 0, self.width, self.height, self.borderColor.a, self.borderColor.r, self.borderColor.g, self.borderColor.b);
-
-    local title = "AVCS Menu"
-    self:drawText(title, self.width/2 - (getTextManager():MeasureStringX(UIFont.Medium, getText("IGUI_AdminPanel_ItemList")) / 2), z, 1,1,1,1, UIFont.Medium)
-
-
-    -- OTHER STUFF --
-
-    local infoX = self.width/3 + 150
+    local infoX = self.width/3 + 140
     local infoY = 500
 
-    local infoWidth = self.width/3 + 90
+    local infoWidth = self.width/3 + 120
     local infoHeight = 100
 
     self:drawRect(infoX, infoY, infoWidth, infoHeight, self.backgroundColor.a, self.backgroundColor.r, self.backgroundColor.g, self.backgroundColor.b);
     self:drawRectBorder(infoX, infoY, infoWidth, infoHeight, self.borderColor.a, self.borderColor.r, self.borderColor.g, self.borderColor.b);
 
+end
 
-
-
+function AVCSItemsListViewer:onToggleVisible()
+	if self:getIsVisible() then
+		self:addToUIManager()
+	else
+		self:removeFromUIManager()
+	end
 end
 
 function AVCSItemsListViewer:onClick(button)
-    if button.internal == "CLOSE" then
-        self:close();
-    end
+
 end
 
 function AVCSItemsListViewer:onSelectPlayer()
@@ -205,9 +246,16 @@ function AVCSItemsListViewer.OnOpenPanel()
         AVCSItemsListViewer.instance:setKeyboardFocus()
         return
     end
-    local modal = AVCSItemsListViewer:new(50, 200, 850, 650)
-    modal:initialise();
-    modal:addToUIManager();
+
+    local width = 850
+    local height = 650
+
+    local x = getCore():getScreenWidth() / 2 - (width / 2)
+    local y = getCore():getScreenHeight() / 2 - (height / 2)
+
+    local modal = AVCSItemsListViewer:new(x, y, width, height)
+    modal:initialise()
+    modal:addToUIManager()
     modal.instance:setKeyboardFocus()
 end
 
@@ -216,18 +264,30 @@ end
 --**
 --************************************************************************--
 function AVCSItemsListViewer:new(x, y, width, height)
-    local o = {}
-    x = getCore():getScreenWidth() / 2 - (width / 2);
-    y = getCore():getScreenHeight() / 2 - (height / 2);
-    o = ISPanel:new(x, y, width, height);
+    local o = ISCollapsableWindow:new(x, y, width, height)
     setmetatable(o, self)
     self.__index = self
-    o.borderColor = {r=0.4, g=0.4, b=0.4, a=1};
-    o.backgroundColor = {r=0, g=0, b=0, a=0.8};
-    o.width = width;
-    o.height = height;
-    o.moveWithMouse = true;
-    AVCSItemsListViewer.instance = o;
-    ISDebugMenu.RegisterClass(self);
-    return o;
+
+    o.showBackground    	= true
+	o.showBorder        	= true
+    o.borderColor = {r=0.4, g=0.4, b=0.4, a=1}
+    o.backgroundColor = {r=0, g=0, b=0, a=0.8}
+
+
+    o.title = "AVCS Menu"
+    o.width = width
+    o.height = height
+
+	o.visibleTarget			= o;
+	--o.visibleFunction		= ISSearchWindow.onToggleVisible;
+
+    o.moveWithMouse = true
+    o:setResizable(false)
+	o:setDrawFrame(true)
+    o:setVisible(true)
+    o:initialise()
+
+    AVCSItemsListViewer.instance = o
+
+    return o
 end

@@ -91,16 +91,11 @@ end
 
 function AVCSItemsListTable:initList(module)
 
-    local categoryNames = {}
     for _, v in ipairs(module) do
         self.datas:addItem(v.carModel, v)
     end
 
-
-
-
     table.sort(self.datas.items, function(a,b) return not string.sort(a.item.carModel, b.item.carModel); end);
-    --table.sort(categoryNames, function(a,b) return not string.sort(a, b) end)
 
 end
 
@@ -122,6 +117,7 @@ function AVCSItemsListTable:drawDatas(y, item, alt)
 
         panelContainers.previewPanel.javaObject:fromLua2("setVehicleScript", "previewVeh", item.item.carModel)
         AVCSItemsListViewer.messages.owner = "Owner: " .. getPlayer():getUsername()
+        AVCSItemsListViewer.messages.location = "Location: " .. tostring(ZombRand(100, 2000) .. ", " .. tostring(ZombRand(100,2000)))
 
         --self:drawText("Owner: " .. tostring(ZombRand(1,100)), 200, 10, 1, 1, 1, 1, UIFont.Medium)
         --self:drawText("Location: ...", 10, 40, 1, 1, 1, 1, UIFont.Medium)
