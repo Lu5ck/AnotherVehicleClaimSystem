@@ -63,10 +63,10 @@ function AVCS.addOptionToMenuOutsideVehicle(player, context, vehicle)
 			option = context:addOption(getText("ContextMenu_AVCS_ClaimVehicle"), player, claimCfmDialog, vehicle)
 			option.toolTip = toolTip
 			if playerInv:getItemCount("Base.AVCSClaimForm") < 1 then
-				toolTip.description = getText("Tooltip_AVCS_Needs") .. " <RGB:1,0,0>" .. getItemNameFromFullType("Base.AVCSClaimForm") .. " " .. playerInv:getItemCount("Base.AVCSClaimForm") .. "/1"
+				toolTip.description = getText("Tooltip_AVCS_Needs") .. " <LINE><RGB:1,0,0>" .. getItemNameFromFullType("Base.AVCSClaimForm") .. " " .. playerInv:getItemCount("Base.AVCSClaimForm") .. "/1"
 				option.notAvailable = true
 			else
-				toolTip.description = getText("Tooltip_AVCS_Needs") .. " <RGB:0,1,0>" .. getItemNameFromFullType("Base.AVCSClaimForm") .. " " .. playerInv:getItemCount("Base.AVCSClaimForm") .. "/1"
+				toolTip.description = getText("Tooltip_AVCS_Needs") .. " <LINE><RGB:0,1,0>" .. getItemNameFromFullType("Base.AVCSClaimForm") .. " " .. playerInv:getItemCount("Base.AVCSClaimForm") .. "/1"
 				option.notAvailable = false
 			end
 
