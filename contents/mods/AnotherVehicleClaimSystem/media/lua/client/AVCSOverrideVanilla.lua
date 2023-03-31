@@ -22,7 +22,7 @@ end
 local function claimCfmDialog(player, vehicle)
     local message = string.format("Confirm", vehicle:getScript():getName())
     local playerNum = player:getPlayerNum()
-    local modal = ISModalDialog:new(0, 0, 300, 150, message, true, player, claimVehicle, playerNum, vehicle)
+    local modal = ISModalDialog:new((getCore():getScreenWidth() / 2) - (300 / 2), (getCore():getScreenHeight() / 2) - (150 / 2), 300, 150, message, true, player, claimVehicle, playerNum, vehicle)
     modal:initialise();
     modal:addToUIManager();
 end
@@ -37,7 +37,7 @@ end
 local function unclaimCfmDialog(player, vehicle)
     local message = string.format("Confirm", vehicle:getScript():getName())
     local playerNum = player:getPlayerNum()
-    local modal = ISModalDialog:new(0, 0, 300, 150, message, true, player, unclaimVehicle, playerNum, vehicle)
+    local modal = ISModalDialog:new((getCore():getScreenWidth() / 2) - (300 / 2), (getCore():getScreenHeight() / 2) - (150 / 2), 300, 150, message, true, player, unclaimVehicle, playerNum, vehicle)
     modal:initialise();
     modal:addToUIManager();
 end
@@ -81,13 +81,13 @@ function AVCS.addOptionToMenuOutsideVehicle(player, context, vehicle)
 		-- Owned car
 		option = context:addOption(getText("ContextMenu_AVCS_UnclaimVehicle"), player, unclaimCfmDialog, vehicle)
 		option.toolTip = toolTip
-		toolTip.description = getText("Tooltip_AVCS_Owner") .. ": " .. checkResult.ownerid .. "<LINE>" .. getText("Tooltip_AVCS_Expire") .. ": " .. os.date("%d-%b-%y", (checkResult.LastKnownLogonTime + (SandboxVars.AVCS.ClaimTimeout * 60 * 60)))
+		toolTip.description = getText("Tooltip_AVCS_Owner") .. ": " .. checkResult.ownerid .. " <LINE>" .. getText("Tooltip_AVCS_Expire") .. ": " .. os.date("%d-%b-%y", (checkResult.LastKnownLogonTime + (SandboxVars.AVCS.ClaimTimeout * 60 * 60)))
 		option.notAvailable = false
 	elseif checkResult.permissions == false then
 		-- Owned car
 		option = context:addOption(getText("ContextMenu_AVCS_UnclaimVehicle"), player, unclaimCfmDialog, vehicle)
 		option.toolTip = toolTip
-		toolTip.description = getText("Tooltip_AVCS_Owner") .. ": " .. checkResult.ownerid .. "<LINE>" .. getText("Tooltip_AVCS_Expire") .. ": " .. os.date("%d-%b-%y", (checkResult.LastKnownLogonTime + (SandboxVars.AVCS.ClaimTimeout * 60 * 60)))
+		toolTip.description = getText("Tooltip_AVCS_Owner") .. ": " .. checkResult.ownerid .. " <LINE>" .. getText("Tooltip_AVCS_Expire") .. ": " .. os.date("%d-%b-%y", (checkResult.LastKnownLogonTime + (SandboxVars.AVCS.ClaimTimeout * 60 * 60)))
 		option.notAvailable = true
 	end
 
