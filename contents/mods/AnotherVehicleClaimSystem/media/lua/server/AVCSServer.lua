@@ -328,7 +328,7 @@ local function OnServerStarted()
 end
 
 -- For debugging basic functions via SP
-if getWorld():getGameMode() ~= "Multiplayer" then
+if not isClient() and not isServer() then
 	-- When Mod first added to server
 	if not ModData.exists("AVCSByVehicleSQLID") then ModData.create("AVCSByVehicleSQLID") end
 	if not ModData.exists("AVCSByPlayerID") then ModData.create("AVCSByPlayerID") end
