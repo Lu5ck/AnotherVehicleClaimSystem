@@ -8,10 +8,16 @@
 if isClient() and not isServer() then
 	return
 end
-
+--[[
+Global variables that is accessed frequently
+sortedPlayerTimeoutClaim is a table sorted in last known logon time timestamp and associoated player id
+dbByVehicleSQLID store the ModData AVRByVehicleID
+dbAVCSByPlayerID store the ModData AVRByPlayerID
+--]]
 AVCS.sortedPlayerTimeoutClaim = nil
 AVCS.dbByVehicleSQLID = nil
 AVCS.dbAVCSByPlayerID = nil
+
 --[[
 It is impossible to get real time coordinate of vehicles
 Vehicle object is not readily obtainable and vehicle DB is not accessible via mod codes
