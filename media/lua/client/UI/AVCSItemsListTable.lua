@@ -3,100 +3,10 @@ require "ISUI/ISPanel"
 -- TODO Add on select to change the preview
 
 --local previewBtnTexture = getTexture("media/textures/ShopUI_Preview.png")
-
-
 local panelContainers = {}
 
 
-
-AVCSItemsListTable = ISPanel:derive("AVCSItemsListTable")
-
-local FONT_HGT_SMALL = getTextManager():getFontHeight(UIFont.Small)
-local FONT_HGT_MEDIUM = getTextManager():getFontHeight(UIFont.Medium)
-local FONT_HGT_LARGE = getTextManager():getFontHeight(UIFont.Large)
-
-local HEADER_HGT = FONT_HGT_MEDIUM + 2 * 2
-
-function AVCSItemsListTable:initialise()
-    ISPanel.initialise(self)
-end
-
-
-function AVCSItemsListTable:render()
-    ISPanel.render(self)
-end
-
-
-
-function AVCSItemsListTable:getCurrentItemId()
-    print("Selected: " .. self.datas.selected)
-    
-    for k, v in ipairs(self.datas.items) do
-        print("Cycling: " .. k)
-        if k == self.datas.selected then
-            return v.item.id
-            
-        end
-    end
-
-end
-
-
-
-function AVCSItemsListTable:createChildren()
-    ISPanel.createChildren(self)
-
-    self.datas = ISScrollingListBox:new(0, HEADER_HGT, self.width, self.height - HEADER_HGT)
-
-    self.datas.itemheight = FONT_HGT_SMALL + 4 * 2
-    self.datas.selected = 0
-    self.datas.joypadParent = self
-    self.datas.font = UIFont.NewSmall
-    self.datas.doDrawItem = self.drawDatas
-    self.datas.drawBorder = true
-    self.datas.items = {}       -- init
-
-    self.datas:addColumn("Car", 0)
-
-    self.datas:initialise()
-    self.datas:instantiate()
-
-    self:addChild(self.datas)
-
-end
-
-
-
-
-function AVCSItemsListTable:initList(module)
-    for _, v in ipairs(module) do
-        self.datas:addItem(v.carModel, v)
-    end
-
-    table.sort(self.datas.items, function(a,b) return not string.sort(a.item.carModel, b.item.carModel) end)
-    self.datas.selected = 1     -- Auto select the first item
-
-end
-
 local function doDrawItemOverride(self, y, item, alt)
-    if AVCSMenu.isRefreshing then
-        AVCSBaseUI.GetPersonalVehicles()
-        self:clear()
-        for _, v in ipairs(AVCSBaseUI.items) do
-            self:addItem(v.carModel, v)
-        end
-        --table.sort(self.items, function(a,b) return not string.sort(a.item.carModel, b.item.carModel) end)
-        --self.selected = 1     -- Auto select the first item
-
-        AVCSMenu.isRefreshing = false
-     end
-
-
-
-    
-    
-    
-    
     --print(#self.items)
 
 
@@ -158,8 +68,89 @@ local function doDrawItemOverride(self, y, item, alt)
 
 end
 
+local function updateOverride(self)
+    if AVCSMenu.isRefreshing then
+        print("REFRESHING IN DATAS")
+        AVCSBaseUI.GetPersonalVehicles()
+        self:clear()
+        for _, v in ipairs(AVCSBaseUI.items) do
+            self:addItem(v.carModel, v)
+        end
+        --table.sort(self.items, function(a,b) return not string.sort(a.item.carModel, b.item.carModel) end)
+        --self.selected = 1     -- Auto select the first item
+
+        AVCSMenu.isRefreshing = false
+    end
+
+end
+
+
+
+AVCSItemsListTable = ISPanel:derive("AVCSItemsListTable")
+
+local FONT_HGT_SMALL = getTextManager():getFontHeight(UIFont.Small)
+local FONT_HGT_MEDIUM = getTextManager():getFontHeight(UIFont.Medium)
+local FONT_HGT_LARGE = getTextManager():getFontHeight(UIFont.Large)
+
+local HEADER_HGT = FONT_HGT_MEDIUM + 2 * 2
+
+function AVCSItemsListTable:initialise()
+    ISPanel.initialise(self)
+end
+
+function AVCSItemsListTable:render()
+    ISPanel.render(self)
+end
+
+function AVCSItemsListTable:getCurrentItemId()
+    print("Selected: " .. self.datas.selected)
+    
+    for k, v in ipairs(self.datas.items) do
+        print("Cycling: " .. k)
+        if k == self.datas.selected then
+            return v.item.id
+            
+        end
+    end
+
+end
+
+function AVCSItemsListTable:createChildren()
+    ISPanel.createChildren(self)
+
+    self.datas = ISScrollingListBox:new(0, HEADER_HGT, self.width, self.height - HEADER_HGT)
+
+    self.datas.itemheight = FONT_HGT_SMALL + 4 * 2
+    self.datas.selected = 0
+    self.datas.joypadParent = self
+    self.datas.font = UIFont.NewSmall
+    self.datas.doDrawItem = doDrawItemOverride
+    self.datas.update = updateOverride
+    self.datas.drawBorder = true
+    self.datas.items = {}       -- init
+
+    self.datas:addColumn("Car", 0)
+
+    self.datas:initialise()
+    self.datas:instantiate()
+
+    self:addChild(self.datas)
+
+end
+
+function AVCSItemsListTable:initList(module)
+    for _, v in ipairs(module) do
+        self.datas:addItem(v.carModel, v)
+    end
+
+    table.sort(self.datas.items, function(a,b) return not string.sort(a.item.carModel, b.item.carModel) end)
+    self.datas.selected = 1     -- Auto select the first item
+
+end
+
 function AVCSItemsListTable:update()
     self.datas.doDrawItem = doDrawItemOverride
+    self.datas.update = updateOverride
 end
 
 --------------------------------
