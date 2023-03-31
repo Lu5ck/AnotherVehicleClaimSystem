@@ -195,7 +195,7 @@ AVCS.onClientCommand = function(moduleName, command, playerObj, vehicleID)
 	if moduleName == "AVCS" and command == "claimVehicle" then
 		AVCS.claimVehicle(playerObj, vehicleID)
 	elseif moduleName == "AVCS" and command == "unclaimVehicle" then
-		if SandboxVars.AVCS.ServerSideCheckUnclaim then
+		if SandboxVars.AVCS.ServerSideChecking then
 			local checkResult = AVCS.checkPermission(playerObj, getVehicleById(vehicleID.vehicle))
 			if type(checkResult) == "boolean" then
 				if checkResult == false then
