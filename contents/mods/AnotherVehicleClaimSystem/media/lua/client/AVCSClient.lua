@@ -106,7 +106,7 @@ function AVCS.updateClientLastKnownLogonTime()
 	local onlinePlayers = getOnlinePlayers()
 	local tempDB = ModData.get("AVCSByPlayerID")
 	local tempCount = 0
-	for i = 1, onlinePlayers:size() then
+	for i = 1, onlinePlayers:size() do
 		if tempDB[onlinePlayers:get(i)] ~= nil then
 			tempDB[onlinePlayers:get(i)].LastKnownLogonTime = getTimestamp()
 			tempCount = tempCount + 1
