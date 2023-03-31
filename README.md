@@ -15,4 +15,4 @@ Work in Process (WIP)
 5. ~~Add in toggable (sandbox setting) server side permission checking and log unauthorized unclaim and claiming~~
 6. Mesh and texture for the claim ticket
 7. ~~Finish up tooltips for claim & unclaim menu~~
-8. Claimed timeout aka vehicles will be unclaimed if player not logon for XX time
+8. ~~Claimed timeout aka vehicles will be unclaimed if player not logon for XX time~~
