@@ -137,18 +137,17 @@ function AVCS.claimVehicle(playerObj, vehicleID)
 	end
 end
 
+-- vehicleID is SQL ID
 function AVCS.unclaimVehicle(playerObj, vehicleID)
-	local vehicleObj = getVehicleById(vehicleID.vehicle)
-	
-	if AVCS.dbByVehicleSQLID[vehicleObj:getSqlId()] then
-		local ownerPlayerID = AVCS.dbByVehicleSQLID[vehicleObj:getSqlId()].OwnerPlayerID
-		AVCS.dbByVehicleSQLID[vehicleObj:getSqlId()] = nil
+	if AVCS.dbByVehicleSQLID[vehicleID] then
+		local ownerPlayerID = AVCS.dbByVehicleSQLID[vehicleID].OwnerPlayerID
+		AVCS.dbByVehicleSQLID[vehicleID] = nil
 		
 		-- Store the updated ModData --
 		ModData.add("AVCSByVehicleSQLID", AVCS.dbByVehicleSQLID)
 		
-		if AVCS.dbAVCSByPlayerID[ownerPlayerID][vehicleObj:getSqlId()] then
-			AVCS.dbAVCSByPlayerID[ownerPlayerID][vehicleObj:getSqlId()] = nil
+		if AVCS.dbAVCSByPlayerID[ownerPlayerID][vehicleID] then
+			AVCS.dbAVCSByPlayerID[ownerPlayerID][vehicleID] = nil
 			AVCS.dbAVCSByPlayerID[ownerPlayerID][LastKnownLogonTime] = getTimestamp()
 		end
 
