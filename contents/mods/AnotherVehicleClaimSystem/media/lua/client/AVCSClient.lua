@@ -112,6 +112,8 @@ local function OnConnected()
 	-- Get the latest Global ModData to work with
 	ModData.request("AVCSByVehicleSQLID")
 	ModData.request("AVCSByPlayerID")
+
+	sendClientCommand(getPlayer(), "AVCS", "updateLastKnownLogonTime", nil)
 end
 
 local function OnReceiveGlobalModData(key, modData)
@@ -123,6 +125,11 @@ local function OnReceiveGlobalModData(key, modData)
 	end
 end
 
+local function EveryTenMinutes()
+	sendClientCommand(getPlayer(), "AVCS", "updateLastKnownLogonTime", nil)
+end
+
+Events.EveryTenMinutes.Add(EveryTenMinutes)
 Events.OnReceiveGlobalModData.Add(OnReceiveGlobalModData)
 Events.OnConnected.Add(OnConnected)
 Events.OnServerCommand.Add(AVCS.OnServerCommand)

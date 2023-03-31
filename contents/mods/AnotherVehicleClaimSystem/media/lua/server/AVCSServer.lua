@@ -8,6 +8,10 @@
 if isClient() and not isServer() then
 	return
 end
+
+AVCS.sortedPlayerTimeoutClaim = nil
+AVCS.dbByVehicleSQLID = nil
+AVCS.dbAVCSByPlayerID = nil
 --[[
 It is impossible to get real time coordinate of vehicles
 Vehicle object is not readily obtainable and vehicle DB is not accessible via mod codes
@@ -47,7 +51,6 @@ and so on
 --]]
 
 function AVCS.claimVehicle(playerObj, vehicleID)
-	local tempDB = ModData.get("AVCSByVehicleSQLID")
 	local vehicleObj = getVehicleById(vehicleID.vehicle)
 
 	-- Assign Object ModData, workaround for SQL ID not being consistent for client-side and server-side
@@ -65,7 +68,7 @@ function AVCS.claimVehicle(playerObj, vehicleID)
 
 	-- Make sure is not already claimed
 	-- Only SQL ID is persistent, vehicleID is created on runtime
-	if tempDB[vehicleObj:getSqlId()] then
+	if AVCS.dbByVehicleSQLID[vehicleObj:getSqlId()] then
 		-- Using vanilla logging function, write to a log with suffix AVCS
 		-- Datetime, Unix Time, Warning message, offender username, vehicle full name, coordinate
 		-- [26-03-23 22:23:36.671] [1679840616] Warning: Attempting to claim already owned vehicle [Username] [Base.ExtremeCar] [13026,1215]
@@ -76,7 +79,7 @@ function AVCS.claimVehicle(playerObj, vehicleID)
 		--ModData.transmit("AVCSByVehicleSQLID")
 		--ModData.transmit("AVCSByPlayerID")
 	else
-		tempDB[vehicleObj:getSqlId()] = {
+		AVCS.dbByVehicleSQLID[vehicleObj:getSqlId()] = {
 			OwnerPlayerID = playerObj:getUsername(),
 			ClaimDateTime = getTimestamp(),
 			CarModel = vehicleObj:getScript():getFullName(),
@@ -97,19 +100,25 @@ function AVCS.claimVehicle(playerObj, vehicleID)
 		}
 		
 		-- Store the updated ModData --
-		ModData.add("AVCSByVehicleSQLID", tempDB)
+		ModData.add("AVCSByVehicleSQLID", AVCS.dbByVehicleSQLID)
 		
-		tempDB = ModData.get("AVCSByPlayerID")
-		if not tempDB[playerObj:getUsername()] then
-			tempDB[playerObj:getUsername()] = {
-				[vehicleObj:getSqlId()] = true
+		if not AVCS.dbAVCSByPlayerID[playerObj:getUsername()] then
+			AVCS.dbAVCSByPlayerID[playerObj:getUsername()] = {
+				[vehicleObj:getSqlId()] = true,
+				LastKnownLogonTime = getTimestamp()
 			}
+
+			-- New player, insert it to the cache, theorically should be the latest entry
+			AVCS.sortedPlayerTimeoutClaim[AVCS.dbAVCSByPlayerID[playerObj:getUsername()].LastKnownLogonTime] = {}
+			table.insert(AVCS.sortedPlayerTimeoutClaim[AVCS.dbAVCSByPlayerID[playerObj:getUsername()].LastKnownLogonTime], playerObj:getUsername())
+			
 		else
-			tempDB[playerObj:getUsername()][vehicleObj:getSqlId()] = true
+			AVCS.dbAVCSByPlayerID[playerObj:getUsername()][vehicleObj:getSqlId()] = true
+			AVCS.dbAVCSByPlayerID[playerObj:getUsername()][LastKnownLogonTime] = getTimestamp()
 		end
 		
 		-- Store the updated ModData --
-		ModData.add("AVCSByPlayerID", tempDB)
+		ModData.add("AVCSByPlayerID", AVCS.dbAVCSByPlayerID)
 		
 		--[[ Send the updated ModData to all clients
 		ModData.transmit("AVCSByVehicleSQLID")
@@ -123,23 +132,35 @@ function AVCS.claimVehicle(playerObj, vehicleID)
 end
 
 function AVCS.unclaimVehicle(playerObj, vehicleID)
-	local tempDB = ModData.get("AVCSByVehicleSQLID")
 	local vehicleObj = getVehicleById(vehicleID.vehicle)
 	
-	if tempDB[vehicleObj:getSqlId()] then
-		local ownerPlayerID = tempDB[vehicleObj:getSqlId()].OwnerPlayerID
-		tempDB[vehicleObj:getSqlId()] = nil
+	if AVCS.dbByVehicleSQLID[vehicleObj:getSqlId()] then
+		local ownerPlayerID = AVCS.dbByVehicleSQLID[vehicleObj:getSqlId()].OwnerPlayerID
+		AVCS.dbByVehicleSQLID[vehicleObj:getSqlId()] = nil
 		
 		-- Store the updated ModData --
-		ModData.add("AVCSByVehicleSQLID", tempDB)
+		ModData.add("AVCSByVehicleSQLID", AVCS.dbByVehicleSQLID)
 		
-		tempDB = ModData.get("AVCSByPlayerID")
-		if tempDB[ownerPlayerID][vehicleObj:getSqlId()] then
-			tempDB[ownerPlayerID][vehicleObj:getSqlId()] = nil
+		if AVCS.dbAVCSByPlayerID[ownerPlayerID][vehicleObj:getSqlId()] then
+			AVCS.dbAVCSByPlayerID[ownerPlayerID][vehicleObj:getSqlId()] = nil
+			AVCS.dbAVCSByPlayerID[ownerPlayerID][LastKnownLogonTime] = getTimestamp()
+		end
+
+		-- If the player has 0 vehicle, remove it completely
+		local tempCount = 0
+		for i, v in pairs(AVCS.dbAVCSByPlayerID[ownerPlayerID]) do
+			tempCount = tempCount + 1
+			if tempCount >= 2 then
+				break
+			end
 		end
 		
+		if tempCount == 1 then
+			AVCS.dbAVCSByPlayerID[ownerPlayerID] = nil
+		end
+
 		-- Store the updated ModData --
-		ModData.add("AVCSByPlayerID", tempDB)
+		ModData.add("AVCSByPlayerID", AVCS.dbAVCSByPlayerID)
 		
 		local tempArr = {
 			VehicleID = vehicleObj:getSqlId(),
@@ -162,6 +183,14 @@ function AVCS.unclaimVehicle(playerObj, vehicleID)
 	end
 end
 
+-- Update Player Logon Time
+function AVCS.updateLastKnownLogonTime(playerObj)
+	if AVCS.dbAVCSByPlayerID[playerObj:getUsername()] ~= nil then
+		AVCS.dbAVCSByPlayerID[playerObj:getUsername()].LastKnownLogonTime = getTimestamp()
+	end
+	ModData.add("AVCSByPlayerID", AVCS.dbAVCSByPlayerID)
+end
+
 AVCS.onClientCommand = function(moduleName, command, playerObj, vehicleID)
 	if moduleName == "AVCS" and command == "claimVehicle" then
 		AVCS.claimVehicle(playerObj, vehicleID)
@@ -175,6 +204,7 @@ AVCS.onClientCommand = function(moduleName, command, playerObj, vehicleID)
 					-- [26-03-23 22:23:36.671] [1679840616] Warning: Attempting to unclaim without permission [Username] [Base.ExtremeCar] [13026,1215]
 					local vehicleObj = getVehicleById(vehicleID.vehicle)
 					writeLog("AVCS", "[" .. getTimestamp() .. "] Warning: Attempting to unclaim without permission [" .. playerObj:getUsername() .. "] [" .. vehicleObj:getScript():getFullName() .. "] [" .. math.floor(vehicleObj:getX()) .. "," .. math.floor(vehicleObj:getY()) .. "]")
+					return
 				end
 			elseif checkResult.permissions == false then
 				-- Using vanilla logging function, write to a log with suffix AVCS
@@ -182,9 +212,91 @@ AVCS.onClientCommand = function(moduleName, command, playerObj, vehicleID)
 				-- [26-03-23 22:23:36.671] [1679840616] Warning: Attempting to unclaim without permission [Username] [Base.ExtremeCar] [13026,1215]
 				local vehicleObj = getVehicleById(vehicleID.vehicle)
 				writeLog("AVCS", "[" .. getTimestamp() .. "] Warning: Attempting to unclaim without permission [" .. playerObj:getUsername() .. "] [" .. vehicleObj:getScript():getFullName() .. "] [" .. math.floor(vehicleObj:getX()) .. "," .. math.floor(vehicleObj:getY()) .. "]")
+				return
 			end
 		end
 		AVCS.unclaimVehicle(playerObj, vehicleID)
+	elseif moduleName == "AVCS" and command == "updateLastKnownLogonTime" then
+		AVCS.updateLastKnownLogonTime(playerObj)
+	end
+end
+
+-- Remove given player ID from DBs completely
+-- This hopefully thororughly remove the player from server-side Global ModData
+-- We don't really need to care about client-side AVCSByPlayerID Global ModData as client will always get new fresh set onConnected
+-- We do need to care about server-side as we don't want the AVCSByPlayerID to be bloated which will slow down other functions
+function AVCS.removePlayerCompletely(playerID)
+	if AVCS.dbAVCSByPlayerID[playerID] ~= nil then
+		for k, v in pairs(AVCS.dbAVCSByPlayerID[playerID]) do
+			if k ~= "LastKnownLogonTime" then
+				AVCS.dbByVehicleSQLID[k] = nil
+				local tempArr = {
+					VehicleID = k,
+					OwnerPlayerID = playerID
+				}
+				ModData.add("AVCSByVehicleSQLID", AVCS.dbByVehicleSQLID)
+				sendServerCommand("AVCS", "updateClientUnclaimVehicle", tempArr)
+			end
+		end
+		AVCS.dbAVCSByPlayerID[playerID] = nil
+		ModData.add("AVCSByPlayerID", AVCS.dbAVCSByPlayerID)
+	end
+end
+
+--[[
+Transform dbAVCSByPlayerID into
+[LastKnownLogonTime] = { PlayerID1, PlayerID2 }
+--]]
+local function createSortedPlayerTimeoutClaim()
+	local temp = {}
+	for _, v in pairs(AVCS.dbAVCSByPlayerID) do
+		table.insert(temp, v)
+	end
+	table.sort(temp, function(a, b) return a.LastKnownLogonTime < b.LastKnownLogonTime end)
+
+	AVCS.sortedPlayerTimeoutClaim = {}
+	-- Group LastKnownLogonTime together
+	-- Unlikely to have same LastKnownLogonTime but if it does, it will cause errors
+	for _, v in ipairs(temp) do
+		local playerID
+		for i, k in pairs(AVCS.dbAVCSByPlayerID) do
+			if k == v then
+				playerID = i
+				break
+			end
+		end
+		if AVCS.sortedPlayerTimeoutClaim[v.LastKnownLogonTime] == nil then
+			AVCS.sortedPlayerTimeoutClaim[v.LastKnownLogonTime] = {}
+		end
+		table.insert(AVCS.sortedPlayerTimeoutClaim[v.LastKnownLogonTime], playerID)
+	end
+end
+
+function AVCS.doClaimTimeout()
+	if AVCS.sortedPlayerTimeoutClaim ~= nil then
+		local tempRebuild = false
+		for varTime, v in pairs(AVCS.sortedPlayerTimeoutClaim) do
+			-- If yet to expire
+			if getTimestamp() - varTime < (SandboxVars.AVCS.ClaimTimeout * 60 * 60) then
+				return
+			end
+			for _, k in ipairs(AVCS.sortedPlayerTimeoutClaim[varTime]) do
+				if AVCS.dbAVCSByPlayerID[k] ~= nil then
+					-- The sorted cache is not always updated, we simply perform final verification here
+					if AVCS.dbAVCSByPlayerID[k].LastKnownLogonTime - varTime > (SandboxVars.AVCS.ClaimTimeout * 60 * 60) then
+						AVCS.removePlayerCompletely(k)
+					else
+						-- Cache does not reflect current state, rebuild the cache again
+						-- This shouldn't happen often and is faster to rebuild than to attempt to insert while keeping it sorted
+						tempRebuild = true
+					end
+				end
+			end
+			AVCS.sortedPlayerTimeoutClaim[varTime] = nil
+		end
+		if tempRebuild == true then
+			createSortedPlayerTimeoutClaim()
+		end
 	end
 end
 
@@ -192,7 +304,17 @@ local function OnServerStarted()
 	-- When Mod first added to server
 	if not ModData.exists("AVCSByVehicleSQLID") then ModData.create("AVCSByVehicleSQLID") end
 	if not ModData.exists("AVCSByPlayerID") then ModData.create("AVCSByPlayerID") end
+
+	-- Set global variable as this is frequently accessed
+	AVCS.dbByVehicleSQLID = ModData.get("AVCSByVehicleSQLID")
+	AVCS.dbAVCSByPlayerID = ModData.get("AVCSByPlayerID")
+
+	-- Create a sorted table
+	if AVCS.sortedPlayerTimeoutClaim == nil then
+		createSortedPlayerTimeoutClaim()
+	end
 end
 
+Events.EveryTenMinutes.Add(AVCS.doClaimTimeout)
 Events.OnServerStarted.Add(OnServerStarted)
 Events.OnClientCommand.Add(AVCS.onClientCommand)
