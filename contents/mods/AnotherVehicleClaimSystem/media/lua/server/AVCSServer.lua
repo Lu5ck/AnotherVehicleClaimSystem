@@ -201,23 +201,39 @@ AVCS.onClientCommand = function(moduleName, command, playerObj, vehicleID)
 		AVCS.claimVehicle(playerObj, vehicleID)
 	elseif moduleName == "AVCS" and command == "unclaimVehicle" then
 		if SandboxVars.AVCS.ServerSideChecking then
-			local checkResult = AVCS.checkPermission(playerObj, getVehicleById(vehicleID.vehicle))
+			local checkResult = nil
+			if type(vehicleID) == "number" then
+				checkResult = AVCS.checkPermission(playerObj, vehicleID)
+			else
+				checkResult = AVCS.checkPermission(playerObj, getVehicleById(vehicleID.vehicle))
+			end
+
 			if type(checkResult) == "boolean" then
 				if checkResult == false then
 					-- Using vanilla logging function, write to a log with suffix AVCS
 					-- Datetime, Unix Time, Warning message, offender username, vehicle full name, coordinate
 					-- [26-03-23 22:23:36.671] [1679840616] Warning: Attempting to unclaim without permission [Username] [Base.ExtremeCar] [13026,1215]
 					local vehicleObj = getVehicleById(vehicleID.vehicle)
-					writeLog("AVCS", "[" .. getTimestamp() .. "] Warning: Attempting to unclaim without permission [" .. playerObj:getUsername() .. "] [" .. vehicleObj:getScript():getFullName() .. "] [" .. math.floor(vehicleObj:getX()) .. "," .. math.floor(vehicleObj:getY()) .. "]")
-					return
+					if vehicleObj ~= nil then
+						writeLog("AVCS", "[" .. getTimestamp() .. "] Warning: Attempting to unclaim without permission [" .. playerObj:getUsername() .. "] [" .. vehicleObj:getScript():getFullName() .. "] [" .. math.floor(vehicleObj:getX()) .. "," .. math.floor(vehicleObj:getY()) .. "]")
+						return
+					else
+						writeLog("AVCS", "[" .. getTimestamp() .. "] Warning: Attempting to unclaim without permission [" .. playerObj:getUsername() .. "] [Remote Unclaim]")
+						return
+					end
 				end
 			elseif checkResult.permissions == false then
 				-- Using vanilla logging function, write to a log with suffix AVCS
 				-- Datetime, Unix Time, Warning message, offender username, vehicle full name, coordinate
 				-- [26-03-23 22:23:36.671] [1679840616] Warning: Attempting to unclaim without permission [Username] [Base.ExtremeCar] [13026,1215]
 				local vehicleObj = getVehicleById(vehicleID.vehicle)
-				writeLog("AVCS", "[" .. getTimestamp() .. "] Warning: Attempting to unclaim without permission [" .. playerObj:getUsername() .. "] [" .. vehicleObj:getScript():getFullName() .. "] [" .. math.floor(vehicleObj:getX()) .. "," .. math.floor(vehicleObj:getY()) .. "]")
-				return
+				if vehicleObj ~= nil then
+					writeLog("AVCS", "[" .. getTimestamp() .. "] Warning: Attempting to unclaim without permission [" .. playerObj:getUsername() .. "] [" .. vehicleObj:getScript():getFullName() .. "] [" .. math.floor(vehicleObj:getX()) .. "," .. math.floor(vehicleObj:getY()) .. "]")
+					return
+				else
+					writeLog("AVCS", "[" .. getTimestamp() .. "] Warning: Attempting to unclaim without permission [" .. playerObj:getUsername() .. "] [Remote Unclaim]")
+					return
+				end
 			end
 		end
 		AVCS.unclaimVehicle(playerObj, vehicleID)

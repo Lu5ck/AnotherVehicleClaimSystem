@@ -58,14 +58,19 @@ table / array = owned and permission
 --]]
 
 function AVCS.checkPermission(playerObj, vehicleObj)
-	local tempPart = AVCS.getMulePart(vehicleObj)
+	local vehicleSQL = nil
+	if type(vehicleObj) ~= "number" then
+		local tempPart = AVCS.getMulePart(vehicleObj)
 
-	-- Vehicle claiming not supported on this vehicle, likely a modded vehicle with non standard parts
-	if tempPart == false or tempPart == nil then
-		return false
+		-- Vehicle claiming not supported on this vehicle, likely a modded vehicle with non standard parts
+		if tempPart == false or tempPart == nil then
+			return false
+		end
+
+		vehicleSQL = tempPart:getModData().SQLID
+	else
+		vehicleSQL = vehicleObj
 	end
-
-	local vehicleSQL = tempPart:getModData().SQLID
 
 	-- If doesn't contain server-side SQL ID ModData,  it means yet to be imprinted therefore naturally unclaimed
 	if vehicleSQL == nil then
@@ -73,6 +78,7 @@ function AVCS.checkPermission(playerObj, vehicleObj)
 	end
 
 	local vehicleDB = ModData.get("AVCSByVehicleSQLID")
+	local playerDB = ModData.get("AVCSByPlayerID")
 
 	-- Ownerless
 	if vehicleDB[vehicleSQL] == nil then
@@ -84,6 +90,7 @@ function AVCS.checkPermission(playerObj, vehicleObj)
 		local details = {
 			permissions = true,
 			ownerid = vehicleDB[vehicleSQL].OwnerPlayerID
+			LastKnownLogonTime = playerDB[vehicleDB[vehicleSQL].OwnerPlayerID].LastKnownLogonTime
 		}
 		return details
 	end
@@ -93,6 +100,7 @@ function AVCS.checkPermission(playerObj, vehicleObj)
 		local details = {
 			permissions = true,
 			ownerid = playerObj:getUsername()
+			LastKnownLogonTime = playerDB[playerObj:getUsername()].LastKnownLogonTime
 		}
 		return details
 	end
@@ -108,6 +116,7 @@ function AVCS.checkPermission(playerObj, vehicleObj)
 					local details = {
 						permissions = true,
 						ownerid = vehicleDB[vehicleSQL].OwnerPlayerID
+						LastKnownLogonTime = playerDB[vehicleDB[vehicleSQL].OwnerPlayerID].LastKnownLogonTime
 					}
 					return details
 				end
@@ -124,6 +133,7 @@ function AVCS.checkPermission(playerObj, vehicleObj)
 					local details = {
 						permissions = true,
 						ownerid = vehicleDB[vehicleSQL].OwnerPlayerID
+						LastKnownLogonTime = playerDB[vehicleDB[vehicleSQL].OwnerPlayerID].LastKnownLogonTime
 					}
 					return details
 				end
@@ -135,6 +145,7 @@ function AVCS.checkPermission(playerObj, vehicleObj)
 	local details = {
 		permissions = false,
 		ownerid = vehicleDB[vehicleSQL].OwnerPlayerID
+		LastKnownLogonTime = playerDB[vehicleDB[vehicleSQL].OwnerPlayerID].LastKnownLogonTime
 	}
 	return details
 end
