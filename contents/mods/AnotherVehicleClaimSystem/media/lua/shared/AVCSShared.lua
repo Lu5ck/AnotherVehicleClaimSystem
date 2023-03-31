@@ -89,7 +89,7 @@ function AVCS.checkPermission(playerObj, vehicleObj)
 	if not string.lower(playerObj:getAccessLevel()) == "none" then
 		local details = {
 			permissions = true,
-			ownerid = vehicleDB[vehicleSQL].OwnerPlayerID
+			ownerid = vehicleDB[vehicleSQL].OwnerPlayerID,
 			LastKnownLogonTime = playerDB[vehicleDB[vehicleSQL].OwnerPlayerID].LastKnownLogonTime
 		}
 		return details
@@ -99,7 +99,7 @@ function AVCS.checkPermission(playerObj, vehicleObj)
 	if vehicleDB[vehicleSQL].OwnerPlayerID == playerObj:getUsername() then
 		local details = {
 			permissions = true,
-			ownerid = playerObj:getUsername()
+			ownerid = playerObj:getUsername(),
 			LastKnownLogonTime = playerDB[playerObj:getUsername()].LastKnownLogonTime
 		}
 		return details
@@ -115,7 +115,7 @@ function AVCS.checkPermission(playerObj, vehicleObj)
 				if v == playerObj:getUsername() then
 					local details = {
 						permissions = true,
-						ownerid = vehicleDB[vehicleSQL].OwnerPlayerID
+						ownerid = vehicleDB[vehicleSQL].OwnerPlayerID,
 						LastKnownLogonTime = playerDB[vehicleDB[vehicleSQL].OwnerPlayerID].LastKnownLogonTime
 					}
 					return details
@@ -132,7 +132,7 @@ function AVCS.checkPermission(playerObj, vehicleObj)
 				if v == playerObj:getUsername() then
 					local details = {
 						permissions = true,
-						ownerid = vehicleDB[vehicleSQL].OwnerPlayerID
+						ownerid = vehicleDB[vehicleSQL].OwnerPlayerID,
 						LastKnownLogonTime = playerDB[vehicleDB[vehicleSQL].OwnerPlayerID].LastKnownLogonTime
 					}
 					return details
@@ -144,7 +144,7 @@ function AVCS.checkPermission(playerObj, vehicleObj)
 	-- No permission
 	local details = {
 		permissions = false,
-		ownerid = vehicleDB[vehicleSQL].OwnerPlayerID
+		ownerid = vehicleDB[vehicleSQL].OwnerPlayerID,
 		LastKnownLogonTime = playerDB[vehicleDB[vehicleSQL].OwnerPlayerID].LastKnownLogonTime
 	}
 	return details
