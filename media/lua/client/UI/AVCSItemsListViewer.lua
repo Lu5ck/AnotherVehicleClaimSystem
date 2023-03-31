@@ -193,6 +193,9 @@ function AVCSItemsListViewer:onClick(button)
         sendClientCommand(getPlayer(), "AVCS", "unclaimVehicle", {sqlId = AVCSItemsListViewer.messages.sqlId} )
 
 
+        -- TODO We should have a handshake from the server to be sure that we don't have access to that car anymore.
+        AVCSMenu.isRefreshing = true
+
         print("Unclaim car")
     elseif button.internal == "REFRESH" then
 

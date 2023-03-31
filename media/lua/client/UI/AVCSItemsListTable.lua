@@ -79,6 +79,19 @@ local function updateOverride(self)
         --table.sort(self.items, function(a,b) return not string.sort(a.item.carModel, b.item.carModel) end)
         --self.selected = 1     -- Auto select the first item
 
+
+        if #self.items == 0 then
+            
+            -- Disable preview
+            panelContainers.previewPanel.javaObject:fromLua2("setVehicleScript", "previewVeh", "")
+            -- Disable text
+            AVCSItemsListViewer.messages.owner = ""
+            AVCSItemsListViewer.messages.location = ""
+    
+        end
+
+
+
         AVCSMenu.isRefreshing = false
     end
 
