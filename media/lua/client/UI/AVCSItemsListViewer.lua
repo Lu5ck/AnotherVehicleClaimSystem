@@ -116,12 +116,8 @@ function AVCSItemsListViewer:initialise()
     self:addChild(self.previewPanel)
 
 
-
-
-
-
-    
-    self:initList()
+    -- Setup list boxes, personal, safehouses, factions
+    self:initListBoxes()
 
 
 	self:addToUIManager()
@@ -130,6 +126,26 @@ function AVCSItemsListViewer:initialise()
 	self:bringToTop()
 	ISLayoutManager.RegisterWindow('AVCSItemsListViewer', AVCSItemsListViewer, self)
 
+end
+
+function AVCSItemsListViewer:initListBoxes()
+
+    self:initList()
+
+
+
+    self.listBox = AVCSItemsListTable:new(0, 0, self.leftPanel.width, self.leftPanel.height - self.leftPanel.tabHeight, self.previewPanel)
+    self.listBox:initialise()
+
+    -- TODO Add icons
+    self.leftPanel:addView("P", self.listBox)
+    self.listBox:initList(self.items)
+
+    self.leftPanel:addView("F", self.listBox)       -- TODO Make different listbox
+    self.leftPanel:addView("S", self.listBox)       -- TODO Make different listbox
+
+
+    self.leftPanel:activateView("P")
 end
 
 function AVCSItemsListViewer:initList()
@@ -147,9 +163,9 @@ function AVCSItemsListViewer:initList()
 
         local playerName = getPlayer():getUsername()
         self.items = {}
+        local specificPlayerClaimedCars = playerClaimedCars[playerName]
 
-        if playerClaimedCars then
-            local specificPlayerClaimedCars = playerClaimedCars[playerName]
+        if specificPlayerClaimedCars then
             print("Loading vehicles list")
 
             local index = 1
@@ -170,17 +186,7 @@ function AVCSItemsListViewer:initList()
     end
 
 
-    self.listBox = AVCSItemsListTable:new(0, 0, self.leftPanel.width, self.leftPanel.height - self.leftPanel.tabHeight, self.previewPanel)
-    self.listBox:initialise()
-
-    self.leftPanel:addView("P", self.listBox)
-    self.listBox:initList(self.items)
-
-    self.leftPanel:addView("F", self.listBox)
-    self.leftPanel:addView("S", self.listBox)
-
-
-    self.leftPanel:activateView("P")
+    
 end
 
 function AVCSItemsListViewer:render()
@@ -228,18 +234,24 @@ function AVCSItemsListViewer:onToggleVisible()
 	end
 end
 
+function AVCSItemsListViewer:refreshVehiclesList()
+
+    self.listBox:initList(self.items)
+
+end
+
 function AVCSItemsListViewer:onClick(button)
 
     if button.internal == "UNCLAIM" then
 
 
-        local vehicleId = AVCSItemsListViewer.messages.vehicleId
-        sendClientCommand(getPlayer(), "AVCS", "unclaimVehicle", {vehicle = vehicleId} )
+        sendClientCommand(getPlayer(), "AVCS", "unclaimVehicle", {sqlId = AVCSItemsListViewer.messages.sqlId} )
 
 
         print("Unclaim car")
     elseif button.internal == "REFRESH" then
-        print("Refresh")
+        self:initList()
+        self.listBox:initList(self.items)       -- TODO WE SHOULD REFRESH THE OTHER LIST BOXES!
     end
 end
 
@@ -254,8 +266,8 @@ function AVCSItemsListViewer:setKeyboardFocus()
 end
 
 function AVCSItemsListViewer:close()
-    self:setVisible(false);
-    self:removeFromUIManager();
+    self:setVisible(false)
+    self:removeFromUIManager()
 end
 
 function AVCSItemsListViewer.OnOpenPanel()
@@ -263,6 +275,9 @@ function AVCSItemsListViewer.OnOpenPanel()
         AVCSItemsListViewer.instance:setVisible(true)
         AVCSItemsListViewer.instance:addToUIManager()
         AVCSItemsListViewer.instance:setKeyboardFocus()
+        
+
+        -- TODO force update
         return
     end
 

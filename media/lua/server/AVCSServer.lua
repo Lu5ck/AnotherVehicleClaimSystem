@@ -122,27 +122,31 @@ function AVCS.claimVehicle(playerObj, vehicleID)
 	end
 end
 
-function AVCS.unclaimVehicle(playerObj, vehicleID)
+function AVCS.unclaimVehicle(playerObj, sqlId)
+
+
+
+
+
 	local tempDB = ModData.get("AVCSByVehicleSQLID")
-	local vehicleObj = getVehicleById(vehicleID.vehicle)
-	
-	if tempDB[vehicleObj:getSqlId()] then
-		local ownerPlayerID = tempDB[vehicleObj:getSqlId()].OwnerPlayerID
-		tempDB[vehicleObj:getSqlId()] = nil
+	--local vehicleObj = getVehicleById(vehicleID.vehicle)
+	if tempDB[sqlId] then
+		local ownerPlayerID = tempDB[sqlId].OwnerPlayerID
+		tempDB[sqlId] = nil
 		
 		-- Store the updated ModData --
 		ModData.add("AVCSByVehicleSQLID", tempDB)
 		
 		tempDB = ModData.get("AVCSByPlayerID")
-		if tempDB[ownerPlayerID][vehicleObj:getSqlId()] then
-			tempDB[ownerPlayerID][vehicleObj:getSqlId()] = nil
+		if tempDB[ownerPlayerID][sqlId] then
+			tempDB[ownerPlayerID][sqlId] = nil
 		end
 		
 		-- Store the updated ModData --
 		ModData.add("AVCSByPlayerID", tempDB)
 		
 		local tempArr = {
-			VehicleID = vehicleObj:getSqlId(),
+			VehicleID = sqlId,
 			OwnerPlayerID = ownerPlayerID
 		}
 		
@@ -162,11 +166,51 @@ function AVCS.unclaimVehicle(playerObj, vehicleID)
 	end
 end
 
+
+function AVCS.findVehicle(playerObj, vehicleID)
+
+	-- coordinates.
+
+	--local cell = getWorld():getCell():getGridSquare(vehicleID.x, vehicleID.y, 0)
+
+	print("Trying to get cell from server")
+	local cell = getCell()
+	print(cell)
+	local gridSq = cell:getGridSquare(vehicleID.x, vehicleID.y, 0)
+
+
+	local secondChell = gridSq:getCell()
+	print(secondChell)
+
+
+
+	--local vehicles = cell:getVehicles()
+
+	-- local c = getCell()
+	-- local g = c:getGridSquare(11707, 6704, 0)
+	-- print(g)
+
+	-- -- get sqlid from each vehicle until we find the one we need.
+
+	-- for i = 0, #vehicles:size() - 1 do
+	-- 	print(vehicles:get(i))
+	-- end
+
+
+
+
+
+
+
+end
+
 AVCS.onClientCommand = function(moduleName, command, playerObj, vehicleID)
 	if moduleName == "AVCS" and command == "claimVehicle" then
 		AVCS.claimVehicle(playerObj, vehicleID)
 	elseif moduleName == "AVCS" and command == "unclaimVehicle" then
 		if SandboxVars.AVCS.ServerSideCheckUnclaim then
+
+			-- TODO fix check permission, we can't fetch the vehicle from here like this in some cases
 			local checkResult = AVCS.checkPermission(playerObj, getVehicleById(vehicleID.vehicle))
 			if type(checkResult) == "boolean" then
 				if checkResult == false then
@@ -184,8 +228,13 @@ AVCS.onClientCommand = function(moduleName, command, playerObj, vehicleID)
 				writeLog("AVCS", "[" .. getTimestamp() .. "] Warning: Attempting to unclaim without permission [" .. playerObj:getUsername() .. "] [" .. vehicleObj:getScript():getFullName() .. "] [" .. math.floor(vehicleObj:getX()) .. "," .. math.floor(vehicleObj:getY()) .. "]")
 			end
 		end
-		AVCS.unclaimVehicle(playerObj, vehicleID)
+
+
+
+		AVCS.unclaimVehicle(playerObj, vehicleID.sqlId)
 	end
+
+
 end
 
 local function OnServerStarted()

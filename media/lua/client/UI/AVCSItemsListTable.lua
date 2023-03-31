@@ -91,7 +91,10 @@ function AVCSItemsListTable:onAddItem(button, item)
 
 end
 
+
 function AVCSItemsListTable:initList(module)
+
+    self.datas:clear()
 
     for _, v in ipairs(module) do
         self.datas:addItem(v.carModel, v)
@@ -114,14 +117,9 @@ function AVCSItemsListTable:drawDatas(y, item, alt)
     
     local a = 0.9;
 
-
-
-
-
-
     if self.selected == item.index then
         -- FIXME workaroundy, but it should work
-        AVCSItemsListViewer.messages.vehicleId = item.item.id
+        AVCSItemsListViewer.messages.sqlId = item.item.id
 
         self:drawRect(0, (y), self:getWidth(), self.itemheight, 0.3, 0.7, 0.35, 0.15)
         --print(item.item.carModel)
