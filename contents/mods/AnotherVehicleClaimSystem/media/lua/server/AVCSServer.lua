@@ -48,9 +48,11 @@ ModData AVRByVehicleID is stored like this
 - <CarModel>
 - <LastLocationX>
 - <LastLocationY>
+- <LastLocationUpdateDateTime>
 
 ModData AVRByPlayerID is stored like this
 <OwnerPlayerID>
+- <LastKnownLogonTime>
 - <Vehicle SQL ID 1>
 - <Vehicle SQL ID 2>
 and so on
