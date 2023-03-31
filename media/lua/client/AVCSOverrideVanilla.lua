@@ -23,8 +23,8 @@ local function claimCfmDialog(player, vehicle)
     local message = string.format("Confirm", vehicle:getScript():getName())
     local playerNum = player:getPlayerNum()
     local modal = ISModalDialog:new(0, 0, 300, 150, message, true, player, claimVehicle, playerNum, vehicle)
-    modal:initialise();
-    modal:addToUIManager();
+    modal:initialise()
+    modal:addToUIManager()
 end
 
 local function unclaimVehicle(player, button, vehicle)
@@ -38,8 +38,8 @@ local function unclaimCfmDialog(player, vehicle)
     local message = string.format("Confirm", vehicle:getScript():getName())
     local playerNum = player:getPlayerNum()
     local modal = ISModalDialog:new(0, 0, 300, 150, message, true, player, unclaimVehicle, playerNum, vehicle)
-    modal:initialise();
-    modal:addToUIManager();
+    modal:initialise()
+    modal:addToUIManager()
 end
 
 -- Copy and override the vanilla menu to add our context menu in

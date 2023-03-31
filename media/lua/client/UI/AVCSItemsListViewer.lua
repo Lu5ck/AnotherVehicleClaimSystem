@@ -1,6 +1,12 @@
 require "ISUI/ISCollapsableWindow"
 
 
+AVCSMenu = {
+    isRefreshing = false,
+    isUnclaiming = false
+}
+
+
 AVCSItemsListViewer = ISCollapsableWindow:derive("AVCSItemsListViewer")
 AVCSItemsListViewer.messages = {}
 
@@ -130,7 +136,7 @@ end
 
 function AVCSItemsListViewer:initListBoxes()
 
-    self:initList()
+    local items = AVCSBaseUI.GetPersonalVehicles()
 
 
 
@@ -139,7 +145,7 @@ function AVCSItemsListViewer:initListBoxes()
 
     -- TODO Add icons
     self.leftPanel:addView("P", self.listBox)
-    self.listBox:initList(self.items)
+    self.listBox:initList(items)
 
     self.leftPanel:addView("F", self.listBox)       -- TODO Make different listbox
     self.leftPanel:addView("S", self.listBox)       -- TODO Make different listbox
@@ -148,78 +154,23 @@ function AVCSItemsListViewer:initListBoxes()
     self.leftPanel:activateView("P")
 end
 
-function AVCSItemsListViewer:initList()
-
-    local DEBUG = false
-
-    if DEBUG then
-        self.items = {}
-
-        self.items[1] = {carModel = "Base.CarTaxi", location = {1000, 2000}, id = "idid"}
-        self.items[2] = {carModel = "Base.ModernCar", location = {2000, 512}, id = "idid1"}
-    else
-        local playerClaimedCars = ModData.get("AVCSByPlayerID")
-        local serverClaimedCars = ModData.get("AVCSByVehicleSQLID")
-
-        local playerName = getPlayer():getUsername()
-        self.items = {}
-        local specificPlayerClaimedCars = playerClaimedCars[playerName]
-
-        if specificPlayerClaimedCars then
-            print("Loading vehicles list")
-
-            local index = 1
-            for vehicleId, _ in pairs(specificPlayerClaimedCars) do
-                local singleCar = serverClaimedCars[vehicleId]
-
-                self.items[index] = {
-                    carModel = singleCar.CarModel,
-                    location = {singleCar.LastLocationX, singleCar.LastLocationY},
-                    id = vehicleId
-                }
-
-                print(self.items[index].carModel)
-                index = index + 1
-
-            end
-        end
-    end
-
-
-    
-end
-
 function AVCSItemsListViewer:render()
 	ISCollapsableWindow.render(self)
 
-
     -- Render the info
-    
-    -- TODO We must allign this to the left
-    self.infoPanel:drawText(AVCSItemsListViewer.messages.owner, 10, 10, 1,1,1,1, UIFont.Medium)
-    self.infoPanel:drawText(AVCSItemsListViewer.messages.location, 10, 40, 1,1,1,1, UIFont.Medium)
-    
-    
-
+    self.infoPanel:drawText(AVCSItemsListViewer.messages.owner, 10, 10, 1, 1, 1, 1, UIFont.NewSmall)
+    self.infoPanel:drawText(AVCSItemsListViewer.messages.location, 10, 40, 1, 1, 1, 1, UIFont.NewSmall)
 
 end
-
-function AVCSItemsListViewer:update()
-
-end
-
 
 function AVCSItemsListViewer:prerender()
 	ISCollapsableWindow.prerender(self)
-
-
 
     local infoX = self.infoPanel.x
     local infoY = self.infoPanel.y
 
     local infoWidth = self.infoPanel.width
     local infoHeight = self.infoPanel.height
-
 
     self:drawRect(infoX, infoY, infoWidth, infoHeight, self.backgroundColor.a, self.backgroundColor.r, self.backgroundColor.g, self.backgroundColor.b);
     self:drawRectBorder(infoX, infoY, infoWidth, infoHeight, self.borderColor.a, self.borderColor.r, self.borderColor.g, self.borderColor.b);
@@ -234,28 +185,25 @@ function AVCSItemsListViewer:onToggleVisible()
 	end
 end
 
-function AVCSItemsListViewer:refreshVehiclesList()
-
-    self.listBox:initList(self.items)
-
-end
-
 function AVCSItemsListViewer:onClick(button)
 
     if button.internal == "UNCLAIM" then
 
-
+        AVCSMenu.isUnclaiming = true
         sendClientCommand(getPlayer(), "AVCS", "unclaimVehicle", {sqlId = AVCSItemsListViewer.messages.sqlId} )
 
 
         print("Unclaim car")
     elseif button.internal == "REFRESH" then
-        self:initList()
-        self.listBox:initList(self.items)       -- TODO WE SHOULD REFRESH THE OTHER LIST BOXES!
-    end
-end
 
-function AVCSItemsListViewer:onSelectPlayer()
+
+        AVCSMenu.isRefreshing = true
+
+
+        --self.items = AVCSBaseUI.GetPersonalVehicles()
+        --self.listBox:initList(self.items)       -- TODO WE SHOULD REFRESH THE OTHER LIST BOXES!
+        
+    end
 end
 
 function AVCSItemsListViewer:setKeyboardFocus()
@@ -319,7 +267,6 @@ function AVCSItemsListViewer:new(x, y, width, height)
     o:setResizable(false)
 	o:setDrawFrame(true)
     o:setVisible(true)
-    o:initialise()
 
     AVCSItemsListViewer.instance = o
 

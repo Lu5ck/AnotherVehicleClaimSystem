@@ -47,75 +47,64 @@ function AVCSItemsListTable:createChildren()
     ISPanel.createChildren(self)
 
     self.datas = ISScrollingListBox:new(0, HEADER_HGT, self.width, self.height - HEADER_HGT)
-    self.datas:initialise()
-    self.datas:instantiate()
+
     self.datas.itemheight = FONT_HGT_SMALL + 4 * 2
     self.datas.selected = 0
     self.datas.joypadParent = self
     self.datas.font = UIFont.NewSmall
     self.datas.doDrawItem = self.drawDatas
     self.datas.drawBorder = true
-
+    self.datas.items = {}       -- init
 
     self.datas:addColumn("Car", 0)
-    --self.datas:setOnMouseDoubleClick(self, AVCSItemsListTable.previewCar)
+
+    self.datas:initialise()
+    self.datas:instantiate()
+
     self:addChild(self.datas)
 
 end
 
 
 
-function AVCSItemsListTable:previewCar(item)
-    AVCSPreviewUI:show(item.carModel, item.carModel, -10, 0)
-end
-
-
-
-function AVCSItemsListTable:addItem(item)
-    --local playerNum = self.viewer.playerSelect.selected - 1
-    --local playerObj = getSpecificPlayer(playerNum)
-    --if not playerObj or playerObj:isDead() then return end
-    --playerObj:getInventory():AddItem(item:getFullName())
-end
-
-
-
-function AVCSItemsListTable:onMouseMove(dx, dy)
-    --print("Mouse")
-
-end
-
-function AVCSItemsListTable:onAddItem(button, item)
-
-    print("REMOVE THIS!")
-
-end
-
 
 function AVCSItemsListTable:initList(module)
-
-    self.datas:clear()
-
     for _, v in ipairs(module) do
         self.datas:addItem(v.carModel, v)
     end
 
     table.sort(self.datas.items, function(a,b) return not string.sort(a.item.carModel, b.item.carModel) end)
-
     self.datas.selected = 1     -- Auto select the first item
 
 end
 
-function AVCSItemsListTable:update()
-    self.datas.doDrawItem = self.drawDatas
-end
+local function doDrawItemOverride(self, y, item, alt)
+    if AVCSMenu.isRefreshing then
+        AVCSBaseUI.GetPersonalVehicles()
+        self:clear()
+        for _, v in ipairs(AVCSBaseUI.items) do
+            self:addItem(v.carModel, v)
+        end
+        --table.sort(self.items, function(a,b) return not string.sort(a.item.carModel, b.item.carModel) end)
+        --self.selected = 1     -- Auto select the first item
 
-function AVCSItemsListTable:drawDatas(y, item, alt)
+        AVCSMenu.isRefreshing = false
+     end
+
+
+
+    
+    
+    
+    
+    --print(#self.items)
+
+
     if y + self:getYScroll() + self.itemheight < 0 or y + self:getYScroll() >= self.height then
         return y + self.itemheight
     end
-    
-    local a = 0.9;
+
+    local a = 0.9
 
     if self.selected == item.index then
         -- FIXME workaroundy, but it should work
@@ -131,14 +120,14 @@ function AVCSItemsListTable:drawDatas(y, item, alt)
     end
 
     if alt then
-        self:drawRect(0, (y), self:getWidth(), self.itemheight, 0.3, 0.6, 0.5, 0.5);
+        self:drawRect(0, (y), self:getWidth(), self.itemheight, 0.3, 0.6, 0.5, 0.5)
     end
 
-    self:drawRectBorder(0, (y), self:getWidth(), self.itemheight, a, self.borderColor.r, self.borderColor.g, self.borderColor.b);
+    self:drawRectBorder(0, (y), self:getWidth(), self.itemheight, a, self.borderColor.r, self.borderColor.g, self.borderColor.b)
 
     local iconX = 4
-    local iconSize = FONT_HGT_SMALL;
-    local xoffset = 10;
+    local iconSize = FONT_HGT_SMALL
+    local xoffset = 10
 
     local clipX = self.columns[1].size
     local clipX2 = self.columns[1].size
@@ -152,15 +141,6 @@ function AVCSItemsListTable:drawDatas(y, item, alt)
 
 
     self:drawText(getText("IGUI_VehicleName" .. carName), xoffset, y + 4, 1, 1, 1, a, self.font)
-
-
-    -- if item.item:getDisplayCategory() ~= nil then
-    --     self:drawText(getText("IGUI_ItemCat_" .. item.item:getDisplayCategory()), self.columns[4].size + xoffset, y + 4, 1, 1, 1, a, self.font);
-    --     else
-    --     self:drawText("Error: No category set", self.columns[4].size + xoffset, y + 4, 1, 1, 1, a, self.font);
-    -- end
-
-
     self:repaintStencilRect(0, clipY, self.width, clipY2 - clipY)
 
     -- local icon = item.item:getIcon()
@@ -175,6 +155,11 @@ function AVCSItemsListTable:drawDatas(y, item, alt)
     -- end
     
     return y + self.itemheight;
+
+end
+
+function AVCSItemsListTable:update()
+    self.datas.doDrawItem = doDrawItemOverride
 end
 
 --------------------------------
@@ -186,9 +171,6 @@ function AVCSItemsListTable:new(x, y, width, height, previewPanel)
     o.borderColor = {r=0.4, g=0.4, b=0.4, a=0}
     o.backgroundColor = {r=0, g=0, b=0, a=1}
     o.buttonBorderColor = {r=0.7, g=0.7, b=0.7, a=0.5}
-    o.totalResult = 0
-    o.filterWidgets = {}
-    o.filterWidgetMap = {}
     panelContainers.previewPanel = previewPanel
     AVCSItemsListTable.instance = o
     return o
