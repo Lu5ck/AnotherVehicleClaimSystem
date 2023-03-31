@@ -26,20 +26,18 @@ function AVCSItemsListTable:render()
     ISPanel.render(self)
 end
 
-function AVCSItemsListTable:new(x, y, width, height, previewPanel)
-    local o = ISPanel:new(x, y, width, height)
-    setmetatable(o, self);
-    o.listHeaderColor = {r=0.4, g=0.4, b=0.4, a=0.3}
-    o.borderColor = {r=0.4, g=0.4, b=0.4, a=0}
-    o.backgroundColor = {r=0, g=0, b=0, a=1}
-    o.buttonBorderColor = {r=0.7, g=0.7, b=0.7, a=0.5}
-    o.totalResult = 0
-    o.filterWidgets = {}
-    o.filterWidgetMap = {}
-    panelContainers.previewPanel = previewPanel
-    AVCSItemsListTable.instance = o
-    return o
+
+
+function AVCSItemsListTable:getCurrentItem()
+    for k, v in ipairs(self.datas.items) do
+        print(k)
+        if k == self.datas.selected then
+            return v.item
+        end
+    end
 end
+
+
 
 function AVCSItemsListTable:createChildren()
     ISPanel.createChildren(self)
@@ -95,7 +93,9 @@ function AVCSItemsListTable:initList(module)
         self.datas:addItem(v.carModel, v)
     end
 
-    table.sort(self.datas.items, function(a,b) return not string.sort(a.item.carModel, b.item.carModel); end);
+    table.sort(self.datas.items, function(a,b) return not string.sort(a.item.carModel, b.item.carModel) end)
+
+    self.datas.selected = 1     -- Auto select the first item
 
 end
 
@@ -110,6 +110,11 @@ function AVCSItemsListTable:drawDatas(y, item, alt)
     
     local a = 0.9;
 
+
+
+
+
+
     if self.selected == item.index then
 
         self:drawRect(0, (y), self:getWidth(), self.itemheight, 0.3, 0.7, 0.35, 0.15)
@@ -117,10 +122,7 @@ function AVCSItemsListTable:drawDatas(y, item, alt)
 
         panelContainers.previewPanel.javaObject:fromLua2("setVehicleScript", "previewVeh", item.item.carModel)
         AVCSItemsListViewer.messages.owner = "Owner: " .. getPlayer():getUsername()
-        AVCSItemsListViewer.messages.location = "Location: " .. tostring(ZombRand(100, 2000) .. ", " .. tostring(ZombRand(100,2000)))
-
-        --self:drawText("Owner: " .. tostring(ZombRand(1,100)), 200, 10, 1, 1, 1, 1, UIFont.Medium)
-        --self:drawText("Location: ...", 10, 40, 1, 1, 1, 1, UIFont.Medium)
+        AVCSItemsListViewer.messages.location = "Location: " .. tostring(item.item.location[1]) .. ", " .. tostring(item.item.location[2])
 
     end
 
@@ -169,4 +171,21 @@ function AVCSItemsListTable:drawDatas(y, item, alt)
     -- end
     
     return y + self.itemheight;
+end
+
+--------------------------------
+
+function AVCSItemsListTable:new(x, y, width, height, previewPanel)
+    local o = ISPanel:new(x, y, width, height)
+    setmetatable(o, self);
+    o.listHeaderColor = {r=0.4, g=0.4, b=0.4, a=0.3}
+    o.borderColor = {r=0.4, g=0.4, b=0.4, a=0}
+    o.backgroundColor = {r=0, g=0, b=0, a=1}
+    o.buttonBorderColor = {r=0.7, g=0.7, b=0.7, a=0.5}
+    o.totalResult = 0
+    o.filterWidgets = {}
+    o.filterWidgetMap = {}
+    panelContainers.previewPanel = previewPanel
+    AVCSItemsListTable.instance = o
+    return o
 end

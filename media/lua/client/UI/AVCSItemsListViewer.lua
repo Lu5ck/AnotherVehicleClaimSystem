@@ -25,6 +25,10 @@ function AVCSItemsListViewer:initialise()
     local btnWid = 100
     local btnHgt = math.max(25, FONT_HGT_SMALL + 3 * 2)
     local padBottom = 10
+    local top = 50
+
+    local correctHeight = self.height - padBottom - btnHgt - padBottom - top
+
 
     -- self.playerSelect = ISComboBox:new(self.width - 10 - btnWid, 10, btnWid, btnHgt, self, self.onSelectPlayer)
     -- self.playerSelect:initialise()
@@ -34,8 +38,7 @@ function AVCSItemsListViewer:initialise()
     -- self.playerSelect:addOption("Player 4")
     -- self:addChild(self.playerSelect)
 
-    local top = 50
-    self.leftPanel = ISTabPanel:new(20, top, self.width/3, self.height - padBottom - btnHgt - padBottom - top)
+    self.leftPanel = ISTabPanel:new(20, top, self.width/3, correctHeight)
     self.leftPanel:initialise()
     self.leftPanel.borderColor = { r = 0, g = 0, b = 0, a = 0}
     self.leftPanel.target = self
@@ -69,7 +72,7 @@ function AVCSItemsListViewer:initialise()
     local updateBtnImg = getTexture("media/ui/emotes/gears_green.png")
 
     self.updateBtn = ISButton:new(updateBtnX, updateBtnY, 50, 50, "", self, AVCSItemsListViewer.onClick)
-    self.updateBtn.internal = "UNCLAIM"
+    self.updateBtn.internal = "REFRESH"
     self.updateBtn.anchorTop = false
     self.updateBtn.anchorBottom = true
     self.updateBtn.borderColor = {r=1, g=1, b=1, a=1}
@@ -82,8 +85,24 @@ function AVCSItemsListViewer:initialise()
     self:addChild(self.updateBtn)
 
 
+    local previewPanelWidth = 400
+    local previewPanelHeight = 400
+    local infoPanelY = top
 
-    self.previewPanel = AVCSPreviewScene:new(self.width/2, top, 400, 400)
+
+    self.infoPanel = ISPanel:new(self.width/2, infoPanelY, previewPanelWidth, 100)
+    self.infoPanel:initialise()
+    self.infoPanel.background = false
+    self.infoPanel.backgroundColor = {r=0, g=0, b=0, a=0}
+    self.infoPanel.borderColor = { r = 1, g = 1, b = 1, a = 1}
+    self.infoPanel.target = self
+    self.infoPanel.equalTabWidth = false
+    self:addChild(self.infoPanel)
+
+
+
+
+    self.previewPanel = AVCSPreviewScene:new(self.width/2, top, previewPanelWidth, correctHeight)
     self.previewPanel:initialise()
     self.previewPanel:instantiate()
     self.previewPanel:setAnchorTop(false)
@@ -97,14 +116,10 @@ function AVCSItemsListViewer:initialise()
     self:addChild(self.previewPanel)
 
 
-    self.infoPanel = ISPanel:new(self.width/3 + 150, top + 450, self.width/3 + 90, 100)
-    self.infoPanel:initialise()
-    self.infoPanel.background = false
-    self.infoPanel.backgroundColor = {r=0, g=0, b=0, a=0}
-    self.infoPanel.borderColor = { r = 1, g = 1, b = 1, a = 1}
-    self.infoPanel.target = self
-    self.infoPanel.equalTabWidth = false
-    self:addChild(self.infoPanel)
+
+
+
+
     
     self:initList()
 
@@ -167,22 +182,24 @@ function AVCSItemsListViewer:initList()
 
 
 
-    local listBox = AVCSItemsListTable:new(0, 0, self.leftPanel.width, self.leftPanel.height - self.leftPanel.tabHeight, self.previewPanel, self.infoPanel)
-    listBox:initialise()
+    self.listBox = AVCSItemsListTable:new(0, 0, self.leftPanel.width, self.leftPanel.height - self.leftPanel.tabHeight, self.previewPanel)
+    self.listBox:initialise()
 
-    self.leftPanel:addView("Personal", listBox)
-    listBox:initList(self.items)
+    self.leftPanel:addView("P", self.listBox)
+    self.listBox:initList(self.items)
 
-    self.leftPanel:addView("Faction", listBox)
-    self.leftPanel:addView("Safehouses", listBox)
+    self.leftPanel:addView("F", self.listBox)
+    self.leftPanel:addView("S", self.listBox)
 
 
-    self.leftPanel:activateView("Personal")
+    self.leftPanel:activateView("P")
 end
 
 function AVCSItemsListViewer:render()
 	ISCollapsableWindow.render(self)
 
+
+    -- Render the info
     
     -- TODO We must allign this to the left
     self.infoPanel:drawText(AVCSItemsListViewer.messages.owner, 10, 10, 1,1,1,1, UIFont.Medium)
@@ -201,11 +218,14 @@ end
 function AVCSItemsListViewer:prerender()
 	ISCollapsableWindow.prerender(self)
 
-    local infoX = self.width/3 + 140
-    local infoY = 500
 
-    local infoWidth = self.width/3 + 120
-    local infoHeight = 100
+
+    local infoX = self.infoPanel.x
+    local infoY = self.infoPanel.y
+
+    local infoWidth = self.infoPanel.width
+    local infoHeight = self.infoPanel.height
+
 
     self:drawRect(infoX, infoY, infoWidth, infoHeight, self.backgroundColor.a, self.backgroundColor.r, self.backgroundColor.g, self.backgroundColor.b);
     self:drawRectBorder(infoX, infoY, infoWidth, infoHeight, self.borderColor.a, self.borderColor.r, self.borderColor.g, self.borderColor.b);
@@ -222,6 +242,15 @@ end
 
 function AVCSItemsListViewer:onClick(button)
 
+    if button.internal == "UNCLAIM" then
+
+
+        local currentItem = self.listBox:getCurrentItem()
+
+        print("Unclaim car")
+    elseif button.internal == "REFRESH" then
+        print("Refresh")
+    end
 end
 
 function AVCSItemsListViewer:onSelectPlayer()
