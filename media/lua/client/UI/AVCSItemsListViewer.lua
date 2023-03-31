@@ -3,7 +3,8 @@ require "ISUI/ISCollapsableWindow"
 
 AVCSMenu = {
     isRefreshing = false,
-    isUnclaiming = false
+    isUnclaiming = false,
+    isItemsEmpty = true,
 }
 
 
@@ -70,6 +71,7 @@ function AVCSItemsListViewer:initialise()
 	self.unclaimBtn:setTextureRGBA(1, 0, 0, 1)
     self.unclaimBtn:initialise()
     self.unclaimBtn:instantiate()
+    self.unclaimBtn:setEnable(not AVCSMenu.isItemsEmpty)
     self:addChild(self.unclaimBtn)
 
 
@@ -160,6 +162,8 @@ function AVCSItemsListViewer:render()
     -- Render the info
     self.infoPanel:drawText(AVCSItemsListViewer.messages.owner, 10, 10, 1, 1, 1, 1, UIFont.NewSmall)
     self.infoPanel:drawText(AVCSItemsListViewer.messages.location, 10, 40, 1, 1, 1, 1, UIFont.NewSmall)
+
+    self.unclaimBtn:setEnable(not AVCSMenu.isItemsEmpty)
 
 end
 

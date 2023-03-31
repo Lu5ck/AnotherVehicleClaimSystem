@@ -38,6 +38,8 @@ AVCSBaseUI.GetPersonalVehicles = function()
         end
     end
 
+    
+    AVCSMenu.isItemsEmpty = #items == 0
     AVCSBaseUI.items = items
 
     return items

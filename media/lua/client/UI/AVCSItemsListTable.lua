@@ -81,16 +81,18 @@ local function updateOverride(self)
 
 
         if #self.items == 0 then
-            
+            print("items is empty!")
             -- Disable preview
             panelContainers.previewPanel.javaObject:fromLua2("setVehicleScript", "previewVeh", "")
             -- Disable text
             AVCSItemsListViewer.messages.owner = ""
             AVCSItemsListViewer.messages.location = ""
-    
+            
+            AVCSMenu.isItemsEmpty = true
+        else
+            print("items is not empty")
+            AVCSMenu.isItemsEmpty = false
         end
-
-
 
         AVCSMenu.isRefreshing = false
     end
