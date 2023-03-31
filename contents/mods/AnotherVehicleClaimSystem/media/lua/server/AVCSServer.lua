@@ -327,6 +327,22 @@ local function OnServerStarted()
 	end
 end
 
+-- For debugging basic functions via SP
+if getWorld():getGameMode() ~= "Multiplayer" then
+	-- When Mod first added to server
+	if not ModData.exists("AVCSByVehicleSQLID") then ModData.create("AVCSByVehicleSQLID") end
+	if not ModData.exists("AVCSByPlayerID") then ModData.create("AVCSByPlayerID") end
+
+	-- Set global variable as this is frequently accessed
+	AVCS.dbByVehicleSQLID = ModData.get("AVCSByVehicleSQLID")
+	AVCS.dbAVCSByPlayerID = ModData.get("AVCSByPlayerID")
+
+	-- Create a sorted table
+	if AVCS.sortedPlayerTimeoutClaim == nil then
+		createSortedPlayerTimeoutClaim()
+	end
+end
+
 Events.EveryTenMinutes.Add(AVCS.doClaimTimeout)
 Events.OnServerStarted.Add(OnServerStarted)
 Events.OnClientCommand.Add(AVCS.onClientCommand)
