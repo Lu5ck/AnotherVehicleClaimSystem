@@ -28,13 +28,17 @@ end
 
 
 
-function AVCSItemsListTable:getCurrentItem()
+function AVCSItemsListTable:getCurrentItemId()
+    print("Selected: " .. self.datas.selected)
+    
     for k, v in ipairs(self.datas.items) do
-        print(k)
+        print("Cycling: " .. k)
         if k == self.datas.selected then
-            return v.item
+            return v.item.id
+            
         end
     end
+
 end
 
 
@@ -116,6 +120,8 @@ function AVCSItemsListTable:drawDatas(y, item, alt)
 
 
     if self.selected == item.index then
+        -- FIXME workaroundy, but it should work
+        AVCSItemsListViewer.messages.vehicleId = item.item.id
 
         self:drawRect(0, (y), self:getWidth(), self.itemheight, 0.3, 0.7, 0.35, 0.15)
         --print(item.item.carModel)

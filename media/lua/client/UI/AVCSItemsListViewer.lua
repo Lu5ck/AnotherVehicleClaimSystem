@@ -134,52 +134,40 @@ end
 
 function AVCSItemsListViewer:initList()
 
-    local DEBUG = true
+    local DEBUG = false
 
     if DEBUG then
-        self.items = {
-        }
+        self.items = {}
 
-        self.items[1] = {carModel = "Base.CarTaxi", location = {1000, 2000}}
-        self.items[2] = {carModel = "Base.ModernCar", location = {2000, 512}}
+        self.items[1] = {carModel = "Base.CarTaxi", location = {1000, 2000}, id = "idid"}
+        self.items[2] = {carModel = "Base.ModernCar", location = {2000, 512}, id = "idid1"}
     else
-
-
         local playerClaimedCars = ModData.get("AVCSByPlayerID")
         local serverClaimedCars = ModData.get("AVCSByVehicleSQLID")
-    
+
         local playerName = getPlayer():getUsername()
         self.items = {}
-    
-    
+
         if playerClaimedCars then
-            
             local specificPlayerClaimedCars = playerClaimedCars[playerName]
-    
-        
             print("Loading vehicles list")
-        
+
             local index = 1
-            for x in pairs(specificPlayerClaimedCars) do
-                local singleCar = serverClaimedCars[x]
-        
+            for vehicleId, _ in pairs(specificPlayerClaimedCars) do
+                local singleCar = serverClaimedCars[vehicleId]
+
                 self.items[index] = {
                     carModel = singleCar.CarModel,
-                    location = {singleCar.LastLocationX, singleCar.LastLocationY}
+                    location = {singleCar.LastLocationX, singleCar.LastLocationY},
+                    id = vehicleId
                 }
-        
+
                 print(self.items[index].carModel)
                 index = index + 1
-        
+
             end
-    
         end
-
-
     end
-
-
-
 
 
     self.listBox = AVCSItemsListTable:new(0, 0, self.leftPanel.width, self.leftPanel.height - self.leftPanel.tabHeight, self.previewPanel)
@@ -245,7 +233,9 @@ function AVCSItemsListViewer:onClick(button)
     if button.internal == "UNCLAIM" then
 
 
-        local currentItem = self.listBox:getCurrentItem()
+        local vehicleId = AVCSItemsListViewer.messages.vehicleId
+        sendClientCommand(getPlayer(), "AVCS", "unclaimVehicle", {vehicle = vehicleId} )
+
 
         print("Unclaim car")
     elseif button.internal == "REFRESH" then
