@@ -45,7 +45,7 @@ function AVCSItemsListViewer:initialise()
     -- self.playerSelect:addOption("Player 4")
     -- self:addChild(self.playerSelect)
 
-    self.leftPanel = ISTabPanel:new(20, top, self.width/3, correctHeight)
+    self.leftPanel = AVCSTabPanel:new(20, top, self.width/3, correctHeight)
     self.leftPanel:initialise()
     self.leftPanel.borderColor = { r = 0, g = 0, b = 0, a = 0}
     self.leftPanel.target = self
@@ -140,17 +140,26 @@ function AVCSItemsListViewer:initListBoxes()
 
     local items = AVCSBaseUI.GetPersonalVehicles()
 
-
-
     self.listBox = AVCSItemsListTable:new(0, 0, self.leftPanel.width, self.leftPanel.height - self.leftPanel.tabHeight, self.previewPanel)
     self.listBox:initialise()
 
     -- TODO Add icons
-    self.leftPanel:addView("P", self.listBox)
+
+    local personalIcon = getTexture("media/ui/Container_Mannequin.png")
+    local safehousesIcon = getTexture("media/ui/LootableMaps/map_house.png")
+    local factionsIcon = getTexture("media/ui/faction_ico.png")
+
+
+    self.leftPanel:addView("P", personalIcon, self.listBox)
+
+
+
     self.listBox:initList(items)
 
-    self.leftPanel:addView("F", self.listBox)       -- TODO Make different listbox
-    self.leftPanel:addView("S", self.listBox)       -- TODO Make different listbox
+
+
+    self.leftPanel:addView("F", safehousesIcon, self.listBox)       -- TODO Make different listbox
+    self.leftPanel:addView("S", factionsIcon, self.listBox)       -- TODO Make different listbox
 
 
     self.leftPanel:activateView("P")
@@ -178,6 +187,13 @@ function AVCSItemsListViewer:prerender()
 
     self:drawRect(infoX, infoY, infoWidth, infoHeight, self.backgroundColor.a, self.backgroundColor.r, self.backgroundColor.g, self.backgroundColor.b);
     self:drawRectBorder(infoX, infoY, infoWidth, infoHeight, self.borderColor.a, self.borderColor.r, self.borderColor.g, self.borderColor.b);
+
+
+    -- Icons
+
+    --self:drawTextureScaled(personalIcon, 15, 15, 100, 100, 1, 1, 1, 1)
+
+
 
 end
 
@@ -227,6 +243,9 @@ end
 
 function AVCSItemsListViewer.OnOpenPanel()
     if AVCSItemsListViewer.instance then
+
+        print("Opening panel, instance already in")
+
         AVCSItemsListViewer.instance:setVisible(true)
         AVCSItemsListViewer.instance:addToUIManager()
         AVCSItemsListViewer.instance:setKeyboardFocus()
@@ -245,6 +264,7 @@ function AVCSItemsListViewer.OnOpenPanel()
     local modal = AVCSItemsListViewer:new(x, y, width, height)
     modal:initialise()
     modal:addToUIManager()
+    modal.instance:setVisible(true)
     modal.instance:setKeyboardFocus()
 end
 

@@ -7,10 +7,10 @@ AVCSBaseUI.GetPersonalVehicles = function()
     local items = {}
 
     if DEBUG then
-        -- self.items = {}
+        items[1] = {carModel = "Base.CarTaxi", location = {1000, 2000}, id = "idid"}
+        items[2] = {carModel = "Base.ModernCar", location = {2000, 512}, id = "idid1"}
 
-        -- self.items[1] = {carModel = "Base.CarTaxi", location = {1000, 2000}, id = "idid"}
-        -- self.items[2] = {carModel = "Base.ModernCar", location = {2000, 512}, id = "idid1"}
+
     else
         local playerClaimedCars = ModData.get("AVCSByPlayerID")
         local serverClaimedCars = ModData.get("AVCSByVehicleSQLID")
