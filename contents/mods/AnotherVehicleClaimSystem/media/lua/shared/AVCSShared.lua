@@ -109,7 +109,7 @@ function AVCS.checkPermission(playerObj, vehicleObj)
 	if SandboxVars.AVCS.AllowFaction then
 		local ownerObj = getPlayerByUserName(vehicleDB[vehicleSQL].OwnerPlayerID)
 		if Faction.isAlreadyInFaction(ownerObj) then
-			local factionObj = getPlayerFaction(ownerObj)
+			local factionObj = Faction.getPlayerFaction(ownerObj)
 			local factionPlayers = factionObj.getPlayers()
 			for i, v in ipairs(factionPlayers) do
 				if v == playerObj:getUsername() then
@@ -126,7 +126,7 @@ function AVCS.checkPermission(playerObj, vehicleObj)
 	
 	-- Safehouse Members
 	if SandboxVars.AVCS.AllowSafehouse then
-		local safehouseObj = alreadyHaveSafehouse(vehicleDB[vehicleSQL].OwnerPlayerID)
+		local safehouseObj = SafeHouse.hasSafehouse(vehicleDB[vehicleSQL].OwnerPlayerID)
 		if safehouseObj then
 			for i, v in ipairs(safehouseObj.getPlayers()) do
 				if v == playerObj:getUsername() then
