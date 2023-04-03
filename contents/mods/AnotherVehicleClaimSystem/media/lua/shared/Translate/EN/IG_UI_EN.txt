@@ -1,3 +1,0 @@
-IG_UI_EN = {
-	IGUI_AVCS_Vehicle_No_Permission = "Not my vehicle"
-}
