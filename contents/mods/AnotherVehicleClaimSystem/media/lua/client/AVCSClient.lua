@@ -128,6 +128,10 @@ AVCS.OnServerCommand = function(moduleName, command, arg)
 	end
 end
 
+local function OnPreFillWorldObjectContextMenu(player, context, worldObjects, test)
+    context:addOption(getText("ContextMenu_AVCS_ClientUserUI"), worldObjects, AVCSItemsListViewer.OnOpenPanel, nil)
+end
+
 local function OnConnected()
 	-- Get the latest Global ModData to work with
 	ModData.request("AVCSByVehicleSQLID")
@@ -152,6 +156,7 @@ local function EveryTenMinutes()
 	end
 end
 
+Events.OnPreFillWorldObjectContextMenu.Add(OnPreFillWorldObjectContextMenu)
 Events.EveryTenMinutes.Add(EveryTenMinutes)
 Events.OnReceiveGlobalModData.Add(OnReceiveGlobalModData)
 Events.OnConnected.Add(OnConnected)

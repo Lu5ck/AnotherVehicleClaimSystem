@@ -1,6 +1,4 @@
 IG_UI_EN = {
-
-	IGUI_AVCS_OpenMenu = "AVCS Menu",
 	IGUI_AVCS_Vehicle_No_Permission = "Not my vehicle"
 	IGUI_AVCS_Unclaim = "Unclaim"
 }
