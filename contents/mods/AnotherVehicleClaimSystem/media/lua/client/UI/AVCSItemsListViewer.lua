@@ -237,7 +237,8 @@ function AVCSItemsListViewer:setKeyboardFocus()
 end
 
 function AVCSItemsListViewer:close()
-    self:setVisible(false)
+    ISCollapsableWindow.close(self)
+    if AVCSItemsListViewer.instance then AVCSItemsListViewer.instance = nil end
     self:removeFromUIManager()
 end
 
@@ -276,20 +277,15 @@ function AVCSItemsListViewer:new(x, y, width, height)
     local o = ISCollapsableWindow:new(x, y, width, height)
     setmetatable(o, self)
     self.__index = self
-
     o.showBackground    	= true
 	o.showBorder        	= true
     o.borderColor = {r=0.4, g=0.4, b=0.4, a=1}
     o.backgroundColor = {r=0, g=0, b=0, a=0.8}
-
-
     o.title = "AVCS Menu"
     o.width = width
     o.height = height
-
 	o.visibleTarget			= o;
 	--o.visibleFunction		= ISSearchWindow.onToggleVisible;
-
     o.moveWithMouse = true
     o:setResizable(false)
 	o:setDrawFrame(true)
