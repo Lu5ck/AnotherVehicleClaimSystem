@@ -22,9 +22,9 @@ end
 local function claimCfmDialog(player, vehicle)
     local message = string.format("Confirm", vehicle:getScript():getName())
     local playerNum = player:getPlayerNum()
-    local modal = ISModalDialog:new(0, 0, 300, 150, message, true, player, claimVehicle, playerNum, vehicle)
-    modal:initialise()
-    modal:addToUIManager()
+    local modal = ISModalDialog:new((getCore():getScreenWidth() / 2) - (300 / 2), (getCore():getScreenHeight() / 2) - (150 / 2), 300, 150, message, true, player, claimVehicle, playerNum, vehicle)
+    modal:initialise();
+    modal:addToUIManager();
 end
 
 local function unclaimVehicle(player, button, vehicle)
@@ -37,9 +37,9 @@ end
 local function unclaimCfmDialog(player, vehicle)
     local message = string.format("Confirm", vehicle:getScript():getName())
     local playerNum = player:getPlayerNum()
-    local modal = ISModalDialog:new(0, 0, 300, 150, message, true, player, unclaimVehicle, playerNum, vehicle)
-    modal:initialise()
-    modal:addToUIManager()
+    local modal = ISModalDialog:new((getCore():getScreenWidth() / 2) - (300 / 2), (getCore():getScreenHeight() / 2) - (150 / 2), 300, 150, message, true, player, unclaimVehicle, playerNum, vehicle)
+    modal:initialise();
+    modal:addToUIManager();
 end
 
 -- Copy and override the vanilla menu to add our context menu in
@@ -55,36 +55,39 @@ function AVCS.addOptionToMenuOutsideVehicle(player, context, vehicle)
 	toolTip = ISToolTip:new()
 	toolTip:initialise()
 	toolTip:setVisible(false)
-	--option.toolTip = toolTip		-- FIXME option is not init
-	if type(checkResult) == "boolean" then		
+
+	if type(checkResult) == "boolean" then
 		if checkResult == true then
 			local playerInv = player:getInventory()
 			-- Free car
 			option = context:addOption(getText("ContextMenu_AVCS_ClaimVehicle"), player, claimCfmDialog, vehicle)
-
+			option.toolTip = toolTip
 			if playerInv:getItemCount("Base.AVCSClaimForm") < 1 then
-				toolTip.description = getText("Tooltip_AVCS_Needs") .. " <RGB:1,0,0>" .. getItemNameFromFullType("Base.AVCSClaimForm") .. " " .. playerInv:getItemCount("Base.AVCSClaimForm") .. "/1"
+				toolTip.description = getText("Tooltip_AVCS_Needs") .. " <LINE><RGB:1,0,0>" .. getItemNameFromFullType("Base.AVCSClaimForm") .. " " .. playerInv:getItemCount("Base.AVCSClaimForm") .. "/1"
 				option.notAvailable = true
 			else
-				toolTip.description = getText("Tooltip_AVCS_Needs") .. " <RGB:0,1,0>" .. getItemNameFromFullType("Base.AVCSClaimForm") .. " " .. playerInv:getItemCount("Base.AVCSClaimForm") .. "/1"
+				toolTip.description = getText("Tooltip_AVCS_Needs") .. " <LINE><RGB:0,1,0>" .. getItemNameFromFullType("Base.AVCSClaimForm") .. " " .. playerInv:getItemCount("Base.AVCSClaimForm") .. "/1"
 				option.notAvailable = false
 			end
-			option.toolTip = toolTip
+
 		elseif checkResult == false then
 			-- Not supported vehicle
 			option = context:addOption(getText("ContextMenu_AVCS_UnsupportedVehicle"), player, claimCfmDialog, vehicle)
+			option.toolTip = toolTip
 			toolTip.description = getText("Tooltip_AVCS_Unsupported")
 			option.notAvailable = true
 		end
 	elseif checkResult.permissions == true then
 		-- Owned car
 		option = context:addOption(getText("ContextMenu_AVCS_UnclaimVehicle"), player, unclaimCfmDialog, vehicle)
-		toolTip.description = getText("Tooltip_AVCS_Owner") .. ": " .. checkResult.ownerid
+		option.toolTip = toolTip
+		toolTip.description = getText("Tooltip_AVCS_Owner") .. ": " .. checkResult.ownerid .. " <LINE>" .. getText("Tooltip_AVCS_Expire") .. ": " .. os.date("%d-%b-%y", (checkResult.LastKnownLogonTime + (SandboxVars.AVCS.ClaimTimeout * 60 * 60)))
 		option.notAvailable = false
 	elseif checkResult.permissions == false then
 		-- Owned car
 		option = context:addOption(getText("ContextMenu_AVCS_UnclaimVehicle"), player, unclaimCfmDialog, vehicle)
-		toolTip.description = getText("Tooltip_AVCS_Owner") .. ": " .. checkResult.ownerid
+		option.toolTip = toolTip
+		toolTip.description = getText("Tooltip_AVCS_Owner") .. ": " .. checkResult.ownerid .. " <LINE>" .. getText("Tooltip_AVCS_Expire") .. ": " .. os.date("%d-%b-%y", (checkResult.LastKnownLogonTime + (SandboxVars.AVCS.ClaimTimeout * 60 * 60)))
 		option.notAvailable = true
 	end
 

@@ -33,5 +33,11 @@ option AVCS.UdderlyRespawn
 option AVCS.ServerSideChecking
 {
 		type = boolean, default = false,
-		page = AVCS, translation = ServerSideChecking,
+		page = AVCS, translation = AVCS_ServerSideChecking,
+}
+
+option AVCS.ClaimTimeout
+{
+		type = integer, min = 1, max = 999, default = 240,
+		page = AVCS, translation = AVCS_ClaimTimeout,
 }

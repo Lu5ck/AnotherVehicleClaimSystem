@@ -10,7 +10,8 @@ Sandbox_EN = {
 	Sandbox_AVCS_ReturnTicket_tooltip = "Claim ticket can be one-time use or can be returned on unclaim",
 	Sandbox_AVCS_UdderlyRespawn = "Udderly Spawn Random Car on Claim",
 	Sandbox_AVCS_UdderlyRespawn_tooltip = "Spawn a random car in the world through Udderly Respawn Mod",
-	Sandbox_ServerSideCheckUnclaim = "Confirm permission on server-side for unclaim",
-	Sandbox_ServerSideCheckUnclaim_tooltip = "This can increase overhead on server-side but you may need it if hackers are rampaging",
-	
+	Sandbox_AVCS_ServerSideCheckUnclaim = "Server-side Verification",
+	Sandbox_AVCS_ServerSideCheckUnclaim_tooltip = "Perform server-side verification for claim and unclaim, this can increase overhead on server-side but you may need it if hackers are rampaging",
+	Sandbox_AVCS_ClaimTimeout = "Claim timeout",
+	Sandbox_AVCS_ClaimTimeout_tooltip = "How long in hours from players last logon time before vehicle unclaim",
 }
