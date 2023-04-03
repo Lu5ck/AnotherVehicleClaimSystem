@@ -1,6 +1,3 @@
-require "ISUI/ISCollapsableWindow"
-
-
 AVCSMenu = {
     isRefreshing = false,
     isUnclaiming = false,
@@ -10,12 +7,7 @@ AVCSMenu = {
 
 AVCSItemsListViewer = ISCollapsableWindow:derive("AVCSItemsListViewer")
 AVCSItemsListViewer.messages = {}
-
-
-
 AVCSItemsListViewer.messages = {owner = "", location = ""}
-
-
 
 local FONT_HGT_SMALL = getTextManager():getFontHeight(UIFont.Small)
 
@@ -23,11 +15,9 @@ local FONT_HGT_SMALL = getTextManager():getFontHeight(UIFont.Small)
 --** AVCSItemsListViewer:initialise
 --**
 --************************************************************************--
-
 function AVCSItemsListViewer:initialise()
 
 	ISCollapsableWindow.initialise(self)
-
 
     local btnWid = 100
     local btnHgt = math.max(25, FONT_HGT_SMALL + 3 * 2)
@@ -35,7 +25,6 @@ function AVCSItemsListViewer:initialise()
     local top = 50
 
     local correctHeight = self.height - padBottom - btnHgt - padBottom - top
-
 
     -- self.playerSelect = ISComboBox:new(self.width - 10 - btnWid, 10, btnWid, btnHgt, self, self.onSelectPlayer)
     -- self.playerSelect:initialise()
@@ -51,8 +40,6 @@ function AVCSItemsListViewer:initialise()
     self.leftPanel.target = self
     self.leftPanel.equalTabWidth = false
     self:addChild(self.leftPanel)
-
-
 
     local unclaimBtnX = self.leftPanel.width + 50
     local unclaimBtnY = top + 200
@@ -74,7 +61,6 @@ function AVCSItemsListViewer:initialise()
     self.unclaimBtn:setEnable(not AVCSMenu.isItemsEmpty)
     self:addChild(self.unclaimBtn)
 
-
     local updateBtnX = self.leftPanel.width + 50
     local updateBtnY = unclaimBtnY + 100
     local updateBtnImg = getTexture("media/ui/emotes/gears_green.png")
@@ -92,11 +78,9 @@ function AVCSItemsListViewer:initialise()
     self.updateBtn:instantiate()
     self:addChild(self.updateBtn)
 
-
     local previewPanelWidth = 400
     local previewPanelHeight = 400
     local infoPanelY = top
-
 
     self.infoPanel = ISPanel:new(self.width/2, infoPanelY, previewPanelWidth, 100)
     self.infoPanel:initialise()
@@ -106,9 +90,6 @@ function AVCSItemsListViewer:initialise()
     self.infoPanel.target = self
     self.infoPanel.equalTabWidth = false
     self:addChild(self.infoPanel)
-
-
-
 
     self.previewPanel = AVCSPreviewScene:new(self.width/2, top, previewPanelWidth, correctHeight)
     self.previewPanel:initialise()
@@ -123,17 +104,13 @@ function AVCSItemsListViewer:initialise()
     self.previewPanel.javaObject:fromLua2("setVehicleScript", "previewVeh", "")
     self:addChild(self.previewPanel)
 
-
     -- Setup list boxes, personal, safehouses, factions
     self:initListBoxes()
-
-
 	self:addToUIManager()
 	self:setVisible(true)
 	self:update()
 	self:bringToTop()
 	ISLayoutManager.RegisterWindow('AVCSItemsListViewer', AVCSItemsListViewer, self)
-
 end
 
 function AVCSItemsListViewer:initListBoxes()
@@ -149,29 +126,18 @@ function AVCSItemsListViewer:initListBoxes()
     local safehousesIcon = getTexture("media/ui/LootableMaps/map_house.png")
     local factionsIcon = getTexture("media/ui/faction_ico.png")
 
-
     self.leftPanel:addView("P", personalIcon, self.listBox)
-
-
-
     self.listBox:initList(items)
-
-
-
     self.leftPanel:addView("F", safehousesIcon, self.listBox)       -- TODO Make different listbox
     self.leftPanel:addView("S", factionsIcon, self.listBox)       -- TODO Make different listbox
-
-
     self.leftPanel:activateView("P")
 end
 
 function AVCSItemsListViewer:render()
 	ISCollapsableWindow.render(self)
-
     -- Render the info
     self.infoPanel:drawText(AVCSItemsListViewer.messages.owner, 10, 10, 1, 1, 1, 1, UIFont.NewSmall)
     self.infoPanel:drawText(AVCSItemsListViewer.messages.location, 10, 40, 1, 1, 1, 1, UIFont.NewSmall)
-
     self.unclaimBtn:setEnable(not AVCSMenu.isItemsEmpty)
 
 end
@@ -181,16 +147,12 @@ function AVCSItemsListViewer:prerender()
 
     local infoX = self.infoPanel.x
     local infoY = self.infoPanel.y
-
     local infoWidth = self.infoPanel.width
     local infoHeight = self.infoPanel.height
 
     self:drawRect(infoX, infoY, infoWidth, infoHeight, self.backgroundColor.a, self.backgroundColor.r, self.backgroundColor.g, self.backgroundColor.b);
     self:drawRectBorder(infoX, infoY, infoWidth, infoHeight, self.borderColor.a, self.borderColor.r, self.borderColor.g, self.borderColor.b);
-
-
     -- Icons
-
     --self:drawTextureScaled(personalIcon, 15, 15, 100, 100, 1, 1, 1, 1)
 
 
@@ -212,17 +174,12 @@ function AVCSItemsListViewer:onClick(button)
         AVCSMenu.isUnclaiming = true
         sendClientCommand(getPlayer(), "AVCS", "unclaimVehicle", {sqlId = AVCSItemsListViewer.messages.sqlId} )
 
-
         -- TODO We should have a handshake from the server to be sure that we don't have access to that car anymore.
         AVCSMenu.isRefreshing = true
 
         print("Unclaim car")
     elseif button.internal == "REFRESH" then
-
-
         AVCSMenu.isRefreshing = true
-
-
         --self.items = AVCSBaseUI.GetPersonalVehicles()
         --self.listBox:initList(self.items)       -- TODO WE SHOULD REFRESH THE OTHER LIST BOXES!
         
@@ -246,12 +203,9 @@ function AVCSItemsListViewer.OnOpenPanel()
     if AVCSItemsListViewer.instance then
 
         print("Opening panel, instance already in")
-
         AVCSItemsListViewer.instance:setVisible(true)
         AVCSItemsListViewer.instance:addToUIManager()
         AVCSItemsListViewer.instance:setKeyboardFocus()
-        
-
         -- TODO force update
         return
     end
