@@ -67,9 +67,6 @@ function AVCS.UI.UserManagerMain:listVehiclesOnMouseDown(x, y)
     ISScrollingListBox.onMouseDown(self, x, y)
     if self.selected ~= prevListVehiclesSelected then
         prevListVehiclesSelected = self.selected
-        -- self.items
-        -- self.selected
-        -- self.parent
         AVCS.UI.UserManagerMain:listVehiclesOnSelectedChange(self.parent, self.items, self.selected)
     end
 end
@@ -78,6 +75,7 @@ function AVCS.UI.UserManagerMain:listVehiclesOnJoypadDirUp()
     ISScrollingListBox.onJoypadDirUp(self)
     if self.selected ~= prevListVehiclesSelected then
         prevListVehiclesSelected = self.selected
+        AVCS.UI.UserManagerMain:listVehiclesOnSelectedChange(self.parent, self.items, self.selected)
     end
 end
 
@@ -85,6 +83,7 @@ function AVCS.UI.UserManagerMain:listVehiclesOnJoypadDirDown()
     ISScrollingListBox.onJoypadDirDown(self)
     if self.selected ~= prevListVehiclesSelected then
         prevListVehiclesSelected = self.selected
+        AVCS.UI.UserManagerMain:listVehiclesOnSelectedChange(self.parent, self.items, self.selected)
     end
 end
 
@@ -96,8 +95,6 @@ function AVCS.UI.UserManagerMain:updateListVehicles()
 
     if prevTabBtn.internal == "tabPersonal" then
         if dbPlayers[getPlayer():getUsername()] == nil or #dbPlayers[getPlayer():getUsername()] == 1 then
-            self.listVehicles:addItem(getText("IGUI_AVCS_User_Manager_listVehicles_NoVehicle"), nil)
-            self.vehiclePreview.javaObject:fromLua2("setVehicleScript", "previewVeh", "")
         else
             for k, v in pairs(dbPlayers[getPlayer():getUsername()]) do
                 if k ~= "LastKnownLogonTime" then
@@ -212,8 +209,13 @@ function AVCS.UI.UserManagerMain:listVehiclesOnSelectedChange(parent, items, sel
     local vehicleSQLID = items[selected].item
     if vehicleSQLID == nil then return end
 
+    local dbPlayers = ModData.get("AVCSByPlayerID")
     local dbVehicles = ModData.get("AVCSByVehicleSQLID")
     parent.vehiclePreview.javaObject:fromLua2("setVehicleScript", "previewVeh", dbVehicles[vehicleSQLID].CarModel)
+    parent.lblVehicleOwnerInfo:setName(dbVehicles[items[selected].item].OwnerPlayerID)
+    parent.lblVehicleExpireInfo:setName(os.date("%d-%b-%y", (dbPlayers[dbVehicles[items[selected].item].OwnerPlayerID].LastKnownLogonTime + (SandboxVars.AVCS.ClaimTimeout * 60 * 60))))
+    parent.lblVehicleLocationInfo:setName(dbVehicles[items[selected].item].LastLocationX .. ", " .. dbVehicles[items[selected].item].LastLocationY)
+    parent.lblVehicleLastLocationUpdateInfo:setName(os.date("%d-%b-%y", (dbVehicles[items[selected].item].LastLocationUpdateDateTime)))
 end
 
 -- Create on-demand buttons
