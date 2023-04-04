@@ -128,8 +128,25 @@ AVCS.OnServerCommand = function(moduleName, command, arg)
 	end
 end
 
+local function openClientUserManager()
+	if AVCS.UI.UserInstance ~= nil then
+		AVCS.UI.UserInstance:close()
+	end
+
+	local width = 650
+    local height = 350
+
+    local x = getCore():getScreenWidth() / 2 - (width / 2)
+    local y = getCore():getScreenHeight() / 2 - (height / 2)
+
+    AVCS.UI.UserInstance = AVCS.UI.UserManagerMain:new(x, y, width, height)
+    AVCS.UI.UserInstance:initialise()
+    AVCS.UI.UserInstance:addToUIManager()
+    AVCS.UI.UserInstance:setVisible(true)
+end
+
 local function OnPreFillWorldObjectContextMenu(player, context, worldObjects, test)
-    context:addOption(getText("ContextMenu_AVCS_ClientUserUI"), worldObjects, AVCSItemsListViewer.OnOpenPanel, nil)
+    context:addOption(getText("ContextMenu_AVCS_ClientUserUI"), worldObjects, openClientUserManager, nil)
 end
 
 local function OnConnected()

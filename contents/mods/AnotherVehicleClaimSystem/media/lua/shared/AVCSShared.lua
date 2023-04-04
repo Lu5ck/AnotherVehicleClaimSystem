@@ -7,6 +7,7 @@
 
 -- Generic Functions that can be used by either client or server
 AVCS = AVCS or {}
+AVCS.UI = AVCS.UI or {}
 
 -- Ordered list of parts that cannot be removed by typical means
 -- We will store server-side SQL ID in one of those
