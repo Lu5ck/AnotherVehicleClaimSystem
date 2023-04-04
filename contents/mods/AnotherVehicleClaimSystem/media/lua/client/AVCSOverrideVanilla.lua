@@ -63,13 +63,17 @@ function AVCS.addOptionToMenuOutsideVehicle(player, context, vehicle)
 			option = context:addOption(getText("ContextMenu_AVCS_ClaimVehicle"), player, claimCfmDialog, vehicle)
 			option.toolTip = toolTip
 			if playerInv:getItemCount("Base.AVCSClaimForm") < 1 then
-				toolTip.description = getText("Tooltip_AVCS_Needs") .. " <LINE><RGB:1,0,0>" .. getItemNameFromFullType("Base.AVCSClaimForm") .. " " .. playerInv:getItemCount("Base.AVCSClaimForm") .. "/1"
+				toolTip.description = getText("Tooltip_AVCS_Needs") .. " <LINE><RGB:1,0.2,0.2>" .. getItemNameFromFullType("Base.AVCSClaimForm") .. " " .. playerInv:getItemCount("Base.AVCSClaimForm") .. "/1"
 				option.notAvailable = true
 			else
-				toolTip.description = getText("Tooltip_AVCS_Needs") .. " <LINE><RGB:0,1,0>" .. getItemNameFromFullType("Base.AVCSClaimForm") .. " " .. playerInv:getItemCount("Base.AVCSClaimForm") .. "/1"
-				option.notAvailable = false
+				if AVCS.checkMaxClaim(player) then
+					toolTip.description = getText("Tooltip_AVCS_Needs") .. " <LINE><RGB:0.2,1,0.2>" .. getItemNameFromFullType("Base.AVCSClaimForm") .. " " .. playerInv:getItemCount("Base.AVCSClaimForm") .. "/1"
+					option.notAvailable = false
+				else
+					toolTip.description = "<RGB:0.2,1,0.2>" .. getText("Tooltip_AVCS_ExceedLimit")
+					option.notAvailable = true
+				end
 			end
-
 		elseif checkResult == false then
 			-- Not supported vehicle
 			option = context:addOption(getText("ContextMenu_AVCS_UnsupportedVehicle"), player, claimCfmDialog, vehicle)
@@ -129,7 +133,7 @@ function ISEnterVehicle:new(character, vehicle, seat)
 		if checkResult then
 			return AVCS.oIsEnterVehicle(self, character, vehicle, seat)
 		else
-			self.character:setHaloNote(getText("IGUI_AVCS_Vehicle_No_Permission"), 250, 250, 250, 300)
+			character:setHaloNote(getText("IGUI_AVCS_Vehicle_No_Permission"), 250, 250, 250, 300)
 			local temp = {
 				ignoreAction = true
 			}
@@ -155,7 +159,7 @@ function ISSwitchVehicleSeat:new(character, seatTo)
 		if checkResult then
 			return AVCS.oISSwitchVehicleSeat(self, character, seatTo)
 		else
-			self.character:setHaloNote(getText("IGUI_AVCS_Vehicle_No_Permission"), 250, 250, 250, 300)
+			character:setHaloNote(getText("IGUI_AVCS_Vehicle_No_Permission"), 250, 250, 250, 300)
 			local temp = {
 				ignoreAction = true
 			}

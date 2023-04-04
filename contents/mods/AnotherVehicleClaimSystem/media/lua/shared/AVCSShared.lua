@@ -36,12 +36,20 @@ end
 
 function AVCS.checkMaxClaim(playerObj)
 	-- Privileged users has no limit
-	if not string.lower(playerObj:getAccessLevel()) == "none" then
+	if string.lower(playerObj:getAccessLevel()) ~= "none" then
 		return true
 	end
 
 	local tempDB = ModData.get("AVCSByPlayerID")
-	if #tempDB[playerObj.getUsername()] >= SandboxVars.AVCS.MaxVehicle then
+	if tempDB[playerObj:getUsername()] == nil then return true end
+
+	-- No easy way to get size other than count one by one, for key-value pair table
+	local tempSize = 0
+	for k, v in pairs(tempDB[playerObj:getUsername()]) do
+		tempSize = tempSize + 1
+	end
+
+	if tempSize - 1 >= SandboxVars.AVCS.MaxVehicle then
 		return false
 	else
 		return true
@@ -87,7 +95,7 @@ function AVCS.checkPermission(playerObj, vehicleObj)
 	end
 	
 	-- Privileged users
-	if not string.lower(playerObj:getAccessLevel()) == "none" then
+	if string.lower(playerObj:getAccessLevel()) ~= "none" then
 		local details = {
 			permissions = true,
 			ownerid = vehicleDB[vehicleSQL].OwnerPlayerID,
@@ -108,8 +116,8 @@ function AVCS.checkPermission(playerObj, vehicleObj)
 	
 	-- Faction Members
 	if SandboxVars.AVCS.AllowFaction then
-		local ownerObj = getPlayerByUserName(vehicleDB[vehicleSQL].OwnerPlayerID)
-		local factionObj = Faction.getPlayerFaction(getPlayerByUserName(vehicleDB[vehicleSQL].OwnerPlayerID))
+		local temp = vehicleDB[vehicleSQL].OwnerPlayerID
+		local factionObj = Faction.getPlayerFaction(vehicleDB[vehicleSQL].OwnerPlayerID)
 		if factionObj then
 			if factionObj:getOwner() == playerObj:getUsername() then
 				local details = {
