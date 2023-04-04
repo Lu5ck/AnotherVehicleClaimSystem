@@ -29,7 +29,7 @@ function AVCS.UI.UserManagerMain:btnUnclaim_onConfirmClick(btn, _, _)
         self.lblVehicleLastLocationUpdateInfo:setName(os.date("%d-%b-%y", (dbVehicles[self.listVehicles.items[self.listVehicles.selected].item].LastLocationUpdateDateTime)))
         self.btnUnclaim:setEnable(true)
     else
-        self.listVehicles:addItem("No Vehicle", nil)
+        self.listVehicles:addItem(getText("IGUI_AVCS_User_Manager_listVehicles_NoVehicle"), nil)
         self.vehiclePreview.javaObject:fromLua2("setVehicleScript", "previewVeh", "")
         self.lblVehicleOwnerInfo:setName("-")
         self.lblVehicleExpireInfo:setName("-")
@@ -96,7 +96,7 @@ function AVCS.UI.UserManagerMain:updateListVehicles()
 
     if prevTabBtn.internal == "tabPersonal" then
         if dbPlayers[getPlayer():getUsername()] == nil or #dbPlayers[getPlayer():getUsername()] == 1 then
-            self.listVehicles:addItem("No Vehicle", nil)
+            self.listVehicles:addItem(getText("IGUI_AVCS_User_Manager_listVehicles_NoVehicle"), nil)
             self.vehiclePreview.javaObject:fromLua2("setVehicleScript", "previewVeh", "")
         else
             for k, v in pairs(dbPlayers[getPlayer():getUsername()]) do
@@ -198,7 +198,7 @@ function AVCS.UI.UserManagerMain:updateListVehicles()
         self.lblVehicleLastLocationUpdateInfo:setName(os.date("%d-%b-%y", (dbVehicles[self.listVehicles.items[1].item].LastLocationUpdateDateTime)))
         self.btnUnclaim:setEnable(true)
     else
-        self.listVehicles:addItem("No Vehicle", nil)
+        self.listVehicles:addItem(getText("IGUI_AVCS_User_Manager_listVehicles_NoVehicle"), nil)
         self.vehiclePreview.javaObject:fromLua2("setVehicleScript", "previewVeh", "")
         self.lblVehicleOwnerInfo:setName("-")
         self.lblVehicleExpireInfo:setName("-")
@@ -275,7 +275,7 @@ function AVCS.UI.UserManagerMain:createChildren()
     self:addChild(self.vehiclePreview)
 
     -- Create Label for Vehicle Info
-    self.lblVehicleOwner = ISLabel:new(leftPaneHolderWidth + 1 + listVehiclesWidth + 1 + 5, padTop + 1, getTextManager():getFontHeight(UIFont.NewSmall), "Owner", 1, 1, 1, 1, UIFont.NewSmall, true)
+    self.lblVehicleOwner = ISLabel:new(leftPaneHolderWidth + 1 + listVehiclesWidth + 1 + 5, padTop + 1, getTextManager():getFontHeight(UIFont.NewSmall), getText("IGUI_AVCS_User_Manager_lblVehicleOwner"), 1, 1, 1, 1, UIFont.NewSmall, true)
     self.lblVehicleOwner:initialise()
     self.lblVehicleOwner:instantiate()
     self:addChild(self.lblVehicleOwner)
@@ -285,7 +285,7 @@ function AVCS.UI.UserManagerMain:createChildren()
     self.lblVehicleOwnerInfo:instantiate()
     self:addChild(self.lblVehicleOwnerInfo)
 
-    self.lblVehicleExpire = ISLabel:new(leftPaneHolderWidth + 1 + listVehiclesWidth + 1 + 5, padTop + 1 + ((getTextManager():getFontHeight(UIFont.NewSmall)) * 2) + (1 * 2), getTextManager():getFontHeight(UIFont.NewSmall), "Expire By", 1, 1, 1, 1, UIFont.NewSmall, true)
+    self.lblVehicleExpire = ISLabel:new(leftPaneHolderWidth + 1 + listVehiclesWidth + 1 + 5, padTop + 1 + ((getTextManager():getFontHeight(UIFont.NewSmall)) * 2) + (1 * 2), getTextManager():getFontHeight(UIFont.NewSmall), getText("IGUI_AVCS_User_Manager_lblVehicleExpire"), 1, 1, 1, 1, UIFont.NewSmall, true)
     self.lblVehicleExpire:initialise()
     self.lblVehicleExpire:instantiate()
     self:addChild(self.lblVehicleExpire)
@@ -295,7 +295,7 @@ function AVCS.UI.UserManagerMain:createChildren()
     self.lblVehicleExpireInfo:instantiate()
     self:addChild(self.lblVehicleExpireInfo)
 
-    self.lblVehicleLocation = ISLabel:new(leftPaneHolderWidth + 1 + listVehiclesWidth + 1 + 5 + 230, padTop + 1, getTextManager():getFontHeight(UIFont.NewSmall), "Location", 1, 1, 1, 1, UIFont.NewSmall, true)
+    self.lblVehicleLocation = ISLabel:new(leftPaneHolderWidth + 1 + listVehiclesWidth + 1 + 5 + 230, padTop + 1, getTextManager():getFontHeight(UIFont.NewSmall), getText("IGUI_AVCS_User_Manager_lblVehicleLocation"), 1, 1, 1, 1, UIFont.NewSmall, true)
     self.lblVehicleLocation:initialise()
     self.lblVehicleLocation:instantiate()
     self:addChild(self.lblVehicleLocation)
@@ -305,7 +305,7 @@ function AVCS.UI.UserManagerMain:createChildren()
     self.lblVehicleLocationInfo:instantiate()
     self:addChild(self.lblVehicleLocationInfo)
 
-    self.lblVehicleLastLocationUpdate = ISLabel:new(leftPaneHolderWidth + 1 + listVehiclesWidth + 1 + 5 + 230, padTop + 1 + ((getTextManager():getFontHeight(UIFont.NewSmall)) * 2) + (1 * 2), getTextManager():getFontHeight(UIFont.NewSmall), "Last Location Update", 1, 1, 1, 1, UIFont.NewSmall, true)
+    self.lblVehicleLastLocationUpdate = ISLabel:new(leftPaneHolderWidth + 1 + listVehiclesWidth + 1 + 5 + 230, padTop + 1 + ((getTextManager():getFontHeight(UIFont.NewSmall)) * 2) + (1 * 2), getTextManager():getFontHeight(UIFont.NewSmall), getText("IGUI_AVCS_User_Manager_lblVehicleLastLocationUpdate"), 1, 1, 1, 1, UIFont.NewSmall, true)
     self.lblVehicleLastLocationUpdate:initialise()
     self.lblVehicleLastLocationUpdate:instantiate()
     self:addChild(self.lblVehicleLastLocationUpdate)
@@ -319,7 +319,7 @@ function AVCS.UI.UserManagerMain:createChildren()
     local tempImage
     tempImage = getTexture("media/ui/avcs_personal.png")
     self:addTabButtons("tabPersonal", tempImage, 5, getTextManager():getFontHeight(UIFont.NewSmall) + 1 + 5)
-    self.tabButtons[1]:setTooltip("Personal Vehicles")
+    self.tabButtons[1]:setTooltip(getText("IGUI_AVCS_User_Manager_tabButton_Personal_Tooltip"))
     -- Set this as default tab button
     self.tabButtons[1]:setBackgroundRGBA(0.3, 0.3, 0.3, 1)
     prevTabBtn = self.tabButtons[1]
@@ -330,7 +330,7 @@ function AVCS.UI.UserManagerMain:createChildren()
             local y = getTextManager():getFontHeight(UIFont.NewSmall) + 1 + 5
             y = y + (tabBtnSize * #self.tabButtons) + 5
             self:addTabButtons("tabSafehouse", tempImage, 5, y)
-            self.tabButtons[#self.tabButtons]:setTooltip("Safehouse Members' Vehicles")
+            self.tabButtons[#self.tabButtons]:setTooltip(getText("IGUI_AVCS_User_Manager_tabButton_Safehouse_Tooltip"))
         --end
     end
     if SandboxVars.AVCS.AllowFaction then
@@ -342,7 +342,7 @@ function AVCS.UI.UserManagerMain:createChildren()
                 y = y + ((#self.tabButtons - 1) * 5)
             end
             self:addTabButtons("tabFaction", tempImage, 5, y)
-            self.tabButtons[#self.tabButtons]:setTooltip("Faction Members' Vehicles")
+            self.tabButtons[#self.tabButtons]:setTooltip(getText("IGUI_AVCS_User_Manager_tabButton_Faction_Tooltip"))
         --end
     end
 
@@ -359,7 +359,7 @@ function AVCS.UI.UserManagerMain:createChildren()
     self.btnUnclaim.borderColor = {r=0.5, g=0.5, b=0.5, a=1}
     self.btnUnclaim.backgroundColor = {r=0, g=0, b=0, a=1}
     self.btnUnclaim.displayBackground = true
-    self.btnUnclaim:setTooltip("Unclaim")
+    self.btnUnclaim:setTooltip(getText("IGUI_AVCS_User_Manager_btnUnclaim_Tooltip"))
 	self.btnUnclaim:setImage(getTexture("media/ui/avcs_delete.png"))
 	self.btnUnclaim:setTextureRGBA(1, 0, 0, 1)
     self.btnUnclaim:initialise()
@@ -398,7 +398,7 @@ function AVCS.UI.UserManagerMain:new(x, y, width, height)
     o.backgroundColor = {r=0.15, g=0.15, b=0.15, a=1.0}
 	o.showBorder = true
     o.borderColor = {r=0.4, g=0.4, b=0.4, a=1}
-    o.title = "AVCS Menu"
+    o.title = getText("IGUI_AVCS_User_Manager_Title")
     o.width = width
     o.height = height
 	o.visibleTarget	= o

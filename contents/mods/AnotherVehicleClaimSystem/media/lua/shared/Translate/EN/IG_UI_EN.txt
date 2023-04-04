@@ -1,4 +1,12 @@
 IG_UI_EN = {
-	IGUI_AVCS_Vehicle_No_Permission = "Not my vehicle"
-	IGUI_AVCS_Unclaim = "Unclaim"
+	IGUI_AVCS_User_Manager_Title = "Vehicle Manager",
+	IGUI_AVCS_User_Manager_btnUnclaim_Tooltip = "Unclaim vehicle",
+	IGUI_AVCS_User_Manager_tabButton_Personal_Tooltip = "Personal vehicle",
+	IGUI_AVCS_User_Manager_tabButton_Safehouse_Tooltip = "Safehouse wide vehicle",
+	IGUI_AVCS_User_Manager_tabButton_Faction_Tooltip = "Faction wide vehicle",
+	IGUI_AVCS_User_Manager_lblVehicleOwner = "Owner",
+	IGUI_AVCS_User_Manager_lblVehicleExpire = "Expire By",
+	IGUI_AVCS_User_Manager_lblVehicleLocation = "Last Location",
+	IGUI_AVCS_User_Manager_lblVehicleLastLocationUpdate = "Last Location Update",
+	IGUI_AVCS_User_Manager_listVehicles_NoVehicle = "No Vehicle",
 }
