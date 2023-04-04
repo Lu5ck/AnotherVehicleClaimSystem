@@ -116,7 +116,6 @@ function AVCS.checkPermission(playerObj, vehicleObj)
 	
 	-- Faction Members
 	if SandboxVars.AVCS.AllowFaction then
-		local temp = vehicleDB[vehicleSQL].OwnerPlayerID
 		local factionObj = Faction.getPlayerFaction(vehicleDB[vehicleSQL].OwnerPlayerID)
 		if factionObj then
 			if factionObj:getOwner() == playerObj:getUsername() then
