@@ -4,4 +4,5 @@ Tooltip_EN = {
     Tooltip_AVCS_Owner = "Owner",
     Tooltip_AVCS_Expire = "Expire",
     Tooltip_AVCS_Towed = "Cannot be towed or towing",
+    Tooltip_AVCS_ExceedLimit = "Exceed Claim Limit",
 }
