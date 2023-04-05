@@ -1,5 +1,5 @@
 IG_UI_EN = {
-	IGUI_AVCS_User_Manager_Title = "Vehicle Manager",
+	IGUI_AVCS_User_Manager_Title = "Claimed Vehicles Manager",
 	IGUI_AVCS_User_Manager_btnUnclaim_Tooltip = "Unclaim vehicle",
 	IGUI_AVCS_User_Manager_tabButton_Personal_Tooltip = "Personal vehicle",
 	IGUI_AVCS_User_Manager_tabButton_Safehouse_Tooltip = "Safehouse wide vehicle",
@@ -10,4 +10,5 @@ IG_UI_EN = {
 	IGUI_AVCS_User_Manager_lblVehicleLastLocationUpdate = "Last Location Update",
 	IGUI_AVCS_User_Manager_listVehicles_NoVehicle = "No Vehicle",
 	IGUI_AVCS_Vehicle_No_Permission = "No permission",
+	IGUI_ItemCat_AVCS = "AVCS",
 }
