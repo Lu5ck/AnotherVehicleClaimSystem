@@ -37,8 +37,9 @@ function isAVCSVehicleUnclaimAction:perform()
         self.character:getEmitter():stopSound(self.sound)
     end
 
-	--local form = self.character:getInventory():getFirstTypeRecurse("AVCSClaimForm")
-	--form:getContainer():Remove(form)
+    if SandboxVars.AVCS.ReturnTicket then
+        self.character:getInventory():AddItem("Base.AVCSClaimOrb")
+    end
 
 	local tempPart = AVCS.getMulePart(self.vehicle)
 	sendClientCommand(self.character, "AVCS", "unclaimVehicle", { tempPart:getModData().SQLID })
