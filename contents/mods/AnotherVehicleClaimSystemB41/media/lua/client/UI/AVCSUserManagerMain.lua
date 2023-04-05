@@ -327,7 +327,7 @@ function AVCS.UI.UserManagerMain:createChildren()
     prevTabBtn = self.tabButtons[1]
     
     if SandboxVars.AVCS.AllowSafehouse then
-        --if SafeHouse.hasSafehouse(getPlayer()) then
+        --if SafeHouse.hasSafehouse(getPlayer():getUsername()) then
             tempImage = getTexture("media/ui/avcs_safehouse.png")
             local y = getTextManager():getFontHeight(UIFont.NewSmall) + 1 + 5
             y = y + (tabBtnSize * #self.tabButtons) + 5
@@ -336,7 +336,7 @@ function AVCS.UI.UserManagerMain:createChildren()
         --end
     end
     if SandboxVars.AVCS.AllowFaction then
-        --if Faction.isAlreadyInFaction(getPlayer()) then
+        --if Faction.getPlayerFaction(getPlayer():getUsername()) then
             tempImage = getTexture("media/ui/avcs_factions.png")
             local y = getTextManager():getFontHeight(UIFont.NewSmall) + 1 + 5
             y = y + (tabBtnSize * #self.tabButtons) + 5
