@@ -39,8 +39,8 @@ function isAVCSVehicleClaimAction:perform()
 	
 	sendClientCommand(self.character, "AVCS", "claimVehicle", { vehicle = self.vehicle:getId() })
 
-	--local form = self.character:getInventory():getFirstTypeRecurse("AVCSClaimForm")
-	--form:getContainer():Remove(form)
+	local form = self.character:getInventory():getFirstTypeRecurse("AVCSClaimOrb")
+	form:getContainer():Remove(form)
 
     if UdderlyVehicleRespawn and SandboxVars.AVCS.UdderlyRespawn then
         UdderlyVehicleRespawn.SpawnRandomVehicleAtRandomZoneInRandomCell()
