@@ -16,13 +16,13 @@ function isAVCSVehicleUnclaimAction:update()
     self.character:faceThisObject(self.vehicle)
     self.character:setMetabolicTarget(Metabolics.LightDomestic)
     if not self.character:getEmitter():isPlaying(self.sound) then
-        self.sound = self.character:playSound("Hammering")
+        self.sound = self.character:playSound("AVCSClaimSound")
     end
 end
 
 function isAVCSVehicleUnclaimAction:start()
     self:setActionAnim("VehicleWorkOnMid")
-    self.sound = self.character:playSound("Hammering")
+    self.sound = self.character:playSound("AVCSClaimSound")
 end
 
 function isAVCSVehicleUnclaimAction:stop()
