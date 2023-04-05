@@ -1,0 +1,15 @@
+module Base {
+	recipe Craft Mysterious Vehicle Claim Orb
+	{
+		RippedSheets=25,
+		Thread=5,
+        MetalPipe = 1,
+        Screws = 5,
+		keep Pen,
+		keep Hammer,
+		Result 		: AVCSClaimOrb,
+		Time 		: 60,
+		Sound:Hammering,
+		Category	: General,
+	}
+}
