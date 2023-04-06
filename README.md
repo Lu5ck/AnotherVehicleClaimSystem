@@ -8,17 +8,19 @@ Tracking vehicle is unusually difficult in PZ. PZ does not provide a good source
 - Global Database
 This mod started out with the goal of having a centralized database thus in this case, we use the global mod data. Global mod data is basically a fancy key/value table and so we structured two such tables
   - AVCSByVehicleSQLID
-    - OwnerPlayerID = Username
-    - ClaimDateTime = getTimestamp()
-    - CarModel = Base.Car
-    - LastLocationX = 1239
-    - LastLocationY = 1459
-    - LastLocationUpdateDateTime = getTimestamp()
+    - [Vehicle SQL ID]
+      - OwnerPlayerID = Username
+      - ClaimDateTime = getTimestamp()
+      - CarModel = Base.Car
+      - LastLocationX = 1239
+      - LastLocationY = 1459
+      - LastLocationUpdateDateTime = getTimestamp()
   - AVCSByPlayerID
-    - [VehicleSQLID1] = true
-    - [VehicleSQLID2] = true
-    - [VehicleSQLID.etc] = true
-    - LastKnownLogonTime = getTimestamp()
+    - [Username]
+      - [VehicleSQLID1] = true
+      - [VehicleSQLID2] = true
+      - [VehicleSQLID.etc] = true
+      - LastKnownLogonTime = getTimestamp()
     
 These tables are structured similarily to a database with vehicle SQL ID acting as either primary or foreign key, player username acting as either primary or foreign key. As this is a key/value table, as long we have vehicle SQL ID or player username, we can obtain the related data easily with minimum overhead.
 
