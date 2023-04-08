@@ -84,8 +84,8 @@ function AVCS.claimVehicle(playerObj, vehicleID)
 			writeLog("AVCS", "[" .. getTimestamp() .. "] Warning: Attempting to claim already owned vehicle [" .. playerObj:getUsername() .. "] [" .. vehicleObj:getScript():getFullName() .. "] [" .. math.floor(vehicleObj:getX()) .. "," .. math.floor(vehicleObj:getY()) .. "]")
 		end
 		-- Desync has occurred, force sync everyone
-		--ModData.transmit("AVCSByVehicleSQLID")
-		--ModData.transmit("AVCSByPlayerID")
+		ModData.transmit("AVCSByVehicleSQLID")
+		ModData.transmit("AVCSByPlayerID")
 	else
 		AVCS.dbByVehicleSQLID[vehicleObj:getSqlId()] = {
 			OwnerPlayerID = playerObj:getUsername(),
@@ -186,8 +186,8 @@ function AVCS.unclaimVehicle(playerObj, vehicleID)
 		sendServerCommand("AVCS", "updateClientUnclaimVehicle", tempArr)
 	else
 		-- Desync has occurred, force sync everyone
-		--ModData.transmit("AVCSByVehicleSQLID")
-		--ModData.transmit("AVCSByPlayerID")
+		ModData.transmit("AVCSByVehicleSQLID")
+		ModData.transmit("AVCSByPlayerID")
 	end
 end
 
@@ -217,6 +217,10 @@ AVCS.onClientCommand = function(moduleName, command, playerObj, vehicleID)
 					-- Datetime, Unix Time, Warning message, offender username, vehicle full name, coordinate
 					-- [26-03-23 22:23:36.671] [1679840616] Warning: Attempting to unclaim without permission [Username] [Base.ExtremeCar] [13026,1215]
 					writeLog("AVCS", "[" .. getTimestamp() .. "] Warning: Attempting to unclaim without permission [" .. playerObj:getUsername() .. "] [" .. AVCS.dbByVehicleSQLID[vehicleID[1]].CarModel .. "] [" .. AVCS.dbByVehicleSQLID[vehicleID[1]].LastLocationX .. "," .. AVCS.dbByVehicleSQLID[vehicleID[1]].LastLocationY .. "]")
+
+					-- Possible desync has occurred, force sync everyone
+					ModData.transmit("AVCSByVehicleSQLID")
+					ModData.transmit("AVCSByPlayerID")
 					return
 				end
 			elseif checkResult.permissions == false then
@@ -224,6 +228,10 @@ AVCS.onClientCommand = function(moduleName, command, playerObj, vehicleID)
 				-- Datetime, Unix Time, Warning message, offender username, vehicle full name, coordinate
 				-- [26-03-23 22:23:36.671] [1679840616] Warning: Attempting to unclaim without permission [Username] [Base.ExtremeCar] [13026,1215]
 				writeLog("AVCS", "[" .. getTimestamp() .. "] Warning: Attempting to unclaim without permission [" .. playerObj:getUsername() .. "] [" .. AVCS.dbByVehicleSQLID[vehicleID[1]].CarModel .. "] [" .. AVCS.dbByVehicleSQLID[vehicleID[1]].LastLocationX .. "," .. AVCS.dbByVehicleSQLID[vehicleID[1]].LastLocationY .. "]")
+
+				-- Possible desync has occurred, force sync everyone
+				ModData.transmit("AVCSByVehicleSQLID")
+				ModData.transmit("AVCSByPlayerID")
 				return
 			end
 		end
