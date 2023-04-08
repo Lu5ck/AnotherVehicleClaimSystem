@@ -30,7 +30,7 @@ In PZ, global mod data is fully controlled by the modder such that the modders h
 In animated actions, it go through several stages. We override the very first stage to do our permission checking, it is the only stage that make sense.
 
 - Logging
-"isAVCSVehicleClaimAction" and "isAVCSVehicleUnclaimAction" can be manually added to log in "servertest.ini". Otherwise, if you enabled server-side permission validation for claiming and unclaiming, any abnormality will logged to the vanilla log folder under AVCS tag.
+"ISAVCSVehicleClaimAction" and "ISAVCSVehicleUnclaimAction" can be manually added to log in "servertest.ini". Otherwise, if you enabled server-side permission validation for claiming and unclaiming, any abnormality will logged to the vanilla log folder under AVCS tag.
 
 ## Future
 I don't know what future will hold for this mod. This mod can be expanded into a more comphrensive claiming system involving a seperate claim for factions and safehouses, likewise customized permissions just by expanding the database via global mod data and add related code to it. Unforutnately, time is not something I have a lot thus likely not add these features which is why I made this open source so in hope that others will expand it if they ever feel the passion to.

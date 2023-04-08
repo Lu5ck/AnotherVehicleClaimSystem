@@ -1,18 +1,18 @@
 require "TimedActions/ISBaseTimedAction"
 
 -- By adding this action, we can utilize the base game log system
-isAVCSVehicleUnclaimAction = ISBaseTimedAction:derive("isAVCSVehicleUnclaimAction")
+ISAVCSVehicleUnclaimAction = ISBaseTimedAction:derive("ISAVCSVehicleUnclaimAction")
 
-function isAVCSVehicleUnclaimAction:isValid()
+function ISAVCSVehicleUnclaimAction:isValid()
     return self.vehicle and not self.vehicle:isRemovedFromWorld()
 end
 
-function isAVCSVehicleUnclaimAction:waitToStart()
+function ISAVCSVehicleUnclaimAction:waitToStart()
     self.character:faceThisObject(self.vehicle)
     return self.character:shouldBeTurning()
 end
 
-function isAVCSVehicleUnclaimAction:update()
+function ISAVCSVehicleUnclaimAction:update()
     self.character:faceThisObject(self.vehicle)
     self.character:setMetabolicTarget(Metabolics.LightDomestic)
     if not self.character:getEmitter():isPlaying(self.sound) then
@@ -20,19 +20,19 @@ function isAVCSVehicleUnclaimAction:update()
     end
 end
 
-function isAVCSVehicleUnclaimAction:start()
+function ISAVCSVehicleUnclaimAction:start()
     self:setActionAnim("VehicleWorkOnMid")
     self.sound = self.character:playSound("AVCSClaimSound")
 end
 
-function isAVCSVehicleUnclaimAction:stop()
+function ISAVCSVehicleUnclaimAction:stop()
     if self.sound ~= 0 then
         self.character:getEmitter():stopSound(self.sound)
     end
     ISBaseTimedAction.stop(self)
 end
 
-function isAVCSVehicleUnclaimAction:perform()
+function ISAVCSVehicleUnclaimAction:perform()
     if self.sound ~= 0 then
         self.character:getEmitter():stopSound(self.sound)
     end
@@ -51,7 +51,7 @@ function isAVCSVehicleUnclaimAction:perform()
     ISBaseTimedAction.perform(self)
 end
 
-function isAVCSVehicleUnclaimAction:new(character, vehicle)
+function ISAVCSVehicleUnclaimAction:new(character, vehicle)
     local o = {}
     setmetatable(o, self)
     self.__index = self

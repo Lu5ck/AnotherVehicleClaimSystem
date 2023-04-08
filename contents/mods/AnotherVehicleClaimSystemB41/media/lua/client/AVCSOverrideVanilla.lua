@@ -15,7 +15,7 @@ require "luautils"
 local function claimVehicle(player, button, vehicle)
     if button.internal == "NO" then return end
     if luautils.walkAdj(player, vehicle:getSquare()) then
-        ISTimedActionQueue.add(isAVCSVehicleClaimAction:new(player, vehicle))
+        ISTimedActionQueue.add(ISAVCSVehicleClaimAction:new(player, vehicle))
     end
 end
 
@@ -30,7 +30,7 @@ end
 local function unclaimVehicle(player, button, vehicle)
     if button.internal == "NO" then return end
     if luautils.walkAdj(player, vehicle:getSquare()) then
-        ISTimedActionQueue.add(isAVCSVehicleUnclaimAction:new(player, vehicle))
+        ISTimedActionQueue.add(ISAVCSVehicleUnclaimAction:new(player, vehicle))
     end
 end
 
