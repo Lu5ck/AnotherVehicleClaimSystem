@@ -11,6 +11,7 @@ AVCS.UI = AVCS.UI or {}
 
 -- Ordered list of parts that cannot be removed by typical means
 -- We will store server-side SQL ID in one of those
+--[[
 AVCS.muleParts = AVCS.muleParts or {
 	"GloveBox",
 	"TruckBed",
@@ -19,19 +20,35 @@ AVCS.muleParts = AVCS.muleParts or {
 	"M101A3Trunk", -- K15 Vehicles
 	"Engine"
 }
-
+--]]
 -- Ingame debugger is unreliable but this does work
 function AVCS.getMulePart(vehicleObj)
+	AVCS.matchTrunkPart("trunkdoor")
 	local tempPart = false
-	if vehicleObj then
-		for i, v in ipairs(AVCS.muleParts) do
-			tempPart = vehicleObj:getPartById(v)
-			if tempPart then
-				return tempPart
-			end
+	-- Split by ";"
+	for s in string.gmatch(SandboxVars.AVCS.MuleParts, "([^;]+)") do
+		-- Trim leading and trailing white spaces
+		tempPart = vehicleObj:getPartById(s:match("^%s*(.-)%s*$"))
+		if tempPart then
+			return tempPart
 		end
 	end
 	return tempPart
+end
+
+function AVCS.matchTrunkPart(strTrunk)
+	if strTrunk == nil then
+		return false
+	end
+
+	if type(strTrunk) == "string" and string.len(strTrunk) > 0 then
+		for s in string.gmatch(SandboxVars.AVCS.TrunkParts, "([^;]+)") do
+			if string.lower(s:match("^%s*(.-)%s*$")) == string.lower(strTrunk) then
+				return true
+			end
+		end
+	end
+	return false
 end
 
 function AVCS.checkMaxClaim(playerObj)

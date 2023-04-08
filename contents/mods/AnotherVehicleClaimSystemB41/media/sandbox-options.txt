@@ -41,3 +41,15 @@ option AVCS.ClaimTimeout
 		type = integer, min = 1, max = 999, default = 240,
 		page = AVCS, translation = AVCS_ClaimTimeout,
 }
+
+option AVCS.MuleParts
+{
+		type = string, default = GloveBox;TruckBed;TruckBedOpen;TrailerTrunk;M101A3Trunk;Engine,
+		page = AVCS, translation = AVCS_MuleParts,
+}
+
+option AVCS.TrunkParts
+{
+		type = string, default = TrunkDoor;DoorRear,
+		page = AVCS, translation = AVCS_TrunkParts,
+}

@@ -326,7 +326,7 @@ function ISOpenVehicleDoor:new(character, vehicle, partOrSeat)
 
 	-- Opening from outside
 	local tempID = string.lower(partOrSeat:getId())
-	if tempID ~= "trunkdoor" and tempID ~= "doorrear" then
+	if not AVCS.matchTrunkPart(tempID) then
 		return AVCS.oISOpenVehicleDoor(self, character, vehicle, partOrSeat)
 	end
 
