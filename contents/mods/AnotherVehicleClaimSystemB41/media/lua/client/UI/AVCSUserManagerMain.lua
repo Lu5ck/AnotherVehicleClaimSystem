@@ -232,6 +232,20 @@ function AVCS.UI.UserManagerMain:addTabButtons(btnName, bgImage, x, y)
     self:addChild(self.tabButtons[i])
 end
 
+function AVCS.UI.UserManagerMain:vehiclePreviewOnRightMouseDown(x, y)
+    if (self.parent.vehiclePreview:getView() == "Right") then
+        self.parent.vehiclePreview:setView("Top")
+    elseif (self.parent.vehiclePreview:getView() == "Top") then
+        self.parent.vehiclePreview:setView("Front")
+    elseif (self.parent.vehiclePreview:getView() == "Front") then
+        self.parent.vehiclePreview:setView("Left")
+    elseif (self.parent.vehiclePreview:getView() == "Left") then
+        self.parent.vehiclePreview:setView("Back")
+    elseif (self.parent.vehiclePreview:getView() == "Back") then
+        self.parent.vehiclePreview:setView("Right")
+    end
+end
+
 function AVCS.UI.UserManagerMain:createChildren()
     ISCollapsableWindow.createChildren(self)
 
@@ -258,6 +272,7 @@ function AVCS.UI.UserManagerMain:createChildren()
 
     -- Create Vehicle Preview
     self.vehiclePreview = ISUI3DScene:new(leftPaneHolderWidth + 1 + listVehiclesWidth + 1, padTop, self.width - leftPaneHolderWidth - 1 - listVehiclesWidth - 1, self.height - padTop)
+    self.vehiclePreview.onRightMouseDown = self.vehiclePreviewOnRightMouseDown
     self.vehiclePreview:initialise()
     self.vehiclePreview:instantiate()
     self.vehiclePreview:setAnchorTop(false)
