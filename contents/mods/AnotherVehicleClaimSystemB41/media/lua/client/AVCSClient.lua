@@ -96,6 +96,14 @@ function AVCS.updateClientLastKnownLogonTime()
 	end
 end
 --]]
+
+function AVCS.forcesyncClientGlobalModData(arg)
+	if getPlayer():getUsername() == arg[1] then
+		ModData.request("AVCSByVehicleSQLID")
+		ModData.request("AVCSByPlayerID")
+	end
+end
+
 AVCS.OnServerCommand = function(moduleName, command, arg)
 	if moduleName == "AVCS" and command == "updateClientClaimVehicle" then
 		AVCS.updateClientClaimVehicle(arg)
@@ -103,6 +111,8 @@ AVCS.OnServerCommand = function(moduleName, command, arg)
 		AVCS.updateClientUnclaimVehicle(arg)
 	elseif moduleName == "AVCS" and command == "updateClientVehicleCoordinate" then
 		AVCS.updateClientVehicleCoordinate(arg)
+	elseif moduleName == "AVCS" and command == "forcesyncClientGlobalModData" then
+		AVCS.forcesyncClientGlobalModData(arg)
 	end
 end
 
