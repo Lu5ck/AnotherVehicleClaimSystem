@@ -19,14 +19,12 @@ function AVCS.UI.UserManagerMain:btnUnclaim_onConfirmClick(btn, _, _)
     sendClientCommand(getPlayer(), "AVCS", "unclaimVehicle", { self.listVehicles.items[self.listVehicles.selected].item })
     self.listVehicles:removeItemByIndex(self.listVehicles.selected)
 
-    local dbPlayers = ModData.get("AVCSByPlayerID")
-    local dbVehicles = ModData.get("AVCSByVehicleSQLID")
     if self.listVehicles.selected ~= 0 then
-        self.vehiclePreview.javaObject:fromLua2("setVehicleScript", "previewVeh", dbVehicles[self.listVehicles.items[self.listVehicles.selected].item].CarModel)
-        self.lblVehicleOwnerInfo:setName(dbVehicles[self.listVehicles.items[self.listVehicles.selected].item].OwnerPlayerID)
-        self.lblVehicleExpireInfo:setName(os.date("%d-%b-%y", (dbPlayers[dbVehicles[self.listVehicles.items[self.listVehicles.selected].item].OwnerPlayerID].LastKnownLogonTime + (SandboxVars.AVCS.ClaimTimeout * 60 * 60))))
-        self.lblVehicleLocationInfo:setName(dbVehicles[self.listVehicles.items[self.listVehicles.selected].item].LastLocationX .. ", " .. dbVehicles[self.listVehicles.items[self.listVehicles.selected].item].LastLocationY)
-        self.lblVehicleLastLocationUpdateInfo:setName(os.date("%d-%b-%y", (dbVehicles[self.listVehicles.items[self.listVehicles.selected].item].LastLocationUpdateDateTime)))
+        self.vehiclePreview.javaObject:fromLua2("setVehicleScript", "previewVeh", AVCS.dbByVehicleSQLID[self.listVehicles.items[self.listVehicles.selected].item].CarModel)
+        self.lblVehicleOwnerInfo:setName(AVCS.dbByVehicleSQLID[self.listVehicles.items[self.listVehicles.selected].item].OwnerPlayerID)
+        self.lblVehicleExpireInfo:setName(os.date("%d-%b-%y", (AVCS.dbByPlayerID[AVCS.dbByVehicleSQLID[self.listVehicles.items[self.listVehicles.selected].item].OwnerPlayerID].LastKnownLogonTime + (SandboxVars.AVCS.ClaimTimeout * 60 * 60))))
+        self.lblVehicleLocationInfo:setName(AVCS.dbByVehicleSQLID[self.listVehicles.items[self.listVehicles.selected].item].LastLocationX .. ", " .. AVCS.dbByVehicleSQLID[self.listVehicles.items[self.listVehicles.selected].item].LastLocationY)
+        self.lblVehicleLastLocationUpdateInfo:setName(os.date("%d-%b-%y", (AVCS.dbByVehicleSQLID[self.listVehicles.items[self.listVehicles.selected].item].LastLocationUpdateDateTime)))
         self.btnUnclaim:setEnable(true)
     else
         self.listVehicles:addItem(getText("IGUI_AVCS_User_Manager_listVehicles_NoVehicle"), nil)
@@ -88,18 +86,16 @@ function AVCS.UI.UserManagerMain:listVehiclesOnJoypadDirDown()
 end
 
 function AVCS.UI.UserManagerMain:updateListVehicles()
-    local dbPlayers = ModData.get("AVCSByPlayerID")
-    local dbVehicles = ModData.get("AVCSByVehicleSQLID")
     self.listVehicles:clear()
     prevListVehiclesSelected = 1
 
     if prevTabBtn.internal == "tabPersonal" then
-        if dbPlayers[getPlayer():getUsername()] == nil or #dbPlayers[getPlayer():getUsername()] == 1 then
+        if AVCS.dbByPlayerID[getPlayer():getUsername()] == nil or #AVCS.dbByPlayerID[getPlayer():getUsername()] == 1 then
         else
-            for k, v in pairs(dbPlayers[getPlayer():getUsername()]) do
+            for k, v in pairs(AVCS.dbByPlayerID[getPlayer():getUsername()]) do
                 if k ~= "LastKnownLogonTime" then
                     -- Get get rid of the prefix, not all prefix start with "Base." so we look for first dot instead
-                    local carFullName = dbVehicles[k].CarModel
+                    local carFullName = AVCS.dbByVehicleSQLID[k].CarModel
                     local index = string.find(carFullName, "%.")
                     
                     --  Reuse the variable, no biggie
@@ -108,7 +104,7 @@ function AVCS.UI.UserManagerMain:updateListVehicles()
                     if carFullName then
                         self.listVehicles:addItem(carFullName, k)
                     else
-                        self.listVehicles:addItem(dbVehicles[k].CarModel, k)
+                        self.listVehicles:addItem(AVCS.dbByVehicleSQLID[k].CarModel, k)
                     end
                 end
             end
@@ -119,10 +115,10 @@ function AVCS.UI.UserManagerMain:updateListVehicles()
             local tempPlayers = safehouseObj:getPlayers()
             for i = 0, tempPlayers:size() - 1 do
                 if tempPlayers:get(i) ~= getPlayer():getUsername() then
-                    for k, v in pairs(dbPlayers[tempPlayers:get(i)]) do
+                    for k, v in pairs(AVCS.dbByPlayerID[tempPlayers:get(i)]) do
                         if k ~= "LastKnownLogonTime" then
                             -- Get get rid of the prefix, not all prefix start with "Base." so we look for first dot instead
-                            local carFullName = dbVehicles[k].CarModel
+                            local carFullName = AVCS.dbByVehicleSQLID[k].CarModel
                             local index = string.find(carFullName, "%.")
                             
                             --  Reuse the variable, no biggie
@@ -131,7 +127,7 @@ function AVCS.UI.UserManagerMain:updateListVehicles()
                             if carFullName then
                                 self.listVehicles:addItem(carFullName, k)
                             else
-                                self.listVehicles:addItem(dbVehicles[k].CarModel, k)
+                                self.listVehicles:addItem(AVCS.dbByVehicleSQLID[k].CarModel, k)
                             end
                         end
                     end
@@ -145,10 +141,10 @@ function AVCS.UI.UserManagerMain:updateListVehicles()
             -- Owner and Members are not in the same list
             -- Dirty codings
             if factionObj:getOwner() ~= getPlayer():getUsername() then
-                for k, v in pairs(dbPlayers[factionObj:getOwner()]) do
+                for k, v in pairs(AVCS.dbByPlayerID[factionObj:getOwner()]) do
                     if k ~= "LastKnownLogonTime" then
                         -- Get get rid of the prefix, not all prefix start with "Base." so we look for first dot instead
-                        local carFullName = dbVehicles[k].CarModel
+                        local carFullName = AVCS.dbByVehicleSQLID[k].CarModel
                         local index = string.find(carFullName, "%.")
                         
                         --  Reuse the variable, no biggie
@@ -157,7 +153,7 @@ function AVCS.UI.UserManagerMain:updateListVehicles()
                         if carFullName then
                             self.listVehicles:addItem(carFullName, k)
                         else
-                            self.listVehicles:addItem(dbVehicles[k].CarModel, k)
+                            self.listVehicles:addItem(AVCS.dbByVehicleSQLID[k].CarModel, k)
                         end
                     end
                 end
@@ -166,10 +162,10 @@ function AVCS.UI.UserManagerMain:updateListVehicles()
             local tempPlayers = factionObj:getPlayers()
             for i = 0, tempPlayers:size() - 1 do
                 if tempPlayers:get(i) ~= getPlayer():getUsername() then
-                    for k, v in pairs(dbPlayers[tempPlayers:get(i)]) do
+                    for k, v in pairs(AVCS.dbByPlayerID[tempPlayers:get(i)]) do
                         if k ~= "LastKnownLogonTime" then
                             -- Get get rid of the prefix, not all prefix start with "Base." so we look for first dot instead
-                            local carFullName = dbVehicles[k].CarModel
+                            local carFullName = AVCS.dbByVehicleSQLID[k].CarModel
                             local index = string.find(carFullName, "%.")
                             
                             --  Reuse the variable, no biggie
@@ -178,7 +174,7 @@ function AVCS.UI.UserManagerMain:updateListVehicles()
                             if carFullName then
                                 self.listVehicles:addItem(carFullName, k)
                             else
-                                self.listVehicles:addItem(dbVehicles[k].CarModel, k)
+                                self.listVehicles:addItem(AVCS.dbByVehicleSQLID[k].CarModel, k)
                             end
                         end
                     end
@@ -188,11 +184,11 @@ function AVCS.UI.UserManagerMain:updateListVehicles()
     end
 
     if #self.listVehicles.items > 0 then
-        self.vehiclePreview.javaObject:fromLua2("setVehicleScript", "previewVeh", dbVehicles[self.listVehicles.items[1].item].CarModel)
-        self.lblVehicleOwnerInfo:setName(dbVehicles[self.listVehicles.items[1].item].OwnerPlayerID)
-        self.lblVehicleExpireInfo:setName(os.date("%d-%b-%y", (dbPlayers[dbVehicles[self.listVehicles.items[1].item].OwnerPlayerID].LastKnownLogonTime + (SandboxVars.AVCS.ClaimTimeout * 60 * 60))))
-        self.lblVehicleLocationInfo:setName(dbVehicles[self.listVehicles.items[1].item].LastLocationX .. ", " .. dbVehicles[self.listVehicles.items[1].item].LastLocationY)
-        self.lblVehicleLastLocationUpdateInfo:setName(os.date("%d-%b-%y", (dbVehicles[self.listVehicles.items[1].item].LastLocationUpdateDateTime)))
+        self.vehiclePreview.javaObject:fromLua2("setVehicleScript", "previewVeh", AVCS.dbByVehicleSQLID[self.listVehicles.items[1].item].CarModel)
+        self.lblVehicleOwnerInfo:setName(AVCS.dbByVehicleSQLID[self.listVehicles.items[1].item].OwnerPlayerID)
+        self.lblVehicleExpireInfo:setName(os.date("%d-%b-%y", (AVCS.dbByPlayerID[AVCS.dbByVehicleSQLID[self.listVehicles.items[1].item].OwnerPlayerID].LastKnownLogonTime + (SandboxVars.AVCS.ClaimTimeout * 60 * 60))))
+        self.lblVehicleLocationInfo:setName(AVCS.dbByVehicleSQLID[self.listVehicles.items[1].item].LastLocationX .. ", " .. AVCS.dbByVehicleSQLID[self.listVehicles.items[1].item].LastLocationY)
+        self.lblVehicleLastLocationUpdateInfo:setName(os.date("%d-%b-%y", (AVCS.dbByVehicleSQLID[self.listVehicles.items[1].item].LastLocationUpdateDateTime)))
         self.btnUnclaim:setEnable(true)
     else
         self.listVehicles:addItem(getText("IGUI_AVCS_User_Manager_listVehicles_NoVehicle"), nil)
@@ -209,13 +205,11 @@ function AVCS.UI.UserManagerMain:listVehiclesOnSelectedChange(parent, items, sel
     local vehicleSQLID = items[selected].item
     if vehicleSQLID == nil then return end
 
-    local dbPlayers = ModData.get("AVCSByPlayerID")
-    local dbVehicles = ModData.get("AVCSByVehicleSQLID")
-    parent.vehiclePreview.javaObject:fromLua2("setVehicleScript", "previewVeh", dbVehicles[vehicleSQLID].CarModel)
-    parent.lblVehicleOwnerInfo:setName(dbVehicles[items[selected].item].OwnerPlayerID)
-    parent.lblVehicleExpireInfo:setName(os.date("%d-%b-%y", (dbPlayers[dbVehicles[items[selected].item].OwnerPlayerID].LastKnownLogonTime + (SandboxVars.AVCS.ClaimTimeout * 60 * 60))))
-    parent.lblVehicleLocationInfo:setName(dbVehicles[items[selected].item].LastLocationX .. ", " .. dbVehicles[items[selected].item].LastLocationY)
-    parent.lblVehicleLastLocationUpdateInfo:setName(os.date("%d-%b-%y", (dbVehicles[items[selected].item].LastLocationUpdateDateTime)))
+    parent.vehiclePreview.javaObject:fromLua2("setVehicleScript", "previewVeh", AVCS.dbByVehicleSQLID[vehicleSQLID].CarModel)
+    parent.lblVehicleOwnerInfo:setName(AVCS.dbByVehicleSQLID[items[selected].item].OwnerPlayerID)
+    parent.lblVehicleExpireInfo:setName(os.date("%d-%b-%y", (AVCS.dbByPlayerID[AVCS.dbByVehicleSQLID[items[selected].item].OwnerPlayerID].LastKnownLogonTime + (SandboxVars.AVCS.ClaimTimeout * 60 * 60))))
+    parent.lblVehicleLocationInfo:setName(AVCS.dbByVehicleSQLID[items[selected].item].LastLocationX .. ", " .. AVCS.dbByVehicleSQLID[items[selected].item].LastLocationY)
+    parent.lblVehicleLastLocationUpdateInfo:setName(os.date("%d-%b-%y", (AVCS.dbByVehicleSQLID[items[selected].item].LastLocationUpdateDateTime)))
 end
 
 -- Create on-demand buttons

@@ -10,17 +10,15 @@ if not isClient() and isServer() then
 end
 
 function AVCS.updateClientClaimVehicle(arg)
-	local tempDB = ModData.get("AVCSByVehicleSQLID")
-	
 	-- A desync has occurred, this shouldn't happen
 	-- We will request full data from server
-	if tempDB == nil then
+	if AVCS.dbByVehicleSQLID == nil then
 		ModData.request("AVCSByVehicleSQLID")
 		ModData.request("AVCSByPlayerID")
 		return
 	end
 
-	tempDB[arg.VehicleID] = {
+	AVCS.dbByVehicleSQLID[arg.VehicleID] = {
 		OwnerPlayerID = arg.OwnerPlayerID,
 		ClaimDateTime = arg.ClaimDateTime,
 		CarModel = arg.CarModel,
@@ -28,96 +26,76 @@ function AVCS.updateClientClaimVehicle(arg)
 		LastLocationY = arg.LastLocationY,
 		LastLocationUpdateDateTime = arg.LastLocationUpdateDateTime
 	}
-	-- Store the updated ModData --
-	ModData.add("AVCSByVehicleSQLID", tempDB)
-		
-	tempDB = ModData.get("AVCSByPlayerID")
-	if not tempDB[arg.OwnerPlayerID] then
-		tempDB[arg.OwnerPlayerID] = {
+
+	if not AVCS.dbByPlayerID[arg.OwnerPlayerID] then
+		AVCS.dbByPlayerID[arg.OwnerPlayerID] = {
 			[arg.VehicleID] = true,
 			LastKnownLogonTime = getTimestamp()
 		}
 	else
-		tempDB[arg.OwnerPlayerID][arg.VehicleID] = true
-		tempDB[arg.OwnerPlayerID].LastKnownLogonTime = getTimestamp()
+		AVCS.dbByPlayerID[arg.OwnerPlayerID][arg.VehicleID] = true
+		AVCS.dbByPlayerID[arg.OwnerPlayerID].LastKnownLogonTime = getTimestamp()
 	end
-	
-	-- Store the updated ModData --
-	ModData.add("AVCSByPlayerID", tempDB)
 end
 
 function AVCS.updateClientUnclaimVehicle(arg)
-	local tempDB = ModData.get("AVCSByVehicleSQLID")
-	
 	-- A desync has occurred, this shouldn't happen
 	-- We will request full data from server
-	if tempDB == nil then
+	if AVCS.dbByVehicleSQLID == nil then
 		ModData.request("AVCSByVehicleSQLID")
 		ModData.request("AVCSByPlayerID")
 		return
 	end
 	
-	if tempDB[arg.VehicleID] == nil then
+	if AVCS.dbByVehicleSQLID[arg.VehicleID] == nil then
 		ModData.request("AVCSByVehicleSQLID")
 		ModData.request("AVCSByPlayerID")
 		return
 	end
 	
-	tempDB[arg.VehicleID] = nil
-		
-	-- Store the updated ModData --
-	ModData.add("AVCSByVehicleSQLID", tempDB)
-		
-	tempDB = ModData.get("AVCSByPlayerID")
-	tempDB[arg.OwnerPlayerID][arg.VehicleID] = nil
-
-	-- Store the updated ModData --
-	ModData.add("AVCSByPlayerID", tempDB)
+	AVCS.dbByVehicleSQLID[arg.VehicleID] = nil
+	AVCS.dbByPlayerID[arg.OwnerPlayerID][arg.VehicleID] = nil
 end
 
 function AVCS.updateClientVehicleCoordinate(arg)
-	local tempDB = ModData.get("AVCSByVehicleSQLID")
-
 	-- A desync has occurred, this shouldn't happen
 	-- We will request full data from server
-	if tempDB == nil then
+	if AVCS.dbByVehicleSQLID == nil then
 		ModData.request("AVCSByVehicleSQLID")
 		ModData.request("AVCSByPlayerID")
 		return
 	end
 
-	if tempDB[arg.VehicleID] == nil then
+	if AVCS.dbByVehicleSQLID[arg.VehicleID] == nil then
 		ModData.request("AVCSByVehicleSQLID")
 		ModData.request("AVCSByPlayerID")
 		return
 	end
 
-	tempDB[arg.VehicleID].LastLocationX = arg.LastLocationX
-	tempDB[arg.VehicleID].LastLocationY = arg.LastLocationY
-	tempDB[arg.VehicleID].LastLocationUpdateDateTime = arg.LastLocationUpdateDateTime
-
-	-- Store the updated ModData --
-	ModData.add("AVCSByVehicleSQLID", tempDB)
+	AVCS.dbByVehicleSQLID[arg.VehicleID].LastLocationX = arg.LastLocationX
+	AVCS.dbByVehicleSQLID[arg.VehicleID].LastLocationY = arg.LastLocationY
+	AVCS.dbByVehicleSQLID[arg.VehicleID].LastLocationUpdateDateTime = arg.LastLocationUpdateDateTime
 end
 
 -- Apparently getOnlinePlayers() only obtain nearby players and not all online players
 -- Thus this function will not be utilized as I wanted to, I will just leave it here
+--[[
 function AVCS.updateClientLastKnownLogonTime()
 	local onlinePlayers = getOnlinePlayers()
 	local tempDB = ModData.get("AVCSByPlayerID")
 	local tempCount = 0
 	for i = 1, onlinePlayers:size() do
-		if tempDB[onlinePlayers:get(i)] ~= nil then
-			tempDB[onlinePlayers:get(i)].LastKnownLogonTime = getTimestamp()
+		if AVCS.dbByPlayerID[onlinePlayers:get(i)] ~= nil then
+			AVCS.dbByPlayerID[onlinePlayers:get(i)].LastKnownLogonTime = getTimestamp()
 			tempCount = tempCount + 1
 		end
 	end
 
 	if tempCount ~= 0 then
-		ModData.add("AVCSByPlayerID", tempDB)
+		ModData.add("AVCSByPlayerID", AVCS.dbByPlayerID)
 	end
 end
-
+--]]
 AVCS.OnServerCommand = function(moduleName, command, arg)
 	if moduleName == "AVCS" and command == "updateClientClaimVehicle" then
 		AVCS.updateClientClaimVehicle(arg)
@@ -159,16 +137,15 @@ end
 
 local function OnReceiveGlobalModData(key, modData)
 	if key == "AVCSByVehicleSQLID" then
-		ModData.add("AVCSByVehicleSQLID", modData)
+		AVCS.dbByVehicleSQLID = modData
 	end
 	if key == "AVCSByPlayerID" then
-		ModData.add("AVCSByPlayerID", modData)
+		AVCS.dbByPlayerID = modData
 	end
 end
 
 local function EveryTenMinutes()
-	local tempDB = ModData.get("AVCSByPlayerID")
-	if tempDB[getPlayer()] ~= nil then
+	if AVCS.dbByPlayerID[getPlayer():getUsername()] ~= nil then
 		sendClientCommand(getPlayer(), "AVCS", "updateLastKnownLogonTime", nil)
 	end
 end

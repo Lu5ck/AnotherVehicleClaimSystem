@@ -9,6 +9,16 @@
 AVCS = AVCS or {}
 AVCS.UI = AVCS.UI or {}
 
+--[[
+Global variables that is accessed frequently
+Both client-side and server-side have this same name variables
+Important to initialise these variables accordingly in both side
+dbByVehicleSQLID store the ModData AVRByVehicleID
+dbAVCSByPlayerID store the ModData AVRByPlayerID
+]]
+AVCS.dbByVehicleSQLID = nil
+AVCS.dbByPlayerID = nil
+
 -- Ordered list of parts that cannot be removed by typical means
 -- We will store server-side SQL ID in one of those
 --[[
@@ -57,12 +67,11 @@ function AVCS.checkMaxClaim(playerObj)
 		return true
 	end
 
-	local tempDB = ModData.get("AVCSByPlayerID")
-	if tempDB[playerObj:getUsername()] == nil then return true end
+	if AVCS.dbByPlayerID[playerObj:getUsername()] == nil then return true end
 
 	-- No easy way to get size other than count one by one, for key-value pair table
 	local tempSize = 0
-	for k, v in pairs(tempDB[playerObj:getUsername()]) do
+	for k, v in pairs(AVCS.dbByPlayerID[playerObj:getUsername()]) do
 		tempSize = tempSize + 1
 	end
 
@@ -103,11 +112,8 @@ function AVCS.checkPermission(playerObj, vehicleObj)
 		return true
 	end
 
-	local vehicleDB = ModData.get("AVCSByVehicleSQLID")
-	local playerDB = ModData.get("AVCSByPlayerID")
-
 	-- Ownerless
-	if vehicleDB[vehicleSQL] == nil then
+	if AVCS.dbByVehicleSQLID[vehicleSQL] == nil then
 		return true
 	end
 	
@@ -115,31 +121,31 @@ function AVCS.checkPermission(playerObj, vehicleObj)
 	if string.lower(playerObj:getAccessLevel()) ~= "none" then
 		local details = {
 			permissions = true,
-			ownerid = vehicleDB[vehicleSQL].OwnerPlayerID,
-			LastKnownLogonTime = playerDB[vehicleDB[vehicleSQL].OwnerPlayerID].LastKnownLogonTime
+			ownerid = AVCS.dbByVehicleSQLID[vehicleSQL].OwnerPlayerID,
+			LastKnownLogonTime = AVCS.dbByPlayerID[AVCS.dbByVehicleSQLID[vehicleSQL].OwnerPlayerID].LastKnownLogonTime
 		}
 		return details
 	end
 
 	-- Owner
-	if vehicleDB[vehicleSQL].OwnerPlayerID == playerObj:getUsername() then
+	if AVCS.dbByVehicleSQLID[vehicleSQL].OwnerPlayerID == playerObj:getUsername() then
 		local details = {
 			permissions = true,
 			ownerid = playerObj:getUsername(),
-			LastKnownLogonTime = playerDB[playerObj:getUsername()].LastKnownLogonTime
+			LastKnownLogonTime = AVCS.dbByPlayerID[playerObj:getUsername()].LastKnownLogonTime
 		}
 		return details
 	end
 	
 	-- Faction Members
 	if SandboxVars.AVCS.AllowFaction then
-		local factionObj = Faction.getPlayerFaction(vehicleDB[vehicleSQL].OwnerPlayerID)
+		local factionObj = Faction.getPlayerFaction(AVCS.dbByVehicleSQLID[vehicleSQL].OwnerPlayerID)
 		if factionObj then
 			if factionObj:getOwner() == playerObj:getUsername() then
 				local details = {
 					permissions = true,
-					ownerid = vehicleDB[vehicleSQL].OwnerPlayerID,
-					LastKnownLogonTime = playerDB[vehicleDB[vehicleSQL].OwnerPlayerID].LastKnownLogonTime
+					ownerid = AVCS.dbByVehicleSQLID[vehicleSQL].OwnerPlayerID,
+					LastKnownLogonTime = AVCS.dbByPlayerID[AVCS.dbByVehicleSQLID[vehicleSQL].OwnerPlayerID].LastKnownLogonTime
 				}
 				return details
 			end
@@ -149,8 +155,8 @@ function AVCS.checkPermission(playerObj, vehicleObj)
 				if tempPlayers:get(i) == playerObj:getUsername() then
 					local details = {
 						permissions = true,
-						ownerid = vehicleDB[vehicleSQL].OwnerPlayerID,
-						LastKnownLogonTime = playerDB[vehicleDB[vehicleSQL].OwnerPlayerID].LastKnownLogonTime
+						ownerid = AVCS.dbByVehicleSQLID[vehicleSQL].OwnerPlayerID,
+						LastKnownLogonTime = AVCS.dbByPlayerID[AVCS.dbByVehicleSQLID[vehicleSQL].OwnerPlayerID].LastKnownLogonTime
 					}
 					return details
 				end
@@ -160,15 +166,15 @@ function AVCS.checkPermission(playerObj, vehicleObj)
 	
 	-- Safehouse Members
 	if SandboxVars.AVCS.AllowSafehouse then
-		local safehouseObj = SafeHouse.hasSafehouse(vehicleDB[vehicleSQL].OwnerPlayerID)
+		local safehouseObj = SafeHouse.hasSafehouse(AVCS.dbByVehicleSQLID[vehicleSQL].OwnerPlayerID)
 		if safehouseObj then
 			local tempPlayers = safehouseObj:getPlayers()
 			for i = 0, tempPlayers:size() - 1 do
 				if tempPlayers:get(i) == playerObj:getUsername() then
 					local details = {
 						permissions = true,
-						ownerid = vehicleDB[vehicleSQL].OwnerPlayerID,
-						LastKnownLogonTime = playerDB[vehicleDB[vehicleSQL].OwnerPlayerID].LastKnownLogonTime
+						ownerid = AVCS.dbByVehicleSQLID[vehicleSQL].OwnerPlayerID,
+						LastKnownLogonTime = AVCS.dbByPlayerID[AVCS.dbByVehicleSQLID[vehicleSQL].OwnerPlayerID].LastKnownLogonTime
 					}
 					return details
 				end
@@ -179,8 +185,8 @@ function AVCS.checkPermission(playerObj, vehicleObj)
 	-- No permission
 	local details = {
 		permissions = false,
-		ownerid = vehicleDB[vehicleSQL].OwnerPlayerID,
-		LastKnownLogonTime = playerDB[vehicleDB[vehicleSQL].OwnerPlayerID].LastKnownLogonTime
+		ownerid = AVCS.dbByVehicleSQLID[vehicleSQL].OwnerPlayerID,
+		LastKnownLogonTime = AVCS.dbByPlayerID[AVCS.dbByVehicleSQLID[vehicleSQL].OwnerPlayerID].LastKnownLogonTime
 	}
 	return details
 end
@@ -208,13 +214,12 @@ function AVCS.updateVehicleCoordinate(vehicleObj)
 	-- Server call, must be extreme efficient as this is called extreme frequently
 	-- Do not use loop here
 	if isServer() and not isClient() then
-		local tempDB = ModData.get("AVCSByVehicleSQLID")
-		if tempDB[vehicleObj:getSqlId()] ~= nil then
-			if tempDB[vehicleObj:getSqlId()].LastLocationX ~= math.floor(vehicleObj:getX()) or tempDB[vehicleObj:getSqlId()].LastLocationY ~= math.floor(vehicleObj:getY()) then
-				tempDB[vehicleObj:getSqlId()].LastLocationX = math.floor(vehicleObj:getX())
-				tempDB[vehicleObj:getSqlId()].LastLocationY = math.floor(vehicleObj:getY())
-				tempDB[vehicleObj:getSqlId()].LastLocationUpdateDateTime = getTimestamp()
-				ModData.add("AVCSByVehicleSQLID", tempDB)
+		if AVCS.dbByVehicleSQLID[vehicleObj:getSqlId()] ~= nil then
+			if AVCS.dbByVehicleSQLID[vehicleObj:getSqlId()].LastLocationX ~= math.floor(vehicleObj:getX()) or AVCS.dbByVehicleSQLID[vehicleObj:getSqlId()].LastLocationY ~= math.floor(vehicleObj:getY()) then
+				AVCS.dbByVehicleSQLID[vehicleObj:getSqlId()].LastLocationX = math.floor(vehicleObj:getX())
+				AVCS.dbByVehicleSQLID[vehicleObj:getSqlId()].LastLocationY = math.floor(vehicleObj:getY())
+				AVCS.dbByVehicleSQLID[vehicleObj:getSqlId()].LastLocationUpdateDateTime = getTimestamp()
+				ModData.add("AVCSByVehicleSQLID", AVCS.dbByVehicleSQLID)
 				local tempArr = {
 					VehicleID = vehicleObj:getSqlId(),
 					LastLocationX = math.floor(vehicleObj:getX()),
