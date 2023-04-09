@@ -13,20 +13,8 @@ function AVCS.UI.UserManagerMain:initialise()
 	ISCollapsableWindow.initialise(self)
 end
 
-function AVCS.UI.UserManagerMain:btnUnclaim_onConfirmClick(btn, _, _)
-    if btn.internal == "NO" then return end
-    local temp = self
-    sendClientCommand(getPlayer(), "AVCS", "unclaimVehicle", { self.listVehicles.items[self.listVehicles.selected].item })
-    self.listVehicles:removeItemByIndex(self.listVehicles.selected)
-
-    if self.listVehicles.selected ~= 0 then
-        self.vehiclePreview.javaObject:fromLua2("setVehicleScript", "previewVeh", AVCS.dbByVehicleSQLID[self.listVehicles.items[self.listVehicles.selected].item].CarModel)
-        self.lblVehicleOwnerInfo:setName(AVCS.dbByVehicleSQLID[self.listVehicles.items[self.listVehicles.selected].item].OwnerPlayerID)
-        self.lblVehicleExpireInfo:setName(os.date("%d-%b-%y, %H:%M:%S", (AVCS.dbByPlayerID[AVCS.dbByVehicleSQLID[self.listVehicles.items[self.listVehicles.selected].item].OwnerPlayerID].LastKnownLogonTime + (SandboxVars.AVCS.ClaimTimeout * 60 * 60))))
-        self.lblVehicleLocationInfo:setName(AVCS.dbByVehicleSQLID[self.listVehicles.items[self.listVehicles.selected].item].LastLocationX .. ", " .. AVCS.dbByVehicleSQLID[self.listVehicles.items[self.listVehicles.selected].item].LastLocationY)
-        self.lblVehicleLastLocationUpdateInfo:setName(os.date("%d-%b-%y, %H:%M:%S", (AVCS.dbByVehicleSQLID[self.listVehicles.items[self.listVehicles.selected].item].LastLocationUpdateDateTime)))
-        self.btnUnclaim:setEnable(true)
-    else
+function AVCS.UI.UserManagerMain:setVehiclePreview(vehicleID)
+    if vehicleID == nil then
         self.listVehicles:addItem(getText("IGUI_AVCS_User_Manager_listVehicles_NoVehicle"), nil)
         self.vehiclePreview.javaObject:fromLua2("setVehicleScript", "previewVeh", "")
         self.lblVehicleOwnerInfo:setName("-")
@@ -34,6 +22,26 @@ function AVCS.UI.UserManagerMain:btnUnclaim_onConfirmClick(btn, _, _)
         self.lblVehicleLocationInfo:setName("-")
         self.lblVehicleLastLocationUpdateInfo:setName("-")
         self.btnUnclaim:setEnable(false)
+    else
+        self.vehiclePreview.javaObject:fromLua2("setVehicleScript", "previewVeh", AVCS.dbByVehicleSQLID[vehicleID].CarModel)
+        self.lblVehicleOwnerInfo:setName(AVCS.dbByVehicleSQLID[vehicleID].OwnerPlayerID)
+        self.lblVehicleExpireInfo:setName(os.date("%d-%b-%y, %H:%M:%S", (AVCS.dbByPlayerID[AVCS.dbByVehicleSQLID[vehicleID].OwnerPlayerID].LastKnownLogonTime + (SandboxVars.AVCS.ClaimTimeout * 60 * 60))))
+        self.lblVehicleLocationInfo:setName(AVCS.dbByVehicleSQLID[vehicleID].LastLocationX .. ", " .. AVCS.dbByVehicleSQLID[vehicleID].LastLocationY)
+        self.lblVehicleLastLocationUpdateInfo:setName(os.date("%d-%b-%y, %H:%M:%S", (AVCS.dbByVehicleSQLID[vehicleID].LastLocationUpdateDateTime)))
+        self.btnUnclaim:setEnable(true)
+    end
+end
+
+function AVCS.UI.UserManagerMain:btnUnclaim_onConfirmClick(btn, _, _)
+    if btn.internal == "NO" then return end
+    local temp = self
+    sendClientCommand(getPlayer(), "AVCS", "unclaimVehicle", { self.listVehicles.items[self.listVehicles.selected].item })
+    self.listVehicles:removeItemByIndex(self.listVehicles.selected)
+
+    if self.listVehicles.selected ~= 0 then
+        self.setVehiclePreview(self, self.listVehicles.items[self.listVehicles.selected].item)
+    else
+        self.setVehiclePreview(self, nil)
     end
 end
 
@@ -184,20 +192,9 @@ function AVCS.UI.UserManagerMain:updateListVehicles()
     end
 
     if #self.listVehicles.items > 0 then
-        self.vehiclePreview.javaObject:fromLua2("setVehicleScript", "previewVeh", AVCS.dbByVehicleSQLID[self.listVehicles.items[1].item].CarModel)
-        self.lblVehicleOwnerInfo:setName(AVCS.dbByVehicleSQLID[self.listVehicles.items[1].item].OwnerPlayerID)
-        self.lblVehicleExpireInfo:setName(os.date("%d-%b-%y, %H:%M:%S", (AVCS.dbByPlayerID[AVCS.dbByVehicleSQLID[self.listVehicles.items[1].item].OwnerPlayerID].LastKnownLogonTime + (SandboxVars.AVCS.ClaimTimeout * 60 * 60))))
-        self.lblVehicleLocationInfo:setName(AVCS.dbByVehicleSQLID[self.listVehicles.items[1].item].LastLocationX .. ", " .. AVCS.dbByVehicleSQLID[self.listVehicles.items[1].item].LastLocationY)
-        self.lblVehicleLastLocationUpdateInfo:setName(os.date("%d-%b-%y, %H:%M:%S", (AVCS.dbByVehicleSQLID[self.listVehicles.items[1].item].LastLocationUpdateDateTime)))
-        self.btnUnclaim:setEnable(true)
+        self.setVehiclePreview(self, self.listVehicles.items[1].item)
     else
-        self.listVehicles:addItem(getText("IGUI_AVCS_User_Manager_listVehicles_NoVehicle"), nil)
-        self.vehiclePreview.javaObject:fromLua2("setVehicleScript", "previewVeh", "")
-        self.lblVehicleOwnerInfo:setName("-")
-        self.lblVehicleExpireInfo:setName("-")
-        self.lblVehicleLocationInfo:setName("-")
-        self.lblVehicleLastLocationUpdateInfo:setName("-")
-        self.btnUnclaim:setEnable(false)
+        self.setVehiclePreview(self, nil)
     end
 end
 
@@ -205,11 +202,7 @@ function AVCS.UI.UserManagerMain:listVehiclesOnSelectedChange(parent, items, sel
     local vehicleSQLID = items[selected].item
     if vehicleSQLID == nil then return end
 
-    parent.vehiclePreview.javaObject:fromLua2("setVehicleScript", "previewVeh", AVCS.dbByVehicleSQLID[vehicleSQLID].CarModel)
-    parent.lblVehicleOwnerInfo:setName(AVCS.dbByVehicleSQLID[items[selected].item].OwnerPlayerID)
-    parent.lblVehicleExpireInfo:setName(os.date("%d-%b-%y, %H:%M:%S", (AVCS.dbByPlayerID[AVCS.dbByVehicleSQLID[items[selected].item].OwnerPlayerID].LastKnownLogonTime + (SandboxVars.AVCS.ClaimTimeout * 60 * 60))))
-    parent.lblVehicleLocationInfo:setName(AVCS.dbByVehicleSQLID[items[selected].item].LastLocationX .. ", " .. AVCS.dbByVehicleSQLID[items[selected].item].LastLocationY)
-    parent.lblVehicleLastLocationUpdateInfo:setName(os.date("%d-%b-%y, %H:%M:%S", (AVCS.dbByVehicleSQLID[items[selected].item].LastLocationUpdateDateTime)))
+    parent.setVehiclePreview(parent, vehicleSQLID)
 end
 
 -- Create on-demand buttons
