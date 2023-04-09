@@ -22,9 +22,9 @@ function AVCS.UI.UserManagerMain:btnUnclaim_onConfirmClick(btn, _, _)
     if self.listVehicles.selected ~= 0 then
         self.vehiclePreview.javaObject:fromLua2("setVehicleScript", "previewVeh", AVCS.dbByVehicleSQLID[self.listVehicles.items[self.listVehicles.selected].item].CarModel)
         self.lblVehicleOwnerInfo:setName(AVCS.dbByVehicleSQLID[self.listVehicles.items[self.listVehicles.selected].item].OwnerPlayerID)
-        self.lblVehicleExpireInfo:setName(os.date("%d-%b-%y", (AVCS.dbByPlayerID[AVCS.dbByVehicleSQLID[self.listVehicles.items[self.listVehicles.selected].item].OwnerPlayerID].LastKnownLogonTime + (SandboxVars.AVCS.ClaimTimeout * 60 * 60))))
+        self.lblVehicleExpireInfo:setName(os.date("%d-%b-%y, %H:%M:%S", (AVCS.dbByPlayerID[AVCS.dbByVehicleSQLID[self.listVehicles.items[self.listVehicles.selected].item].OwnerPlayerID].LastKnownLogonTime + (SandboxVars.AVCS.ClaimTimeout * 60 * 60))))
         self.lblVehicleLocationInfo:setName(AVCS.dbByVehicleSQLID[self.listVehicles.items[self.listVehicles.selected].item].LastLocationX .. ", " .. AVCS.dbByVehicleSQLID[self.listVehicles.items[self.listVehicles.selected].item].LastLocationY)
-        self.lblVehicleLastLocationUpdateInfo:setName(os.date("%d-%b-%y", (AVCS.dbByVehicleSQLID[self.listVehicles.items[self.listVehicles.selected].item].LastLocationUpdateDateTime)))
+        self.lblVehicleLastLocationUpdateInfo:setName(os.date("%d-%b-%y, %H:%M:%S", (AVCS.dbByVehicleSQLID[self.listVehicles.items[self.listVehicles.selected].item].LastLocationUpdateDateTime)))
         self.btnUnclaim:setEnable(true)
     else
         self.listVehicles:addItem(getText("IGUI_AVCS_User_Manager_listVehicles_NoVehicle"), nil)
@@ -186,9 +186,9 @@ function AVCS.UI.UserManagerMain:updateListVehicles()
     if #self.listVehicles.items > 0 then
         self.vehiclePreview.javaObject:fromLua2("setVehicleScript", "previewVeh", AVCS.dbByVehicleSQLID[self.listVehicles.items[1].item].CarModel)
         self.lblVehicleOwnerInfo:setName(AVCS.dbByVehicleSQLID[self.listVehicles.items[1].item].OwnerPlayerID)
-        self.lblVehicleExpireInfo:setName(os.date("%d-%b-%y", (AVCS.dbByPlayerID[AVCS.dbByVehicleSQLID[self.listVehicles.items[1].item].OwnerPlayerID].LastKnownLogonTime + (SandboxVars.AVCS.ClaimTimeout * 60 * 60))))
+        self.lblVehicleExpireInfo:setName(os.date("%d-%b-%y, %H:%M:%S", (AVCS.dbByPlayerID[AVCS.dbByVehicleSQLID[self.listVehicles.items[1].item].OwnerPlayerID].LastKnownLogonTime + (SandboxVars.AVCS.ClaimTimeout * 60 * 60))))
         self.lblVehicleLocationInfo:setName(AVCS.dbByVehicleSQLID[self.listVehicles.items[1].item].LastLocationX .. ", " .. AVCS.dbByVehicleSQLID[self.listVehicles.items[1].item].LastLocationY)
-        self.lblVehicleLastLocationUpdateInfo:setName(os.date("%d-%b-%y", (AVCS.dbByVehicleSQLID[self.listVehicles.items[1].item].LastLocationUpdateDateTime)))
+        self.lblVehicleLastLocationUpdateInfo:setName(os.date("%d-%b-%y, %H:%M:%S", (AVCS.dbByVehicleSQLID[self.listVehicles.items[1].item].LastLocationUpdateDateTime)))
         self.btnUnclaim:setEnable(true)
     else
         self.listVehicles:addItem(getText("IGUI_AVCS_User_Manager_listVehicles_NoVehicle"), nil)
@@ -207,9 +207,9 @@ function AVCS.UI.UserManagerMain:listVehiclesOnSelectedChange(parent, items, sel
 
     parent.vehiclePreview.javaObject:fromLua2("setVehicleScript", "previewVeh", AVCS.dbByVehicleSQLID[vehicleSQLID].CarModel)
     parent.lblVehicleOwnerInfo:setName(AVCS.dbByVehicleSQLID[items[selected].item].OwnerPlayerID)
-    parent.lblVehicleExpireInfo:setName(os.date("%d-%b-%y", (AVCS.dbByPlayerID[AVCS.dbByVehicleSQLID[items[selected].item].OwnerPlayerID].LastKnownLogonTime + (SandboxVars.AVCS.ClaimTimeout * 60 * 60))))
+    parent.lblVehicleExpireInfo:setName(os.date("%d-%b-%y, %H:%M:%S", (AVCS.dbByPlayerID[AVCS.dbByVehicleSQLID[items[selected].item].OwnerPlayerID].LastKnownLogonTime + (SandboxVars.AVCS.ClaimTimeout * 60 * 60))))
     parent.lblVehicleLocationInfo:setName(AVCS.dbByVehicleSQLID[items[selected].item].LastLocationX .. ", " .. AVCS.dbByVehicleSQLID[items[selected].item].LastLocationY)
-    parent.lblVehicleLastLocationUpdateInfo:setName(os.date("%d-%b-%y", (AVCS.dbByVehicleSQLID[items[selected].item].LastLocationUpdateDateTime)))
+    parent.lblVehicleLastLocationUpdateInfo:setName(os.date("%d-%b-%y, %H:%M:%S", (AVCS.dbByVehicleSQLID[items[selected].item].LastLocationUpdateDateTime)))
 end
 
 -- Create on-demand buttons
