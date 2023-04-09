@@ -77,6 +77,22 @@ function AVCS.updateClientVehicleCoordinate(arg)
 	AVCS.dbByVehicleSQLID[arg.VehicleID].LastLocationUpdateDateTime = arg.LastLocationUpdateDateTime
 end
 
+function AVCS.updateClientLastLogon(arg)
+	if AVCS.dbByPlayerID == nil then
+		ModData.request("AVCSByVehicleSQLID")
+		ModData.request("AVCSByPlayerID")
+		return
+	end
+
+	if AVCS.dbByPlayerID[arg.PlayerID] == nil then
+		ModData.request("AVCSByVehicleSQLID")
+		ModData.request("AVCSByPlayerID")
+		return
+	end
+
+	AVCS.dbByPlayerID[arg.PlayerID].LastKnownLogonTime = arg.LastKnownLogonTime
+end
+
 -- Apparently getOnlinePlayers() only obtain nearby players and not all online players
 -- Thus this function will not be utilized as I wanted to, I will just leave it here
 --[[
@@ -111,6 +127,8 @@ AVCS.OnServerCommand = function(moduleName, command, arg)
 		AVCS.updateClientUnclaimVehicle(arg)
 	elseif moduleName == "AVCS" and command == "updateClientVehicleCoordinate" then
 		AVCS.updateClientVehicleCoordinate(arg)
+	elseif moduleName == "AVCS" and command == "updateClientLastLogon" then
+		AVCS.updateClientLastLogon(arg)
 	elseif moduleName == "AVCS" and command == "forcesyncClientGlobalModData" then
 		AVCS.forcesyncClientGlobalModData(arg)
 	end

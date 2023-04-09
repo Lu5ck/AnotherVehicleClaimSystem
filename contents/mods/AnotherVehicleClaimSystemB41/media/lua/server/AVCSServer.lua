@@ -188,6 +188,12 @@ end
 function AVCS.updateLastKnownLogonTime(playerObj)
 	if AVCS.dbByPlayerID[playerObj:getUsername()] ~= nil then
 		AVCS.dbByPlayerID[playerObj:getUsername()].LastKnownLogonTime = getTimestamp()
+
+		local tempArr = {
+			PlayerID = playerObj:getUsername(),
+			LastKnownLogonTime = AVCS.dbByPlayerID[playerObj:getUsername()].LastKnownLogonTime,
+		}
+		sendServerCommand("AVCS", "updateClientLastLogon", tempArr)
 	end
 	ModData.add("AVCSByPlayerID", AVCS.dbByPlayerID)
 end
