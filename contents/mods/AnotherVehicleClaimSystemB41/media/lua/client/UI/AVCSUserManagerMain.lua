@@ -394,7 +394,7 @@ function AVCS.UI.UserManagerMain:createChildren()
     self.btnModify.backgroundColor = {r=0, g=0, b=0, a=1}
     self.btnModify.displayBackground = true
     self.btnModify:setTooltip(getText("IGUI_AVCS_User_Manager_btnModify_Tooltip"))
-	self.btnModify:setImage(getTexture("media/ui/avcs_delete.png"))
+	self.btnModify:setImage(getTexture("media/ui/avcs_modify.png"))
 	self.btnModify:setTextureRGBA(1, 0, 0, 1)
     self.btnModify:initialise()
     self.btnModify:instantiate()
