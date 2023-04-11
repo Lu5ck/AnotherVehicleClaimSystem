@@ -122,7 +122,7 @@ function AVCS.UI.UserManagerMain:updateListVehicles()
         if safehouseObj then
             local tempPlayers = safehouseObj:getPlayers()
             for i = 0, tempPlayers:size() - 1 do
-                if tempPlayers:get(i) ~= getPlayer():getUsername() then
+                if tempPlayers:get(i) ~= getPlayer():getUsername() and AVCS.dbByPlayerID[tempPlayers:get(i)] then
                     for k, v in pairs(AVCS.dbByPlayerID[tempPlayers:get(i)]) do
                         if k ~= "LastKnownLogonTime" then
                             -- Get get rid of the prefix, not all prefix start with "Base." so we look for first dot instead
@@ -148,7 +148,7 @@ function AVCS.UI.UserManagerMain:updateListVehicles()
         if factionObj then
             -- Owner and Members are not in the same list
             -- Dirty codings
-            if factionObj:getOwner() ~= getPlayer():getUsername() then
+            if factionObj:getOwner() ~= getPlayer():getUsername() and AVCS.dbByPlayerID[factionObj:getOwner()] then
                 for k, v in pairs(AVCS.dbByPlayerID[factionObj:getOwner()]) do
                     if k ~= "LastKnownLogonTime" then
                         -- Get get rid of the prefix, not all prefix start with "Base." so we look for first dot instead
@@ -169,7 +169,7 @@ function AVCS.UI.UserManagerMain:updateListVehicles()
 
             local tempPlayers = factionObj:getPlayers()
             for i = 0, tempPlayers:size() - 1 do
-                if tempPlayers:get(i) ~= getPlayer():getUsername() then
+                if tempPlayers:get(i) ~= getPlayer():getUsername() and AVCS.dbByPlayerID[tempPlayers:get(i)] then
                     for k, v in pairs(AVCS.dbByPlayerID[tempPlayers:get(i)]) do
                         if k ~= "LastKnownLogonTime" then
                             -- Get get rid of the prefix, not all prefix start with "Base." so we look for first dot instead
