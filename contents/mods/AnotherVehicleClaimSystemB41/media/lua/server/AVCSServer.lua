@@ -198,24 +198,41 @@ function AVCS.updateLastKnownLogonTime(playerObj)
 	ModData.add("AVCSByPlayerID", AVCS.dbByPlayerID)
 end
 
-AVCS.onClientCommand = function(moduleName, command, playerObj, vehicleID)
+function AVCS.updateSpecifyVehicleUserPermission(arg)
+
+	if AVCS.dbByVehicleSQLID[arg.VehicleID] then
+		for k, v in pairs(arg) do
+			if k ~= "VehicleID" then
+				if v then
+					AVCS.dbByVehicleSQLID[arg.VehicleID][k] = v
+				else
+					AVCS.dbByVehicleSQLID[arg.VehicleID][k] = nil
+				end
+			end
+		end
+		ModData.add("AVCSByVehicleSQLID", AVCS.dbByVehicleSQLID)
+		sendServerCommand("AVCS", "updateClientSpecifyVehicleUserPermission", arg)
+	end
+end
+
+AVCS.onClientCommand = function(moduleName, command, playerObj, arg)
 	if moduleName == "AVCS" and command == "claimVehicle" then
-		AVCS.claimVehicle(playerObj, vehicleID)
+		AVCS.claimVehicle(playerObj, arg)
 	elseif moduleName == "AVCS" and command == "unclaimVehicle" then
-		-- Game send integer as array...
-		-- So we do vehicleID[1] to get SQL ID
-		if type(vehicleID[1]) ~= "number" then
+		-- Game send everything as table...
+		-- So we do arg[1] to get SQL ID
+		if type(arg[1]) ~= "number" then
 			return
 		end
 		if SandboxVars.AVCS.ServerSideChecking then
-			local checkResult = AVCS.checkPermission(playerObj, vehicleID[1])
+			local checkResult = AVCS.checkPermission(playerObj, arg[1])
 
 			if type(checkResult) == "boolean" then
 				if checkResult == false then
 					-- Using vanilla logging function, write to a log with suffix AVCS
 					-- Datetime, Unix Time, Warning message, offender username, vehicle full name, coordinate
 					-- [26-03-23 22:23:36.671] [1679840616] Warning: Attempting to unclaim without permission [Username] [Base.ExtremeCar] [13026,1215]
-					writeLog("AVCS", "[" .. getTimestamp() .. "] Warning: Attempting to unclaim without permission [" .. playerObj:getUsername() .. "] [" .. AVCS.dbByVehicleSQLID[vehicleID[1]].CarModel .. "] [" .. AVCS.dbByVehicleSQLID[vehicleID[1]].LastLocationX .. "," .. AVCS.dbByVehicleSQLID[vehicleID[1]].LastLocationY .. "]")
+					writeLog("AVCS", "[" .. getTimestamp() .. "] Warning: Attempting to unclaim without permission [" .. playerObj:getUsername() .. "] [" .. AVCS.dbByVehicleSQLID[arg[1]].CarModel .. "] [" .. AVCS.dbByVehicleSQLID[arg[1]].LastLocationX .. "," .. AVCS.dbByVehicleSQLID[arg[1]].LastLocationY .. "]")
 
 					-- Possible desync has occurred, force sync the user
 					sendServerCommand("AVCS", "forcesyncClientGlobalModData", { playerObj:getUsername() })
@@ -225,16 +242,46 @@ AVCS.onClientCommand = function(moduleName, command, playerObj, vehicleID)
 				-- Using vanilla logging function, write to a log with suffix AVCS
 				-- Datetime, Unix Time, Warning message, offender username, vehicle full name, coordinate
 				-- [26-03-23 22:23:36.671] [1679840616] Warning: Attempting to unclaim without permission [Username] [Base.ExtremeCar] [13026,1215]
-				writeLog("AVCS", "[" .. getTimestamp() .. "] Warning: Attempting to unclaim without permission [" .. playerObj:getUsername() .. "] [" .. AVCS.dbByVehicleSQLID[vehicleID[1]].CarModel .. "] [" .. AVCS.dbByVehicleSQLID[vehicleID[1]].LastLocationX .. "," .. AVCS.dbByVehicleSQLID[vehicleID[1]].LastLocationY .. "]")
+				writeLog("AVCS", "[" .. getTimestamp() .. "] Warning: Attempting to unclaim without permission [" .. playerObj:getUsername() .. "] [" .. AVCS.dbByVehicleSQLID[arg[1]].CarModel .. "] [" .. AVCS.dbByVehicleSQLID[arg[1]].LastLocationX .. "," .. AVCS.dbByVehicleSQLID[arg[1]].LastLocationY .. "]")
 
 				-- Possible desync has occurred, force sync the user
 				sendServerCommand("AVCS", "forcesyncClientGlobalModData", { playerObj:getUsername() })
 				return
 			end
 		end
-		AVCS.unclaimVehicle(playerObj, vehicleID[1])
+		AVCS.unclaimVehicle(playerObj, arg[1])
 	elseif moduleName == "AVCS" and command == "updateLastKnownLogonTime" then
 		AVCS.updateLastKnownLogonTime(playerObj)
+	elseif moduleName == "AVCS" and command == "updateSpecifyVehicleUserPermission" then
+		-- arg should be table of a lot of things
+		-- VehicleID
+		-- Permission types like AllowDrive, AllowPassenger
+		if SandboxVars.AVCS.ServerSideChecking then
+			local checkResult = AVCS.checkPermission(playerObj, arg.VehicleID)
+
+			if type(checkResult) == "boolean" then
+				if checkResult == false then
+					-- Using vanilla logging function, write to a log with suffix AVCS
+					-- Datetime, Unix Time, Warning message, offender username, vehicle full name, coordinate
+					-- [26-03-23 22:23:36.671] [1679840616] Warning: Attempting to unclaim without permission [Username] [Base.ExtremeCar] [13026,1215]
+					writeLog("AVCS", "[" .. getTimestamp() .. "] Warning: Attempting to modify specific vehicle permissions without permission [" .. playerObj:getUsername() .. "] [" .. AVCS.dbByVehicleSQLID[arg.VehicleID].CarModel .. "]")
+
+					-- Possible desync has occurred, force sync the user
+					sendServerCommand("AVCS", "forcesyncClientGlobalModData", { playerObj:getUsername() })
+					return
+				end
+			elseif checkResult.permissions == false then
+				-- Using vanilla logging function, write to a log with suffix AVCS
+				-- Datetime, Unix Time, Warning message, offender username, vehicle full name, coordinate
+				-- [26-03-23 22:23:36.671] [1679840616] Warning: Attempting to unclaim without permission [Username] [Base.ExtremeCar] [13026,1215]
+				writeLog("AVCS", "[" .. getTimestamp() .. "] Warning: Attempting to modify specific vehicle permissions without permission [" .. playerObj:getUsername() .. "] [" .. AVCS.dbByVehicleSQLID[arg.VehicleID].CarModel .. "]")
+
+				-- Possible desync has occurred, force sync the user
+				sendServerCommand("AVCS", "forcesyncClientGlobalModData", { playerObj:getUsername() })
+				return
+			end
+		end
+		AVCS.updateSpecifyVehicleUserPermission(arg)
 	end
 end
 

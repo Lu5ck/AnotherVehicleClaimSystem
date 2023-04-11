@@ -120,6 +120,23 @@ function AVCS.forcesyncClientGlobalModData(arg)
 	end
 end
 
+function AVCS.updateClientSpecifyVehicleUserPermission(arg)
+	if AVCS.dbByVehicleSQLID[arg.VehicleID] then
+		for k, v in pairs(arg) do
+			if k ~= "VehicleID" then
+				if v then
+					AVCS.dbByVehicleSQLID[arg.VehicleID][k] = v
+				else
+					AVCS.dbByVehicleSQLID[arg.VehicleID][k] = nil
+				end
+			end
+		end
+	else
+		ModData.request("AVCSByVehicleSQLID")
+		ModData.request("AVCSByPlayerID")
+	end
+end
+
 AVCS.OnServerCommand = function(moduleName, command, arg)
 	if moduleName == "AVCS" and command == "updateClientClaimVehicle" then
 		AVCS.updateClientClaimVehicle(arg)
@@ -131,6 +148,8 @@ AVCS.OnServerCommand = function(moduleName, command, arg)
 		AVCS.updateClientLastLogon(arg)
 	elseif moduleName == "AVCS" and command == "forcesyncClientGlobalModData" then
 		AVCS.forcesyncClientGlobalModData(arg)
+	elseif moduleName == "AVCS" and command == "updateClientSpecifyVehicleUserPermission" then
+		AVCS.updateClientSpecifyVehicleUserPermission(arg)
 	end
 end
 

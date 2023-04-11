@@ -122,24 +122,31 @@ if not AVCS.oIsEnterVehicle then
 end
 
 function ISEnterVehicle:new(character, vehicle, seat)
-	-- 0 is driver seat, I think
-	-- We only care about driver seat
+	-- For non-driver seats, driver seat is 0
     if seat ~= 0 then
-		return AVCS.oIsEnterVehicle(self, character, vehicle, seat)
-	else
-		local checkResult = AVCS.checkPermission(character, vehicle)
-		checkResult = AVCS.getSimpleBooleanPermission(checkResult)
-
-		if checkResult then
+		if AVCS.getPublicPermission(vehicle, "AllowPassenger") then
 			return AVCS.oIsEnterVehicle(self, character, vehicle, seat)
-		else
-			character:setHaloNote(getText("IGUI_AVCS_Vehicle_No_Permission"), 250, 250, 250, 300)
-			local temp = {
-				ignoreAction = true
-			}
-			return temp
 		end
 	end
+
+	if seat == 0 then
+		if AVCS.getPublicPermission(vehicle, "AllowDrive") then
+			return AVCS.oIsEnterVehicle(self, character, vehicle, seat)
+		end
+	end
+	
+	local checkResult = AVCS.checkPermission(character, vehicle)
+	checkResult = AVCS.getSimpleBooleanPermission(checkResult)
+
+	if checkResult then
+		return AVCS.oIsEnterVehicle(self, character, vehicle, seat)
+	end
+
+	character:setHaloNote(getText("IGUI_AVCS_Vehicle_No_Permission"), 250, 250, 250, 300)
+	local temp = {
+		ignoreAction = true
+	}
+	return temp
 end
 
 -- Copy and override the vanilla ISSwitchVehicleSeat to block unauthorized users
@@ -148,24 +155,31 @@ if not AVCS.oISSwitchVehicleSeat then
 end
 
 function ISSwitchVehicleSeat:new(character, seatTo)
-	-- 0 is driver seat, I think
-	-- We only care about driver seat
-    if seatTo ~= 0 then
-		return AVCS.oISSwitchVehicleSeat(self, character, seatTo)
-	else
-		local checkResult = AVCS.checkPermission(character, character:getVehicle())
-		checkResult = AVCS.getSimpleBooleanPermission(checkResult)
-
-		if checkResult then
+	-- For non-driver seats, driver seat is 0
+    if seat ~= 0 then
+		if AVCS.getPublicPermission(character:getVehicle(), "AllowPassenger") then
 			return AVCS.oISSwitchVehicleSeat(self, character, seatTo)
-		else
-			character:setHaloNote(getText("IGUI_AVCS_Vehicle_No_Permission"), 250, 250, 250, 300)
-			local temp = {
-				ignoreAction = true
-			}
-			return temp
 		end
 	end
+
+	if seat == 0 then
+		if AVCS.getPublicPermission(character:getVehicle(), "AllowDrive") then
+			return AVCS.oISSwitchVehicleSeat(self, character, seatTo)
+		end
+	end
+
+	local checkResult = AVCS.checkPermission(character, character:getVehicle())
+	checkResult = AVCS.getSimpleBooleanPermission(checkResult)
+
+	if checkResult then
+		return AVCS.oISSwitchVehicleSeat(self, character, seatTo)
+	end
+
+	character:setHaloNote(getText("IGUI_AVCS_Vehicle_No_Permission"), 250, 250, 250, 300)
+	local temp = {
+		ignoreAction = true
+	}
+	return temp
 end
 
 -- Copy and override the vanilla ISAttachTrailerToVehicle to block unauthorized users
@@ -174,20 +188,27 @@ if not AVCS.oISAttachTrailerToVehicle then
 end
 
 function ISAttachTrailerToVehicle:new(character, vehicleA, vehicleB, attachmentA, attachmentB)
-	local checkResultA = AVCS.checkPermission(character, vehicleA)
-	local checkResultB = AVCS.checkPermission(character, vehicleB)
+	local checkResultA = AVCS.getPublicPermission(vehicleA, "AllowAttachVehicle")
+	local checkResultB = AVCS.getPublicPermission(vehicleB, "AllowAttachVehicle")
+
+	if checkResultA and checkResultB then
+		return AVCS.oISAttachTrailerToVehicle(self, character, vehicleA, vehicleB, attachmentA, attachmentB)
+	end
+
+	checkResultA = AVCS.checkPermission(character, vehicleA)
+	checkResultB = AVCS.checkPermission(character, vehicleB)
 	checkResultA = AVCS.getSimpleBooleanPermission(checkResultA)
 	checkResultB = AVCS.getSimpleBooleanPermission(checkResultB)
 
 	if checkResultA and checkResultB then
 		return AVCS.oISAttachTrailerToVehicle(self, character, vehicleA, vehicleB, attachmentA, attachmentB)
-	else
-		character:setHaloNote(getText("IGUI_AVCS_Vehicle_No_Permission"), 250, 250, 250, 300)
-		local temp = {
-			ignoreAction = true
-		}
-		return temp
 	end
+
+	character:setHaloNote(getText("IGUI_AVCS_Vehicle_No_Permission"), 250, 250, 250, 300)
+	local temp = {
+		ignoreAction = true
+	}
+	return temp
 end
 
 -- Copy and override the vanilla ISDetachTrailerFromVehicle to block unauthorized users
@@ -196,18 +217,24 @@ if not AVCS.oISDetachTrailerFromVehicle then
 end
 
 function ISDetachTrailerFromVehicle:new(character, vehicle, attachment)
-	local checkResult = AVCS.checkPermission(character, vehicle)
+	local checkResult = AVCS.getPublicPermission(vehicle, "AllowDetechVehicle")
+
+	if checkResult then
+		return AVCS.oISDetachTrailerFromVehicle(self, character, vehicle, attachment)
+	end
+
+	checkResult = AVCS.checkPermission(character, vehicle)
 	checkResult = AVCS.getSimpleBooleanPermission(checkResult)
 
 	if checkResult then
 		return AVCS.oISDetachTrailerFromVehicle(self, character, vehicle, attachment)
-	else
-		character:setHaloNote(getText("IGUI_AVCS_Vehicle_No_Permission"), 250, 250, 250, 300)
-		local temp = {
-			ignoreAction = true
-		}
-		return temp
 	end
+
+	character:setHaloNote(getText("IGUI_AVCS_Vehicle_No_Permission"), 250, 250, 250, 300)
+	local temp = {
+		ignoreAction = true
+	}
+	return temp
 end
 
 -- Copy and override the vanilla ISUninstallVehiclePart to block unauthorized users
@@ -216,18 +243,24 @@ if not AVCS.oISUninstallVehiclePart then
 end
 
 function ISUninstallVehiclePart:new(character, part, time)
-	local checkResult = AVCS.checkPermission(character, part:getVehicle())
+	local checkResult = AVCS.getPublicPermission(part:getVehicle(), "AllowUninstallParts")
+
+	if checkResult then
+		return AVCS.oISUninstallVehiclePart(self, character, part, time)
+	end
+
+	checkResult = AVCS.checkPermission(character, part:getVehicle())
 	checkResult = AVCS.getSimpleBooleanPermission(checkResult)
 
 	if checkResult then
 		return AVCS.oISUninstallVehiclePart(self, character, part, time)
-	else
-		character:setHaloNote(getText("IGUI_AVCS_Vehicle_No_Permission"), 250, 250, 250, 300)
-		local temp = {
-			ignoreAction = true
-		}
-		return temp
 	end
+
+	character:setHaloNote(getText("IGUI_AVCS_Vehicle_No_Permission"), 250, 250, 250, 300)
+	local temp = {
+		ignoreAction = true
+	}
+	return temp
 end
 
 -- Copy and override the vanilla ISTakeGasolineFromVehicle to block unauthorized users
@@ -236,18 +269,24 @@ if not AVCS.oISTakeGasolineFromVehicle then
 end
 
 function ISTakeGasolineFromVehicle:new(character, part, item, time)
-	local checkResult = AVCS.checkPermission(character, part:getVehicle())
+	local checkResult = AVCS.getPublicPermission(part:getVehicle(), "AllowSiphonFuel")
+
+	if checkResult then
+		return AVCS.oISTakeGasolineFromVehicle(self, character, part, item, time)
+	end
+
+	checkResult = AVCS.checkPermission(character, part:getVehicle())
 	checkResult = AVCS.getSimpleBooleanPermission(checkResult)
 
 	if checkResult then
 		return AVCS.oISTakeGasolineFromVehicle(self, character, part, item, time)
-	else
-		character:setHaloNote(getText("IGUI_AVCS_Vehicle_No_Permission"), 250, 250, 250, 300)
-		local temp = {
-			ignoreAction = true
-		}
-		return temp
 	end
+
+	character:setHaloNote(getText("IGUI_AVCS_Vehicle_No_Permission"), 250, 250, 250, 300)
+	local temp = {
+		ignoreAction = true
+	}
+	return temp
 end
 
 -- Copy and override the vanilla ISTakeEngineParts to block unauthorized users
@@ -256,18 +295,50 @@ if not AVCS.oISTakeEngineParts then
 end
 
 function ISTakeEngineParts:new(character, part, item, time)
-	local checkResult = AVCS.checkPermission(character, part:getVehicle())
+	local checkResult = AVCS.getPublicPermission(part:getVehicle(), "AllowTakeEngineParts")
+
+	if checkResult then
+		return AVCS.oISTakeEngineParts(self, character, part, item, time)
+	end
+
+	checkResult = AVCS.checkPermission(character, part:getVehicle())
 	checkResult = AVCS.getSimpleBooleanPermission(checkResult)
 
 	if checkResult then
 		return AVCS.oISTakeEngineParts(self, character, part, item, time)
-	else
-		character:setHaloNote(getText("IGUI_AVCS_Vehicle_No_Permission"), 250, 250, 250, 300)
-		local temp = {
-			ignoreAction = true
-		}
-		return temp
 	end
+
+	character:setHaloNote(getText("IGUI_AVCS_Vehicle_No_Permission"), 250, 250, 250, 300)
+	local temp = {
+		ignoreAction = true
+	}
+	return temp
+end
+
+-- Copy and override the vanilla ISDeflateTire to block unauthorized users
+if not AVCS.oISInflateTire then
+    AVCS.oISInflateTire = ISInflateTire.new
+end
+
+function ISInflateTire:new(character, part, item, psi, time)
+	local checkResult = AVCS.getPublicPermission(part:getVehicle(), "AllowInflatTires")
+
+	if checkResult then
+		return AVCS.oISInflateTire(self, character, part, item, psi, time)
+	end
+
+	checkResult = AVCS.checkPermission(character, part:getVehicle())
+	checkResult = AVCS.getSimpleBooleanPermission(checkResult)
+
+	if checkResult then
+		return AVCS.oISInflateTire(self, character, part, item, psi, time)
+	end
+
+	character:setHaloNote(getText("IGUI_AVCS_Vehicle_No_Permission"), 250, 250, 250, 300)
+	local temp = {
+		ignoreAction = true
+	}
+	return temp
 end
 
 -- Copy and override the vanilla ISDeflateTire to block unauthorized users
@@ -276,18 +347,24 @@ if not AVCS.oISDeflateTire then
 end
 
 function ISDeflateTire:new(character, part, psi, time)
-	local checkResult = AVCS.checkPermission(character, part:getVehicle())
+	local checkResult = AVCS.getPublicPermission(part:getVehicle(), "AllowDeflatTires")
+
+	if checkResult then
+		return AVCS.oISDeflateTire(self, character, part, psi, time)
+	end
+
+	checkResult = AVCS.checkPermission(character, part:getVehicle())
 	checkResult = AVCS.getSimpleBooleanPermission(checkResult)
 
 	if checkResult then
 		return AVCS.oISDeflateTire(self, character, part, psi, time)
-	else
-		character:setHaloNote(getText("IGUI_AVCS_Vehicle_No_Permission"), 250, 250, 250, 300)
-		local temp = {
-			ignoreAction = true
-		}
-		return temp
 	end
+
+	character:setHaloNote(getText("IGUI_AVCS_Vehicle_No_Permission"), 250, 250, 250, 300)
+	local temp = {
+		ignoreAction = true
+	}
+	return temp
 end
 
 -- Copy and override the vanilla ISSmashVehicleWindow to block unauthorized users
@@ -316,9 +393,6 @@ if not AVCS.oISOpenVehicleDoor then
 end
 
 function ISOpenVehicleDoor:new(character, vehicle, partOrSeat)
-	local checkResult = AVCS.checkPermission(character, vehicle)
-	checkResult = AVCS.getSimpleBooleanPermission(checkResult)
-
 	-- Exiting from seat
 	if type(partOrSeat) == "number" then
 		return AVCS.oISOpenVehicleDoor(self, character, vehicle, partOrSeat)
@@ -330,15 +404,24 @@ function ISOpenVehicleDoor:new(character, vehicle, partOrSeat)
 		return AVCS.oISOpenVehicleDoor(self, character, vehicle, partOrSeat)
 	end
 
+	local checkResult = AVCS.getPublicPermission(vehicle, "AllowOpeningTrunk")
+
 	if checkResult then
 		return AVCS.oISOpenVehicleDoor(self, character, vehicle, partOrSeat)
-	else
-		character:setHaloNote(getText("IGUI_AVCS_Vehicle_No_Permission"), 250, 250, 250, 300)
-		local temp = {
-			ignoreAction = true
-		}
-		return temp
 	end
+
+	checkResult = AVCS.checkPermission(character, vehicle)
+	checkResult = AVCS.getSimpleBooleanPermission(checkResult)
+
+	if checkResult then
+		return AVCS.oISOpenVehicleDoor(self, character, vehicle, partOrSeat)
+	end
+
+	character:setHaloNote(getText("IGUI_AVCS_Vehicle_No_Permission"), 250, 250, 250, 300)
+	local temp = {
+		ignoreAction = true
+	}
+	return temp
 end
 
 -- Copy and override the Vehicle Repair Overhaul ISVehicleSalvage to block unauthorized users

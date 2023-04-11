@@ -33,7 +33,6 @@ AVCS.muleParts = AVCS.muleParts or {
 --]]
 -- Ingame debugger is unreliable but this does work
 function AVCS.getMulePart(vehicleObj)
-	AVCS.matchTrunkPart("trunkdoor")
 	local tempPart = false
 	-- Split by ";"
 	for s in string.gmatch(SandboxVars.AVCS.MuleParts, "([^;]+)") do
@@ -77,6 +76,28 @@ function AVCS.checkMaxClaim(playerObj)
 
 	if tempSize - 1 >= SandboxVars.AVCS.MaxVehicle then
 		return false
+	else
+		return true
+	end
+end
+
+function AVCS.getPublicPermission(vehicleObj, type)
+	local tempPart = AVCS.getMulePart(vehicleObj)
+	if tempPart then
+		local vehicleSQL = tempPart:getModData().SQLID
+		if vehicleSQL then
+			if AVCS.dbByVehicleSQLID[vehicleSQL] then
+				if AVCS.dbByVehicleSQLID[vehicleSQL][type] then
+					return AVCS.dbByVehicleSQLID[vehicleSQL][type]
+				else
+					return false
+				end
+			else
+				return true
+			end
+		else
+			return true
+		end
 	else
 		return true
 	end

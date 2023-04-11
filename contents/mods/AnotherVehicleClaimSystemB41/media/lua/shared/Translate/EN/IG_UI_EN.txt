@@ -1,6 +1,7 @@
 IG_UI_EN = {
 	IGUI_AVCS_User_Manager_Title = "Claimed Vehicles Manager",
 	IGUI_AVCS_User_Manager_btnUnclaim_Tooltip = "Unclaim vehicle",
+	IGUI_AVCS_User_Manager_btnModify_Tooltip = "Modify permissions",
 	IGUI_AVCS_User_Manager_tabButton_Personal_Tooltip = "Personal vehicle",
 	IGUI_AVCS_User_Manager_tabButton_Safehouse_Tooltip = "Safehouse wide vehicle",
 	IGUI_AVCS_User_Manager_tabButton_Faction_Tooltip = "Faction wide vehicle",
@@ -11,4 +12,15 @@ IG_UI_EN = {
 	IGUI_AVCS_User_Manager_listVehicles_NoVehicle = "No Vehicle",
 	IGUI_AVCS_Vehicle_No_Permission = "No permission",
 	IGUI_ItemCat_AVCS = "AVCS",
+	IGUI_AVCS_User_Permissions_lblPublicPermissions = "Public Permissions",
+	IGUI_AVCS_User_Permissions_lblAllowDrive = "Allow driving",
+	IGUI_AVCS_User_Permissions_lblAllowPassenger = "Allow passengers",
+	IGUI_AVCS_User_Permissions_lblAllowSiphonFuel = "Allow siphoning Fuel",
+	IGUI_AVCS_User_Permissions_lblAllowUninstallParts = "Allow uninstalling parts",
+	IGUI_AVCS_User_Permissions_lblAllowAttachVehicle = "Allow attaching vehicle",
+	IGUI_AVCS_User_Permissions_lblAllowDetechVehicle = "Allow detaching vehicle",
+	IGUI_AVCS_User_Permissions_lblAllowTakeEngineParts = "Allow taking engine parts",
+	IGUI_AVCS_User_Permissions_lblAllowOpeningTrunk = "Allow opening trunk",
+	IGUI_AVCS_User_Permissions_lblAllowInflatTires = "Allow inflating tires",
+	IGUI_AVCS_User_Permissions_lblAllowDeflatTires = "Allow deflating tires",
 }

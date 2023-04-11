@@ -21,6 +21,7 @@ function AVCS.UI.UserManagerMain:setVehiclePreview(vehicleID)
         self.lblVehicleExpireInfo:setName("-")
         self.lblVehicleLocationInfo:setName("-")
         self.lblVehicleLastLocationUpdateInfo:setName("-")
+        self.btnModify:setEnable(false)
         self.btnUnclaim:setEnable(false)
     else
         self.vehiclePreview.javaObject:fromLua2("setVehicleScript", "previewVeh", AVCS.dbByVehicleSQLID[vehicleID].CarModel)
@@ -28,6 +29,7 @@ function AVCS.UI.UserManagerMain:setVehiclePreview(vehicleID)
         self.lblVehicleExpireInfo:setName(os.date("%d-%b-%y, %H:%M:%S", (AVCS.dbByPlayerID[AVCS.dbByVehicleSQLID[vehicleID].OwnerPlayerID].LastKnownLogonTime + (SandboxVars.AVCS.ClaimTimeout * 60 * 60))))
         self.lblVehicleLocationInfo:setName(AVCS.dbByVehicleSQLID[vehicleID].LastLocationX .. ", " .. AVCS.dbByVehicleSQLID[vehicleID].LastLocationY)
         self.lblVehicleLastLocationUpdateInfo:setName(os.date("%d-%b-%y, %H:%M:%S", (AVCS.dbByVehicleSQLID[vehicleID].LastLocationUpdateDateTime)))
+        self.btnModify:setEnable(true)
         self.btnUnclaim:setEnable(true)
     end
 end
@@ -45,7 +47,25 @@ function AVCS.UI.UserManagerMain:btnUnclaim_onConfirmClick(btn, _, _)
     end
 end
 
+function AVCS.UI.UserManagerMain:btnModify_onClick()
+    if self.panelModify ~= nil then
+        self.panelModify:close()
+        self.panelModify:removeFromUIManager()
+        self.panelModify = nil
+    end
+    self.panelModify = AVCS.UI.UserPermissionPanel:new((getCore():getScreenWidth() / 2) - (200 / 2), (getCore():getScreenHeight() / 2) - (300 / 2), 200, 300, self.listVehicles.items[self.listVehicles.selected].item)
+    self.panelModify:initialise()
+    self.panelModify:addToUIManager()
+    self.panelModify:setVisible(true)
+end
+
 function AVCS.UI.UserManagerMain:btnUnclaim_onClick()
+    if self.panelModify ~= nil then
+        self.panelModify:close()
+        self.panelModify:removeFromUIManager()
+        self.panelModify = nil
+    end
+
     local message = "Confirm"
     if self.modDialog ~= nil then
         self.modDialog:close()
@@ -58,6 +78,12 @@ function AVCS.UI.UserManagerMain:btnUnclaim_onClick()
 end
 
 function AVCS.UI.UserManagerMain:tabBtn_onClick(btn)
+    if self.panelModify ~= nil then
+        self.panelModify:close()
+        self.panelModify:removeFromUIManager()
+        self.panelModify = nil
+    end
+    
     -- Don't do anything if user keep smashing the button
     if btn == prevTabBtn then
         return
@@ -199,6 +225,12 @@ function AVCS.UI.UserManagerMain:updateListVehicles()
 end
 
 function AVCS.UI.UserManagerMain:listVehiclesOnSelectedChange(parent, items, selected)
+    if self.panelModify ~= nil then
+        self.panelModify:close()
+        self.panelModify:removeFromUIManager()
+        self.panelModify = nil
+    end
+
     local vehicleSQLID = items[selected].item
     if vehicleSQLID == nil then return end
 
@@ -350,16 +382,33 @@ function AVCS.UI.UserManagerMain:createChildren()
         --end
     end
 
-    -- Create unclaim button
+    -- Create modify button
     local y = getTextManager():getFontHeight(UIFont.NewSmall) + 1 + 5
     y = y + (tabBtnSize * #self.tabButtons) + 5
     if #self.tabButtons > 1 then
         y = y + ((#self.tabButtons - 1) * 5)
     end
+    self.btnModify = ISButton:new(5, y, tabBtnSize, tabBtnSize, "", self, AVCS.UI.UserManagerMain.btnModify_onClick)
+    self.btnModify.internal = "btnModify"
+    self.btnModify.borderColor = {r=0.5, g=0.5, b=0.5, a=1}
+    self.btnModify.backgroundColor = {r=0, g=0, b=0, a=1}
+    self.btnModify.displayBackground = true
+    self.btnModify:setTooltip(getText("IGUI_AVCS_User_Manager_btnModify_Tooltip"))
+	self.btnModify:setImage(getTexture("media/ui/avcs_delete.png"))
+	self.btnModify:setTextureRGBA(1, 0, 0, 1)
+    self.btnModify:initialise()
+    self.btnModify:instantiate()
+    self.btnModify:setEnable(false)
+    self:addChild(self.btnModify)
+
+    -- Create unclaim button
+    local y = getTextManager():getFontHeight(UIFont.NewSmall) + 1 + 5
+    y = y + (tabBtnSize * (#self.tabButtons + 1)) + 5
+    if #self.tabButtons > 1 then
+        y = y + ((#self.tabButtons - 1 + 1) * 5)
+    end
     self.btnUnclaim = ISButton:new(5, y, tabBtnSize, tabBtnSize, "", self, AVCS.UI.UserManagerMain.btnUnclaim_onClick)
     self.btnUnclaim.internal = "btnUnclaim"
-    self.btnUnclaim.anchorTop = false
-    self.btnUnclaim.anchorBottom = true
     self.btnUnclaim.borderColor = {r=0.5, g=0.5, b=0.5, a=1}
     self.btnUnclaim.backgroundColor = {r=0, g=0, b=0, a=1}
     self.btnUnclaim.displayBackground = true
@@ -383,6 +432,12 @@ function AVCS.UI.UserManagerMain:close()
         self.modDialog:close()
         self.modDialog:removeFromUIManager()
         self.modDialog = nil
+    end
+
+    if self.panelModify ~= nil then
+        self.panelModify:close()
+        self.panelModify:removeFromUIManager()
+        self.panelModify = nil
     end
 end
 
