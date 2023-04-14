@@ -37,7 +37,7 @@ function ISAVCSVehicleUnclaimAction:perform()
         self.character:getEmitter():stopSound(self.sound)
     end
 
-    if SandboxVars.AVCS.ReturnTicket then
+    if SandboxVars.AVCS.ReturnTicket and SandboxVars.AVCS.RequireTicket then
         self.character:getInventory():AddItem("Base.AVCSClaimOrb")
     end
 

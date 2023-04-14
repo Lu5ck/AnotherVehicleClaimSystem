@@ -18,6 +18,12 @@ option AVCS.MaxVehicle
 		page = AVCS, translation = AVCS_MaxVehicle,
 }
 
+option AVCS.RequireTicket
+{
+		type = boolean, default = true,
+		page = AVCS, translation = AVCS_RequireTicket,
+}
+
 option AVCS.ReturnTicket
 {
 		type = boolean, default = false,

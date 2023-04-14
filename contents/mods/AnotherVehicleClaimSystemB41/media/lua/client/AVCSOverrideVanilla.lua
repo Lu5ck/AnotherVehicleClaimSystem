@@ -62,12 +62,16 @@ function AVCS.addOptionToMenuOutsideVehicle(player, context, vehicle)
 			-- Free car
 			option = context:addOption(getText("ContextMenu_AVCS_ClaimVehicle"), player, claimCfmDialog, vehicle)
 			option.toolTip = toolTip
-			if playerInv:getItemCount("Base.AVCSClaimOrb") < 1 then
+			if playerInv:getItemCount("Base.AVCSClaimOrb") < 1 and SandboxVars.AVCS.RequireTicket then
 				toolTip.description = getText("Tooltip_AVCS_Needs") .. " <LINE><RGB:1,0.2,0.2>" .. getItemNameFromFullType("Base.AVCSClaimOrb") .. " " .. playerInv:getItemCount("Base.AVCSClaimOrb") .. "/1"
 				option.notAvailable = true
 			else
 				if AVCS.checkMaxClaim(player) then
-					toolTip.description = getText("Tooltip_AVCS_Needs") .. " <LINE><RGB:0.2,1,0.2>" .. getItemNameFromFullType("Base.AVCSClaimOrb") .. " " .. playerInv:getItemCount("Base.AVCSClaimOrb") .. "/1"
+					if SandboxVars.AVCS.RequireTicket then
+						toolTip.description = getText("Tooltip_AVCS_Needs") .. " <LINE><RGB:0.2,1,0.2>" .. getItemNameFromFullType("Base.AVCSClaimOrb") .. " " .. playerInv:getItemCount("Base.AVCSClaimOrb") .. "/1"
+					else
+						toolTip.description = getText("Tooltip_AVCS_ClaimVehicle")
+					end
 					option.notAvailable = false
 				else
 					toolTip.description = "<RGB:0.2,1,0.2>" .. getText("Tooltip_AVCS_ExceedLimit")

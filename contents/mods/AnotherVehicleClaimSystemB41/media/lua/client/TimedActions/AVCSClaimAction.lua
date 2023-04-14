@@ -38,9 +38,11 @@ function ISAVCSVehicleClaimAction:perform()
     end
 	
 	sendClientCommand(self.character, "AVCS", "claimVehicle", { vehicle = self.vehicle:getId() })
-
-	local form = self.character:getInventory():getFirstTypeRecurse("AVCSClaimOrb")
-	form:getContainer():Remove(form)
+    
+    if SandboxVars.AVCS.RequireTicket then
+	    local form = self.character:getInventory():getFirstTypeRecurse("AVCSClaimOrb")
+	    form:getContainer():Remove(form)
+    end
 
     if UdderlyVehicleRespawn and SandboxVars.AVCS.UdderlyRespawn then
         UdderlyVehicleRespawn.SpawnRandomVehicleAtRandomZoneInRandomCell()
