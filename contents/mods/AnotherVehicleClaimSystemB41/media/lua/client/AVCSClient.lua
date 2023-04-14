@@ -191,14 +191,14 @@ local function OnReceiveGlobalModData(key, modData)
 	end
 end
 
-local function EveryTenMinutes()
+local function EveryHours()
 	if AVCS.dbByPlayerID[getPlayer():getUsername()] ~= nil then
 		sendClientCommand(getPlayer(), "AVCS", "updateLastKnownLogonTime", nil)
 	end
 end
 
 Events.OnPreFillWorldObjectContextMenu.Add(OnPreFillWorldObjectContextMenu)
-Events.EveryTenMinutes.Add(EveryTenMinutes)
+Events.EveryHours.Add(EveryHours)
 Events.OnReceiveGlobalModData.Add(OnReceiveGlobalModData)
 Events.OnConnected.Add(OnConnected)
 Events.OnServerCommand.Add(AVCS.OnServerCommand)
