@@ -47,7 +47,10 @@ function AVCS.UI.UserManagerMain:btnUnclaim_onConfirmClick(btn, _, _)
     end
 end
 
-function AVCS.UI.UserManagerMain:btnModify_onClick()
+function AVCS.UI.UserManagerMain:btnModify_onClick(btn)
+    if btn.internal ~= "btnModify" then
+        return
+    end
     if self.panelModify ~= nil then
         self.panelModify:close()
         self.panelModify:removeFromUIManager()
@@ -60,6 +63,9 @@ function AVCS.UI.UserManagerMain:btnModify_onClick()
 end
 
 function AVCS.UI.UserManagerMain:btnUnclaim_onClick()
+    if btn.internal ~= "btnUnclaim" then
+        return
+    end
     if self.panelModify ~= nil then
         self.panelModify:close()
         self.panelModify:removeFromUIManager()
@@ -78,16 +84,16 @@ function AVCS.UI.UserManagerMain:btnUnclaim_onClick()
 end
 
 function AVCS.UI.UserManagerMain:tabBtn_onClick(btn)
+    -- Don't do anything if user keep smashing the button
+    if btn == prevTabBtn then
+        return
+    end
     if self.panelModify ~= nil then
         self.panelModify:close()
         self.panelModify:removeFromUIManager()
         self.panelModify = nil
     end
     
-    -- Don't do anything if user keep smashing the button
-    if btn == prevTabBtn then
-        return
-    end
     -- Change bg color of active tab
     btn:setBackgroundRGBA(0.3, 0.3, 0.3, 1)
     prevTabBtn:setBackgroundRGBA(0, 0, 0, 1)
