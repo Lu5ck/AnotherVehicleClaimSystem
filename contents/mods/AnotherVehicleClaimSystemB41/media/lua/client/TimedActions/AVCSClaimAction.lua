@@ -59,7 +59,7 @@ function ISAVCSVehicleClaimAction:new(character, vehicle)
     o.stopOnRun = true
     o.character = character
     o.vehicle = vehicle
-    o.maxTime = 500
+    o.maxTime = 480
     
     if character:isTimedActionInstant() then o.maxTime = 1 end
     return o
