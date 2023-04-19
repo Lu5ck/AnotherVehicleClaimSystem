@@ -170,8 +170,28 @@ local function openClientUserManager()
     AVCS.UI.UserInstance:setVisible(true)
 end
 
+local function openClientAdminManager()
+	if AVCS.UI.AdminInstance ~= nil then
+		AVCS.UI.AdminInstance:close()
+	end
+
+	local width = 920
+    local height = 500
+
+    local x = getCore():getScreenWidth() / 2 - (width / 2)
+    local y = getCore():getScreenHeight() / 2 - (height / 2)
+
+    AVCS.UI.AdminInstance = AVCS.UI.AdminManagerMain:new(x, y, width, height)
+    AVCS.UI.AdminInstance:initialise()
+    AVCS.UI.AdminInstance:addToUIManager()
+    AVCS.UI.AdminInstance:setVisible(true)
+end
+
 local function OnPreFillWorldObjectContextMenu(player, context, worldObjects, test)
     context:addOption(getText("ContextMenu_AVCS_ClientUserUI"), worldObjects, openClientUserManager, nil)
+	--if string.lower(getPlayer():getAccessLevel()) ~= "none" then
+		context:addOption(getText("ContextMenu_AVCS_AdminUserUI"), worldObjects, openClientAdminManager, nil)
+	--end
 end
 
 local function OnConnected()
