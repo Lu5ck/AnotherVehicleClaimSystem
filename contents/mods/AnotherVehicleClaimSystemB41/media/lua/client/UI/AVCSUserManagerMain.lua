@@ -62,7 +62,7 @@ function AVCS.UI.UserManagerMain:btnModify_onClick(btn)
     self.panelModify:setVisible(true)
 end
 
-function AVCS.UI.UserManagerMain:btnUnclaim_onClick()
+function AVCS.UI.UserManagerMain:btnUnclaim_onClick(btn)
     if btn.internal ~= "btnUnclaim" then
         return
     end
