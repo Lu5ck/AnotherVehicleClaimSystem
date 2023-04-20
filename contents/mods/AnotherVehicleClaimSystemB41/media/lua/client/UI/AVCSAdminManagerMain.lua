@@ -324,9 +324,9 @@ function AVCS.UI.AdminManagerMain:btnOnClick(btn)
         safehouseUI:initialise()
         safehouseUI:addToUIManager()
     elseif btn.internal == "btnViewFaction"  then
-        local safehouseUI = ISSafehouseUI:new(getCore():getScreenWidth() / 2 - 250,getCore():getScreenHeight() / 2 - 225, 500, 450, SafeHouse.hasSafehouse(self.listData.items[self.listData.selected].item.OwnerPlayerID), getPlayer())
-        safehouseUI:initialise()
-        safehouseUI:addToUIManager()
+        local factionUI = ISFactionUI:new(getCore():getScreenWidth() / 2 - 250, getCore():getScreenHeight() / 2 - 225, 500, 450, Faction.getPlayerFaction(self.listData.items[self.listData.selected].item.OwnerPlayerID), getPlayer())
+        factionUI:initialise()
+        factionUI:addToUIManager()
     elseif btn.internal == "btnModifyPermissions" then
         self.panelModify = AVCS.UI.UserPermissionPanel:new((getCore():getScreenWidth() / 2) - (200 / 2), (getCore():getScreenHeight() / 2) - (300 / 2), 200, 300, tonumber(self.listData.items[self.listData.selected].item.vehicleID))
         self.panelModify:initialise()
@@ -355,8 +355,9 @@ function AVCS.UI.AdminManagerMain:removeUsernameVehicleID(OwnerPlayerID, vehicle
     local varStart = 1
     local varEnd = #self.varData
     local varFound = 0
+
     while varStart <= varEnd do
-        local varMid = math.floor((start + end) / 2)
+        local varMid = math.floor((varStart + varEnd) / 2)
         if self.varData[varMid].OwnerPlayerID == OwnerPlayerID then
             if self.varData[varMid].vehicleID == vehicleID then
                 table.remove(self.varData, varMid)
