@@ -162,7 +162,7 @@ function AVCS.unclaimVehicle(playerObj, vehicleID)
 		-- Store the updated ModData --
 		ModData.add("AVCSByPlayerID", AVCS.dbByPlayerID)
 		
-		-- Careful the cap
+		-- Case sensitive
 		local tempArr = {
 			VehicleID = vehicleID,
 			OwnerPlayerID = ownerPlayerID

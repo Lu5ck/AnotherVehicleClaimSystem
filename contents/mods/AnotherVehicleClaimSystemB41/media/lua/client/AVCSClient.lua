@@ -93,26 +93,6 @@ function AVCS.updateClientLastLogon(arg)
 	AVCS.dbByPlayerID[arg.PlayerID].LastKnownLogonTime = arg.LastKnownLogonTime
 end
 
--- Apparently getOnlinePlayers() only obtain nearby players and not all online players
--- Thus this function will not be utilized as I wanted to, I will just leave it here
---[[
-function AVCS.updateClientLastKnownLogonTime()
-	local onlinePlayers = getOnlinePlayers()
-	local tempDB = ModData.get("AVCSByPlayerID")
-	local tempCount = 0
-	for i = 1, onlinePlayers:size() do
-		if AVCS.dbByPlayerID[onlinePlayers:get(i)] ~= nil then
-			AVCS.dbByPlayerID[onlinePlayers:get(i)].LastKnownLogonTime = getTimestamp()
-			tempCount = tempCount + 1
-		end
-	end
-
-	if tempCount ~= 0 then
-		ModData.add("AVCSByPlayerID", AVCS.dbByPlayerID)
-	end
-end
---]]
-
 function AVCS.forcesyncClientGlobalModData(arg)
 	if getPlayer():getUsername() == arg[1] then
 		ModData.request("AVCSByVehicleSQLID")
