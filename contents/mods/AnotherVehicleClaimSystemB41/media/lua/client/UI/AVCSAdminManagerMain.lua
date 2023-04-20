@@ -343,8 +343,68 @@ end
 function AVCS.UI.AdminManagerMain:btnUnclaim_onConfirmClick(btn, _, _)
     if btn.internal == "NO" then return end
     sendClientCommand(getPlayer(), "AVCS", "unclaimVehicle", { tonumber(self.listData.items[self.listData.selected].item.vehicleID) })
+    self.removeUsernameVehicleID(self, self.listData.items[self.listData.selected].item.OwnerPlayerID, self.listData.items[self.listData.selected].item.vehicleID)
     self.listData:removeItemByIndex(self.listData.selected)
     self.listOnSelectionChange(self)
+end
+
+function AVCS.UI.AdminManagerMain:removeUsernameVehicleID(OwnerPlayerID, vehicleID)
+    -- Binary seaerch, should be more efficient than typical for-loop when data get huge
+    -- Only works for sorted list
+    local varStart = 1
+    local varEnd = #self.varData
+    local varFound = 0
+    while varStart <= varEnd do
+        local varMid = math.floor((start + end) / 2)
+        if self.varData[varMid].OwnerPlayerID == OwnerPlayerID then
+            if self.varData[varMid].vehicleID == vehicleID then
+                table.remove(self.varData, varMid)
+                return
+            end
+            varFound = varMid
+            break
+        elseif self.varData[varMid].OwnerPlayerID < OwnerPlayerID then
+            varStart = varMid + 1
+        else
+            varEnd = varMid - 1
+        end
+    end
+
+    -- Found the OwnerPlayerID but not vehicleID
+    -- We will look at the adjucent data
+    if varFound ~= 0 then
+        local varTop = varFound + 1
+        local varBottom = varFound - 1
+        while true do
+            if varTop <= #self.varData then
+                if self.varData[varTop].OwnerPlayerID == OwnerPlayerID then
+                    if self.varData[varTop].vehicleID == vehicleID then
+                        table.remove(self.varData, varTop)
+                        return
+                    end
+                    varTop = varTop + 1
+                else
+                    varTop = #self.varData + 1
+                end
+            end
+
+            if varBottom ~= 0 then
+                if self.varData[varBottom].OwnerPlayerID == OwnerPlayerID then
+                    if self.varData[varBottom].vehicleID == vehicleID then
+                        table.remove(self.varData, varBottom)
+                        return
+                    end
+                    varBottom = varBottom - 1
+                end
+                varBottom = 0
+            end
+
+            -- There's nothing! Why is this even called?!
+            if varTop > #self.varData and varBottom == 0 then
+                break
+            end
+        end
+    end
 end
 
 function AVCS.UI.AdminManagerMain:close()
