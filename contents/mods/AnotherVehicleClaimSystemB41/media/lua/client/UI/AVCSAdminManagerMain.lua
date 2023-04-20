@@ -123,9 +123,8 @@ function AVCS.UI.AdminManagerMain:drawData(y, item, alt)
     self.javaObject:DrawTextureScaledColor(nil, self.columns[6].size, y, 1, self.itemheight, self.borderColor.r, self.borderColor.g, self.borderColor.b, self.borderColor.a)
     self:drawText(item.item.ExpireOn, self.columns[6].size + xoffset, y + 4, 1, 1, 1, a, self.font)
 
-    self:repaintStencilRect(0, clipY, self.width, clipY2 - clipY)
-
     return y + self.itemheight;
+
 end
 
 function AVCS.UI.AdminManagerMain:filterStringCompare(mainText, compareText)
