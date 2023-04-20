@@ -28,17 +28,6 @@ function AVCS.UI.AdminManagerMain:listDataOnMouseDown(x, y)
 		self.onmousedown(self.target, self.items[self.selected].item)
 	end
 
-    if self.panelModify ~= nil then
-        self.panelModify:close()
-        self.panelModify:removeFromUIManager()
-        self.panelModify = nil
-    end
-
-    if self.modDialog ~= nil then
-        self.modDialog:close()
-        self.modDialog:removeFromUIManager()
-        self.modDialog = nil
-    end
     self.parent.listOnSelectionChange(self.parent)
 end
 
@@ -60,7 +49,7 @@ function AVCS.UI.AdminManagerMain:listOnSelectionChange()
         self.modDialog = nil
     end
 
-    if self.listData.selected > 0 then
+    if self.listData.selected > 0 and string.lower(getPlayer():getAccessLevel()) == "admin" then
         self.btnModifyPermissions:setEnable(true)
         self.btnDelete:setEnable(true)
         if SafeHouse.hasSafehouse(self.listData.items[self.listData.selected].item.OwnerPlayerID) then
@@ -361,6 +350,18 @@ end
 function AVCS.UI.AdminManagerMain:close()
     ISCollapsableWindow.close(self)
 
+    if self.panelModify ~= nil then
+        self.panelModify:close()
+        self.panelModify:removeFromUIManager()
+        self.panelModify = nil
+    end
+
+    if self.modDialog ~= nil then
+        self.modDialog:close()
+        self.modDialog:removeFromUIManager()
+        self.modDialog = nil
+    end
+    
     if AVCS.UI.AdminInstance then AVCS.UI.AdminInstance = nil end
     self:removeFromUIManager()
 end

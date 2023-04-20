@@ -189,9 +189,9 @@ end
 
 local function OnPreFillWorldObjectContextMenu(player, context, worldObjects, test)
     context:addOption(getText("ContextMenu_AVCS_ClientUserUI"), worldObjects, openClientUserManager, nil)
-	--if string.lower(getPlayer():getAccessLevel()) ~= "none" then
+	if string.lower(getPlayer():getAccessLevel()) ~= "none" then
 		context:addOption(getText("ContextMenu_AVCS_AdminUserUI"), worldObjects, openClientAdminManager, nil)
-	--end
+	end
 end
 
 local function OnConnected()
