@@ -350,6 +350,7 @@ end
 
 function AVCS.UI.AdminManagerMain:removeUsernameVehicleID(OwnerPlayerID, vehicleID)
     -- Binary seaerch, should be more efficient than typical for-loop when data get huge
+    -- We want to avoid worst case scenario of data looping from start to end
     -- Only works for sorted list
     local varStart = 1
     local varEnd = #self.varData
@@ -395,8 +396,9 @@ function AVCS.UI.AdminManagerMain:removeUsernameVehicleID(OwnerPlayerID, vehicle
                         return
                     end
                     varBottom = varBottom - 1
+                else
+                    varBottom = 0
                 end
-                varBottom = 0
             end
 
             -- There's nothing! Why is this even called?!
