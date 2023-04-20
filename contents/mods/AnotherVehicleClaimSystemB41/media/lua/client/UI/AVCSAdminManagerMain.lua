@@ -94,33 +94,33 @@ function AVCS.UI.AdminManagerMain:drawData(y, item, alt)
 
     clipX = self.columns[2].size
     clipX2 = self.columns[3].size
-    self.javaObject:DrawTextureScaledColor(nil, clipX, clipY, 1, self.itemheight, self.borderColor.r, self.borderColor.g, self.borderColor.b, self.borderColor.a)
+    self.javaObject:DrawTextureScaledColor(nil, self.columns[2].size, y, 1, self.itemheight, self.borderColor.r, self.borderColor.g, self.borderColor.b, self.borderColor.a)
     self:setStencilRect(clipX, clipY, clipX2 - clipX, clipY2 - clipY)
     self:drawText(item.item.vehicleID, self.columns[2].size + xoffset, y + 4, 1, 1, 1, a, self.font)
     self:clearStencilRect()
 
     clipX = self.columns[3].size
     clipX2 = self.columns[4].size
-    self.javaObject:DrawTextureScaledColor(nil, clipX, clipY, 1, self.itemheight, self.borderColor.r, self.borderColor.g, self.borderColor.b, self.borderColor.a)
+    self.javaObject:DrawTextureScaledColor(nil, self.columns[3].size, y, 1, self.itemheight, self.borderColor.r, self.borderColor.g, self.borderColor.b, self.borderColor.a)
     self:setStencilRect(clipX, clipY, clipX2 - clipX, clipY2 - clipY)
     self:drawText(item.item.carFullName, self.columns[3].size + xoffset, y + 4, 1, 1, 1, a, self.font)
     self:clearStencilRect()
 
     clipX = self.columns[4].size
     clipX2 = self.columns[5].size
-    self.javaObject:DrawTextureScaledColor(nil, clipX, clipY, 1, self.itemheight, self.borderColor.r, self.borderColor.g, self.borderColor.b, self.borderColor.a)
+    self.javaObject:DrawTextureScaledColor(nil, self.columns[4].size, y, 1, self.itemheight, self.borderColor.r, self.borderColor.g, self.borderColor.b, self.borderColor.a)
     self:setStencilRect(clipX, clipY, clipX2 - clipX, clipY2 - clipY)
     self:drawText(item.item.ClaimDateTime, self.columns[4].size + xoffset, y + 4, 1, 1, 1, a, self.font)
     self:clearStencilRect()
 
     clipX = self.columns[5].size
     clipX2 = self.columns[6].size
-    self.javaObject:DrawTextureScaledColor(nil, clipX, clipY, 1, self.itemheight, self.borderColor.r, self.borderColor.g, self.borderColor.b, self.borderColor.a)
+    self.javaObject:DrawTextureScaledColor(nil, self.columns[5].size, y, 1, self.itemheight, self.borderColor.r, self.borderColor.g, self.borderColor.b, self.borderColor.a)
     self:setStencilRect(clipX, clipY, clipX2 - clipX, clipY2 - clipY)
     self:drawText(item.item.Location, self.columns[5].size + xoffset, y + 4, 1, 1, 1, a, self.font)
     self:clearStencilRect()
 
-    self.javaObject:DrawTextureScaledColor(nil, clipX2, clipY, 1, self.itemheight, self.borderColor.r, self.borderColor.g, self.borderColor.b, self.borderColor.a)
+    self.javaObject:DrawTextureScaledColor(nil, self.columns[6].size, y, 1, self.itemheight, self.borderColor.r, self.borderColor.g, self.borderColor.b, self.borderColor.a)
     self:drawText(item.item.ExpireOn, self.columns[6].size + xoffset, y + 4, 1, 1, 1, a, self.font)
 
     self:repaintStencilRect(0, clipY, self.width, clipY2 - clipY)
