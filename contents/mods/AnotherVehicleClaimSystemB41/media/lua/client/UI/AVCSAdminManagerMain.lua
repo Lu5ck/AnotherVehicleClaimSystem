@@ -162,6 +162,9 @@ function AVCS.UI.AdminManagerMain:initList()
                 local carFullName = AVCS.dbByVehicleSQLID[ak].CarModel
                 local index = string.find(carFullName, "%.")
                 carFullName = getTextOrNull("IGUI_VehicleName" .. string.sub(carFullName, index + 1, string.len(carFullName)))
+                if not carFullName  then
+                    carFullName = AVCS.dbByVehicleSQLID[ak].CarModel
+                end
                 table.insert(tempTable, {OwnerPlayerID = k, carFullName = carFullName, vehicleID = tostring(ak), ExpireOn = os.date("%d-%b-%y, %H:%M:%S", (AVCS.dbByPlayerID[k].LastKnownLogonTime + (SandboxVars.AVCS.ClaimTimeout * 60 * 60))), Location = AVCS.dbByVehicleSQLID[ak].LastLocationX .. "," .. AVCS.dbByVehicleSQLID[ak].LastLocationY, ClaimDateTime = os.date("%d-%b-%y, %H:%M:%S", AVCS.dbByVehicleSQLID[ak].ClaimDateTime)})
             end
         end
