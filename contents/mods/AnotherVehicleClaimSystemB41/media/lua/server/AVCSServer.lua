@@ -222,28 +222,15 @@ end
 function AVCS.rebuildDB()
 	local tempDB = {}
 	for k, v in pairs(AVCS.dbByVehicleSQLID) do
-		if tempDB[v.OwnerPlayerID] then
-			tempDB[v.OwnerPlayerID][k] = true
-			if AVCS.dbByPlayerID[v.OwnerPlayerID] then
-				if AVCS.dbByPlayerID[v.OwnerPlayerID].LastKnownLogonTime then
-					tempDB[v.OwnerPlayerID].LastKnownLogonTime = AVCS.dbByPlayerID[v.OwnerPlayerID].LastKnownLogonTime
-				else
-					tempDB[v.OwnerPlayerID].LastKnownLogonTime = getTimestamp()
-				end
-			end
+		if not tempDB[v.OwnerPlayerID] then
+			tempDB[v.OwnerPlayerID] = {}
+		end
+
+		tempDB[v.OwnerPlayerID][k] = true
+		if AVCS.dbByPlayerID[v.OwnerPlayerID].LastKnownLogonTime then
+			tempDB[v.OwnerPlayerID].LastKnownLogonTime = AVCS.dbByPlayerID[v.OwnerPlayerID].LastKnownLogonTime
 		else
-			local tempTime
-			if AVCS.dbByPlayerID[v.OwnerPlayerID] then
-				if AVCS.dbByPlayerID[v.OwnerPlayerID].LastKnownLogonTime then
-					tempTime = AVCS.dbByPlayerID[v.OwnerPlayerID].LastKnownLogonTime
-				else
-					tempTime = getTimestamp()
-				end
-			end
-			tempDB[v.OwnerPlayerID] = {
-				[k] = true,
-				LastKnownLogonTime = tempTime
-			}
+			tempDB[v.OwnerPlayerID].LastKnownLogonTime = getTimestamp()
 		end
 	end
 
