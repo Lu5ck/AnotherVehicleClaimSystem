@@ -115,7 +115,7 @@ function AVCS.claimVehicle(playerObj, vehicleID)
 			
 		else
 			AVCS.dbByPlayerID[playerObj:getUsername()][vehicleObj:getSqlId()] = true
-			AVCS.dbByPlayerID[playerObj:getUsername()][LastKnownLogonTime] = getTimestamp()
+			AVCS.dbByPlayerID[playerObj:getUsername()].LastKnownLogonTime = getTimestamp()
 		end
 		
 		-- Store the updated ModData --
@@ -143,19 +143,21 @@ function AVCS.unclaimVehicle(playerObj, vehicleID)
 		
 		if AVCS.dbByPlayerID[ownerPlayerID][vehicleID] then
 			AVCS.dbByPlayerID[ownerPlayerID][vehicleID] = nil
-			AVCS.dbByPlayerID[ownerPlayerID][LastKnownLogonTime] = getTimestamp()
+			AVCS.dbByPlayerID[ownerPlayerID].LastKnownLogonTime = getTimestamp()
 		end
 
 		-- If the player has 0 vehicle, remove it completely
 		local tempCount = 0
-		for i, v in pairs(AVCS.dbByPlayerID[ownerPlayerID]) do
-			tempCount = tempCount + 1
-			if tempCount >= 2 then
+		for k, v in pairs(AVCS.dbByPlayerID[ownerPlayerID]) do
+			if k ~= "LastKnownLogonTime" then
+				tempCount = tempCount + 1
+			end
+			if tempCount >= 1 then
 				break
 			end
 		end
 		
-		if tempCount == 1 then
+		if tempCount == 0 then
 			AVCS.dbByPlayerID[ownerPlayerID] = nil
 		end
 
