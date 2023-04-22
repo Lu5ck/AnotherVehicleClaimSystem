@@ -28,6 +28,11 @@ function Vehicles.LowerCondition(vehicle, part, elapsedMinutes)
 	AVCS.updateVehicleCoordinate(vehicle)
 end
 
+-- Common functions
+function AVCS.sortCacheNow()
+	table.sort(AVCS.sortedPlayerTimeoutClaim, function(a, b) return a.ExpiryTime < b.ExpiryTime end)
+end
+
 --[[
 The global modData is basically the database for this vehicle claiming mod
 This global moddata is actively shared with the clients
@@ -110,9 +115,7 @@ function AVCS.claimVehicle(playerObj, vehicleID)
 			}
 
 			-- New player, insert it to the cache, theorically should be the latest entry
-			AVCS.sortedPlayerTimeoutClaim[AVCS.dbByPlayerID[playerObj:getUsername()].LastKnownLogonTime] = {}
-			table.insert(AVCS.sortedPlayerTimeoutClaim[AVCS.dbByPlayerID[playerObj:getUsername()].LastKnownLogonTime], playerObj:getUsername())
-			
+			table.insert(AVCS.sortedPlayerTimeoutClaim, {ExpiryTime = (AVCS.dbByPlayerID[playerObj:getUsername()].LastKnownLogonTime + (SandboxVars.AVCS.ClaimTimeout * 60 * 60)), OwnerPlayerID = playerObj:getUsername()})
 		else
 			AVCS.dbByPlayerID[playerObj:getUsername()][vehicleObj:getSqlId()] = true
 			AVCS.dbByPlayerID[playerObj:getUsername()].LastKnownLogonTime = getTimestamp()
@@ -335,58 +338,48 @@ function AVCS.removePlayerCompletely(playerID)
 end
 
 --[[
-Transform dbAVCSByPlayerID into
-[LastKnownLogonTime] = { PlayerID1, PlayerID2 }
+Transform dbAVCSByPlayerID into array of {LastKnownLogonTime, OwnerPlayerID}
 --]]
 local function createSortedPlayerTimeoutClaim()
 	local temp = {}
-	for _, v in pairs(AVCS.dbByPlayerID) do
-		table.insert(temp, v)
+	for k, v in pairs(AVCS.dbByPlayerID) do
+		table.insert(temp, {ExpiryTime = (v.LastKnownLogonTime + (SandboxVars.AVCS.ClaimTimeout * 60 * 60)), OwnerPlayerID = k})
 	end
-	table.sort(temp, function(a, b) return a.LastKnownLogonTime < b.LastKnownLogonTime end)
 
-	AVCS.sortedPlayerTimeoutClaim = {}
-	-- Group LastKnownLogonTime together
-	-- Unlikely to have same LastKnownLogonTime but if it does, it will cause errors
-	for _, v in ipairs(temp) do
-		local playerID
-		for i, k in pairs(AVCS.dbByPlayerID) do
-			if k == v then
-				playerID = i
-				break
-			end
-		end
-		if AVCS.sortedPlayerTimeoutClaim[v.LastKnownLogonTime] == nil then
-			AVCS.sortedPlayerTimeoutClaim[v.LastKnownLogonTime] = {}
-		end
-		table.insert(AVCS.sortedPlayerTimeoutClaim[v.LastKnownLogonTime], playerID)
-	end
+	AVCS.sortedPlayerTimeoutClaim = temp
+	AVCS.sortCacheNow()
 end
 
 function AVCS.doClaimTimeout()
 	if AVCS.sortedPlayerTimeoutClaim ~= nil then
-		local tempRebuild = false
-		for varTime, v in pairs(AVCS.sortedPlayerTimeoutClaim) do
-			-- If yet to expire
-			if getTimestamp() - varTime < (SandboxVars.AVCS.ClaimTimeout * 60 * 60) then
-				return
-			end
-			for _, k in ipairs(AVCS.sortedPlayerTimeoutClaim[varTime]) do
-				if AVCS.dbByPlayerID[k] ~= nil then
-					-- The sorted cache is not always updated, we simply perform final verification here
-					if AVCS.dbByPlayerID[k].LastKnownLogonTime - varTime > (SandboxVars.AVCS.ClaimTimeout * 60 * 60) then
-						AVCS.removePlayerCompletely(k)
+		local varIndex = 1
+		local needSort = false
+		-- As we dealing with indexes, we want to control the index value as we increment to avoid removing wrong index
+		while varIndex <= #AVCS.sortedPlayerTimeoutClaim do
+			if getTimestamp() > AVCS.sortedPlayerTimeoutClaim[varIndex].ExpiryTime then
+				if AVCS.dbByPlayerID[AVCS.sortedPlayerTimeoutClaim[varIndex].OwnerPlayerID] ~= nil then
+					-- Cache is not always up-to-date, validate the actual
+					if getTimestamp() > (AVCS.dbByPlayerID[AVCS.sortedPlayerTimeoutClaim[varIndex].OwnerPlayerID].LastKnownLogonTime + (SandboxVars.AVCS.ClaimTimeout * 60 * 60)) then
+						AVCS.removePlayerCompletely(AVCS.sortedPlayerTimeoutClaim[varIndex].OwnerPlayerID)
+						table.remove(AVCS.sortedPlayerTimeoutClaim, varIndex)
 					else
-						-- Cache does not reflect current state, rebuild the cache again
-						-- This shouldn't happen often and is faster to rebuild than to attempt to insert while keeping it sorted
-						tempRebuild = true
+						-- Update the expiry time
+						AVCS.sortedPlayerTimeoutClaim[varIndex].ExpiryTime = (AVCS.dbByPlayerID[AVCS.sortedPlayerTimeoutClaim[varIndex].OwnerPlayerID].LastKnownLogonTime + (SandboxVars.AVCS.ClaimTimeout * 60 * 60))
+						needSort = true
+						varIndex = varIndex + 1
 					end
+				else
+					-- User no longer exist, remove from index
+					table.remove(AVCS.sortedPlayerTimeoutClaim, varIndex)
 				end
+			else
+				-- Since sorted, assume everybody else has not expired
+				break
 			end
-			AVCS.sortedPlayerTimeoutClaim[varTime] = nil
 		end
-		if tempRebuild == true then
-			createSortedPlayerTimeoutClaim()
+
+		if needSort then
+			AVCS.sortCacheNow()
 		end
 	end
 end
