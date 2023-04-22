@@ -241,7 +241,7 @@ function AVCS.rebuildDB()
 				end
 			end
 			tempDB[v.OwnerPlayerID] = {
-				k = true,
+				[k] = true,
 				LastKnownLogonTime = tempTime
 			}
 		end
