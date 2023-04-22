@@ -30,4 +30,7 @@ Sandbox_EN = {
 	Sandbox_AVCS_TrunkParts = "Trunk Parts",
 	Sandbox_AVCS_TrunkParts_tooltip = "Vehicle container that has a cover which store cargo, append to add containers of unsupported mod vehicles",
 	Sandbox_AVCS_TrunkParts_help = "Vehicle container that has a cover which store cargo, append to add containers of unsupported mod vehicles",
+	Sandbox_AVCS_RebuildDB = "Rebuild Database",
+	Sandbox_AVCS_RebuildDB_tooltip = "Database may become inconsistent due to catastrophic failures",
+	Sandbox_AVCS_RebuildDB_help = "Database may become inconsistent due to catastrophic failures",
 }

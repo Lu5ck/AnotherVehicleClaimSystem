@@ -217,6 +217,40 @@ function AVCS.updateSpecifyVehicleUserPermission(arg)
 	end
 end
 
+-- Database might become inconsistent with one another due to whatever reasons
+-- Using AVCSByVehicleSQLID as base, we will rebuild the Database on server start
+function AVCS.rebuildDB()
+	local tempDB = {}
+	for k, v in pairs(AVCS.dbByVehicleSQLID) do
+		if tempDB[v.OwnerPlayerID] then
+			tempDB[v.OwnerPlayerID][k] = true
+			if AVCS.dbByPlayerID[v.OwnerPlayerID] then
+				if AVCS.dbByPlayerID[v.OwnerPlayerID].LastKnownLogonTime then
+					tempDB[v.OwnerPlayerID].LastKnownLogonTime = AVCS.dbByPlayerID[v.OwnerPlayerID].LastKnownLogonTime
+				else
+					tempDB[v.OwnerPlayerID].LastKnownLogonTime = getTimestamp()
+				end
+			end
+		else
+			local tempTime
+			if AVCS.dbByPlayerID[v.OwnerPlayerID] then
+				if AVCS.dbByPlayerID[v.OwnerPlayerID].LastKnownLogonTime then
+					tempTime = AVCS.dbByPlayerID[v.OwnerPlayerID].LastKnownLogonTime
+				else
+					tempTime = getTimestamp()
+				end
+			end
+			tempDB[v.OwnerPlayerID] = {
+				k = true
+				LastKnownLogonTime = tempTime
+			}
+		end
+	end
+
+	AVCS.dbByPlayerID = tempDB
+	ModData.add("AVCSByPlayerID", AVCS.dbByPlayerID)
+end
+
 AVCS.onClientCommand = function(moduleName, command, playerObj, arg)
 	if moduleName == "AVCS" and command == "claimVehicle" then
 		AVCS.claimVehicle(playerObj, arg)
@@ -284,6 +318,10 @@ AVCS.onClientCommand = function(moduleName, command, playerObj, arg)
 			end
 		end
 		AVCS.updateSpecifyVehicleUserPermission(arg)
+	elseif moduleName == "AVCS" and command == "rebuildDB" then
+		if playerObj:getAccessLevel() == "admin" then
+			AVCS.rebuildDB()
+		end
 	end
 end
 
@@ -374,6 +412,10 @@ local function OnServerStarted()
 	-- Set global variable as this is frequently accessed
 	AVCS.dbByVehicleSQLID = ModData.get("AVCSByVehicleSQLID")
 	AVCS.dbByPlayerID = ModData.get("AVCSByPlayerID")
+
+	if SandboxVars.AVCS.RebuildDB then
+		AVCS.rebuildDB()
+	end
 
 	-- Create a sorted table
 	if AVCS.sortedPlayerTimeoutClaim == nil then

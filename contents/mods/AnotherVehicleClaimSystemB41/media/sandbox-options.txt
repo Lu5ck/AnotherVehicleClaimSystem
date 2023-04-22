@@ -59,3 +59,9 @@ option AVCS.TrunkParts
 		type = string, default = TrunkDoor;DoorRear,
 		page = AVCS, translation = AVCS_TrunkParts,
 }
+
+option AVCS.RebuildDB
+{
+		type = boolean, default = false,
+		page = AVCS, translation = AVCS_RebuildDB,
+}
