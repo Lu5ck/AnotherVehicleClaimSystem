@@ -199,8 +199,8 @@ function AVCS.updateLastKnownLogonTime(playerObj)
 			LastKnownLogonTime = AVCS.dbByPlayerID[playerObj:getUsername()].LastKnownLogonTime,
 		}
 		sendServerCommand("AVCS", "updateClientLastLogon", tempArr)
+		ModData.add("AVCSByPlayerID", AVCS.dbByPlayerID)
 	end
-	ModData.add("AVCSByPlayerID", AVCS.dbByPlayerID)
 end
 
 function AVCS.updateSpecifyVehicleUserPermission(arg)
