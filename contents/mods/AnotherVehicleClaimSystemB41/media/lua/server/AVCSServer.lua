@@ -322,17 +322,9 @@ function AVCS.removePlayerCompletely(playerID)
 	if AVCS.dbByPlayerID[playerID] ~= nil then
 		for k, v in pairs(AVCS.dbByPlayerID[playerID]) do
 			if k ~= "LastKnownLogonTime" then
-				AVCS.dbByVehicleSQLID[k] = nil
-				local tempArr = {
-					VehicleID = k,
-					OwnerPlayerID = playerID
-				}
-				ModData.add("AVCSByVehicleSQLID", AVCS.dbByVehicleSQLID)
-				sendServerCommand("AVCS", "updateClientUnclaimVehicle", tempArr)
+				AVCS.unclaimVehicle(nil, k)
 			end
 		end
-		AVCS.dbByPlayerID[playerID] = nil
-		ModData.add("AVCSByPlayerID", AVCS.dbByPlayerID)
 	end
 end
 
