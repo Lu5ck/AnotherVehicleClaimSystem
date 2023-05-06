@@ -146,7 +146,6 @@ function AVCS.unclaimVehicle(playerObj, vehicleID)
 		
 		if AVCS.dbByPlayerID[ownerPlayerID][vehicleID] then
 			AVCS.dbByPlayerID[ownerPlayerID][vehicleID] = nil
-			AVCS.dbByPlayerID[ownerPlayerID].LastKnownLogonTime = getTimestamp()
 		end
 
 		-- If the player has 0 vehicle, remove it completely
