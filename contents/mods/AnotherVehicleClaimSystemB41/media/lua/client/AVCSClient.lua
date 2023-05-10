@@ -155,7 +155,7 @@ local function openClientAdminManager()
 		AVCS.UI.AdminInstance:close()
 	end
 
-	local width = 905
+	local width = 955
     local height = 500
 
     local x = getCore():getScreenWidth() / 2 - (width / 2)

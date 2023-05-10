@@ -203,10 +203,10 @@ function AVCS.UI.AdminManagerMain:createChildren()
     -- Total width 840
     self.listData:addColumn(getText("IGUI_AVCS_Admin_Manager_listUsername"), 0) -- 150 width, 126 width actual text
     self.listData:addColumn(getText("IGUI_AVCS_Admin_Manager_listVehicleID"), 150) -- 70 width, title is 55 width actual
-    self.listData:addColumn(getText("IGUI_AVCS_Admin_Manager_listCarName"), 220) -- 300 width, 46 characters max, we will cut off if too long
-    self.listData:addColumn(getText("IGUI_AVCS_Admin_Manager_listClaimedDate"), 520) -- 120 width, 103 width actual text
-    self.listData:addColumn(getText("IGUI_AVCS_Admin_Manager_listLocation"), 640) -- 80 width, 74 width actual
-    self.listData:addColumn(getText("IGUI_AVCS_Admin_Manager_listExpireon"), 720) -- 120 width, 103 width actual text
+    self.listData:addColumn(getText("IGUI_AVCS_Admin_Manager_listCarName"), 270) -- 300 width, 46 characters max, we will cut off if too long
+    self.listData:addColumn(getText("IGUI_AVCS_Admin_Manager_listClaimedDate"), 570) -- 120 width, 103 width actual text
+    self.listData:addColumn(getText("IGUI_AVCS_Admin_Manager_listLocation"), 690) -- 80 width, 74 width actual
+    self.listData:addColumn(getText("IGUI_AVCS_Admin_Manager_listExpireon"), 770) -- 120 width, 103 width actual text
     self:addChild(self.listData)
     self.listData:setFont(UIFont.NewSmall, 5)
 

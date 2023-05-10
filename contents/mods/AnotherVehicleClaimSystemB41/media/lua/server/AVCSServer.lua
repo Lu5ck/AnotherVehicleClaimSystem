@@ -58,6 +58,7 @@ ModData AVRByPlayerID is stored like this
 and so on
 --]]
 
+-- vehicleID is vehicle object ID
 function AVCS.claimVehicle(playerObj, vehicleID)
 	local vehicleObj = getVehicleById(vehicleID.vehicle)
 
@@ -67,16 +68,18 @@ function AVCS.claimVehicle(playerObj, vehicleID)
 	local tempPart = AVCS.getMulePart(vehicleObj)
 	if tempPart == false or tempPart == nil then return end
 	if tempPart:getModData().SQLID == nil then
-		tempPart:getModData().SQLID = vehicleObj:getSqlId()
+		tempPart:getModData().SQLID = getTimestamp() .. vehicleObj:getSqlId()
 
 		-- Force sync, users will get fresh mod data as they load into the cell
 		-- But we want users who already in cell to get this data as well
 		vehicleObj:transmitPartModData(tempPart)
 	end
 
+	vehicleID = tempPart:getModData().SQLID
+
 	-- Make sure is not already claimed
 	-- Only SQL ID is persistent, vehicleID is created on runtime
-	if AVCS.dbByVehicleSQLID[vehicleObj:getSqlId()] then
+	if AVCS.dbByVehicleSQLID[vehicleID] then
 		-- Using vanilla logging function, write to a log with suffix AVCS
 		-- Datetime, Unix Time, Warning message, offender username, vehicle full name, coordinate
 		-- [26-03-23 22:23:36.671] [1679840616] Warning: Attempting to claim already owned vehicle [Username] [Base.ExtremeCar] [13026,1215]
@@ -85,7 +88,7 @@ function AVCS.claimVehicle(playerObj, vehicleID)
 			sendServerCommand("AVCS", "forcesyncClientGlobalModData", { playerObj:getUsername() })
 		end
 	else
-		AVCS.dbByVehicleSQLID[vehicleObj:getSqlId()] = {
+		AVCS.dbByVehicleSQLID[vehicleID] = {
 			OwnerPlayerID = playerObj:getUsername(),
 			ClaimDateTime = getTimestamp(),
 			CarModel = vehicleObj:getScript():getFullName(),
@@ -96,7 +99,7 @@ function AVCS.claimVehicle(playerObj, vehicleID)
 		
 		-- Minimum data to send to clients
 		local tempArr = {
-			VehicleID = vehicleObj:getSqlId(),
+			VehicleID = vehicleID,
 			OwnerPlayerID = playerObj:getUsername(),
 			ClaimDateTime = getTimestamp(),
 			CarModel = vehicleObj:getScript():getFullName(),
@@ -110,14 +113,14 @@ function AVCS.claimVehicle(playerObj, vehicleID)
 		
 		if not AVCS.dbByPlayerID[playerObj:getUsername()] then
 			AVCS.dbByPlayerID[playerObj:getUsername()] = {
-				[vehicleObj:getSqlId()] = true,
+				[vehicleID] = true,
 				LastKnownLogonTime = getTimestamp()
 			}
 
 			-- New player, insert it to the cache, theorically should be the latest entry
 			table.insert(AVCS.sortedPlayerTimeoutClaim, {ExpiryTime = (AVCS.dbByPlayerID[playerObj:getUsername()].LastKnownLogonTime + (SandboxVars.AVCS.ClaimTimeout * 60 * 60)), OwnerPlayerID = playerObj:getUsername()})
 		else
-			AVCS.dbByPlayerID[playerObj:getUsername()][vehicleObj:getSqlId()] = true
+			AVCS.dbByPlayerID[playerObj:getUsername()][vehicleID] = true
 			AVCS.dbByPlayerID[playerObj:getUsername()].LastKnownLogonTime = getTimestamp()
 		end
 		
