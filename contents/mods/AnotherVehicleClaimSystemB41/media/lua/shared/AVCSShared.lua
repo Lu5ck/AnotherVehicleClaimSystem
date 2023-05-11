@@ -235,14 +235,17 @@ function AVCS.updateVehicleCoordinate(vehicleObj)
 	-- Server call, must be extreme efficient as this is called extreme frequently
 	-- Do not use loop here
 	if isServer() and not isClient() then
-		if AVCS.dbByVehicleSQLID[vehicleObj:getSqlId()] ~= nil then
-			if AVCS.dbByVehicleSQLID[vehicleObj:getSqlId()].LastLocationX ~= math.floor(vehicleObj:getX()) or AVCS.dbByVehicleSQLID[vehicleObj:getSqlId()].LastLocationY ~= math.floor(vehicleObj:getY()) then
-				AVCS.dbByVehicleSQLID[vehicleObj:getSqlId()].LastLocationX = math.floor(vehicleObj:getX())
-				AVCS.dbByVehicleSQLID[vehicleObj:getSqlId()].LastLocationY = math.floor(vehicleObj:getY())
-				AVCS.dbByVehicleSQLID[vehicleObj:getSqlId()].LastLocationUpdateDateTime = getTimestamp()
+		local tempPart = AVCS.getMulePart(vehicleObj)
+		if tempPart == false or tempPart == nil then return end
+		local vehicleID = tempPart:getModData().SQLID
+		if AVCS.dbByVehicleSQLID[vehicleID] ~= nil then
+			if AVCS.dbByVehicleSQLID[vehicleID].LastLocationX ~= math.floor(vehicleObj:getX()) or AVCS.dbByVehicleSQLID[vehicleID].LastLocationY ~= math.floor(vehicleObj:getY()) then
+				AVCS.dbByVehicleSQLID[vehicleID].LastLocationX = math.floor(vehicleObj:getX())
+				AVCS.dbByVehicleSQLID[vehicleID].LastLocationY = math.floor(vehicleObj:getY())
+				AVCS.dbByVehicleSQLID[vehicleID].LastLocationUpdateDateTime = getTimestamp()
 				ModData.add("AVCSByVehicleSQLID", AVCS.dbByVehicleSQLID)
 				local tempArr = {
-					VehicleID = vehicleObj:getSqlId(),
+					VehicleID = vehicleID,
 					LastLocationX = math.floor(vehicleObj:getX()),
 					LastLocationY = math.floor(vehicleObj:getY()),
 					LastLocationUpdateDateTime = getTimestamp()
