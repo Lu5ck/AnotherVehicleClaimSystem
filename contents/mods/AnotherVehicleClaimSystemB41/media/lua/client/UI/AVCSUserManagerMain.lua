@@ -130,8 +130,7 @@ function AVCS.UI.UserManagerMain:updateListVehicles()
     prevListVehiclesSelected = 1
 
     if prevTabBtn.internal == "tabPersonal" then
-        if AVCS.dbByPlayerID[getPlayer():getUsername()] == nil or #AVCS.dbByPlayerID[getPlayer():getUsername()] == 1 then
-        else
+        if not AVCS.dbByPlayerID[getPlayer():getUsername()] == nil then
             for k, v in pairs(AVCS.dbByPlayerID[getPlayer():getUsername()]) do
                 if k ~= "LastKnownLogonTime" then
                     -- Get get rid of the prefix, not all prefix start with "Base." so we look for first dot instead
