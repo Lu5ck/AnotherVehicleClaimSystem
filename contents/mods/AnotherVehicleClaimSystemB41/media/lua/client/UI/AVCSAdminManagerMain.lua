@@ -330,7 +330,7 @@ function AVCS.UI.AdminManagerMain:btnOnClick(btn)
         factionUI:initialise()
         factionUI:addToUIManager()
     elseif btn.internal == "btnModifyPermissions" then
-        self.panelModify = AVCS.UI.UserPermissionPanel:new((getCore():getScreenWidth() / 2) - (200 / 2), (getCore():getScreenHeight() / 2) - (300 / 2), 200, 300, tonumber(self.listData.items[self.listData.selected].item.vehicleID))
+        self.panelModify = AVCS.UI.UserPermissionPanel:new((getCore():getScreenWidth() / 2) - (200 / 2), (getCore():getScreenHeight() / 2) - (300 / 2), 200, 300, self.listData.items[self.listData.selected].item.vehicleID)
         self.panelModify:initialise()
         self.panelModify:addToUIManager()
         self.panelModify:setVisible(true)
@@ -344,7 +344,7 @@ end
 
 function AVCS.UI.AdminManagerMain:btnUnclaim_onConfirmClick(btn, _, _)
     if btn.internal == "NO" then return end
-    sendClientCommand(getPlayer(), "AVCS", "unclaimVehicle", { tonumber(self.listData.items[self.listData.selected].item.vehicleID) })
+    sendClientCommand(getPlayer(), "AVCS", "unclaimVehicle", { self.listData.items[self.listData.selected].item.vehicleID })
     self.removeUsernameVehicleID(self, self.listData.items[self.listData.selected].item.OwnerPlayerID, self.listData.items[self.listData.selected].item.vehicleID)
     self.listData:removeItemByIndex(self.listData.selected)
     self.listOnSelectionChange(self)

@@ -249,9 +249,6 @@ AVCS.onClientCommand = function(moduleName, command, playerObj, arg)
 	elseif moduleName == "AVCS" and command == "unclaimVehicle" then
 		-- Game send everything as table...
 		-- So we do arg[1] to get SQL ID
-		if type(arg[1]) ~= "number" then
-			return
-		end
 		if SandboxVars.AVCS.ServerSideChecking then
 			local checkResult = AVCS.checkPermission(playerObj, arg[1])
 
