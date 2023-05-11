@@ -68,7 +68,7 @@ function AVCS.claimVehicle(playerObj, vehicleID)
 	local tempPart = AVCS.getMulePart(vehicleObj)
 	if tempPart == false or tempPart == nil then return end
 	if tempPart:getModData().SQLID == nil then
-		tempPart:getModData().SQLID = getTimestamp() .. vehicleObj:getSqlId()
+		tempPart:getModData().SQLID = tonumber(getTimestamp() .. vehicleObj:getSqlId())
 
 		-- Force sync, users will get fresh mod data as they load into the cell
 		-- But we want users who already in cell to get this data as well
