@@ -49,7 +49,7 @@ function AVCS.UI.AdminManagerMain:listOnSelectionChange()
         self.modDialog = nil
     end
 
-    if self.listData.selected > 0 and string.lower(getPlayer():getAccessLevel()) == "admin" then
+    if self.listData.selected > 0 and (string.lower(getPlayer():getAccessLevel()) == "admin" or (not isClient() and not isServer())) then
         self.btnModifyPermissions:setEnable(true)
         self.btnDelete:setEnable(true)
         if SafeHouse.hasSafehouse(self.listData.items[self.listData.selected].item.OwnerPlayerID) then
@@ -127,7 +127,7 @@ function AVCS.UI.AdminManagerMain:drawData(y, item, alt)
 
 end
 
-function AVCS.UI.AdminManagerMain:drawText(str, x, y, r, g, b, a, font)
+function AVCS.UI.AdminManagerMain:listDataDrawText(str, x, y, r, g, b, a, font)
 	if self.javaObject ~= nil then
 		if font ~= nil then
 			self.javaObject:DrawText(font, tostring(str), x, y, r, g, b, a);
@@ -209,7 +209,7 @@ function AVCS.UI.AdminManagerMain:createChildren()
     self.listData.joypadParent = self
     self.listData.doDrawItem = self.drawData
     self.listData.onMouseDown = self.listDataOnMouseDown
-    self.listData.drawText = self.drawText
+    self.listData.drawText = self.listDataDrawText
     self.listData.drawBorder = true
     -- Total width 840
     self.listData:addColumn(getText("IGUI_AVCS_Admin_Manager_listUsername"), 0) -- 150 width, 126 width actual text

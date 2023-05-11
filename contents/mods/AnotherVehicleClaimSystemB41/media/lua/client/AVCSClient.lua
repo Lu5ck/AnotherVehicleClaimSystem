@@ -169,7 +169,7 @@ end
 
 local function OnPreFillWorldObjectContextMenu(player, context, worldObjects, test)
     context:addOption(getText("ContextMenu_AVCS_ClientUserUI"), worldObjects, openClientUserManager, nil)
-	if string.lower(getPlayer():getAccessLevel()) ~= "none" then
+	if (string.lower(getPlayer():getAccessLevel()) ~= "none") or (not isClient() and not isServer()) then
 		context:addOption(getText("ContextMenu_AVCS_AdminUserUI"), worldObjects, openClientAdminManager, nil)
 	end
 end
