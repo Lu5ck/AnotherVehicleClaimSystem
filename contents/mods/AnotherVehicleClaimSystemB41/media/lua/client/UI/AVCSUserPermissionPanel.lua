@@ -109,45 +109,6 @@ function AVCS.UI.UserPermissionPanel:createChildren()
     self:addSets(getText("IGUI_AVCS_User_Permissions_lblAllowOpeningTrunk"), "AllowOpeningTrunk")
     self:addSets(getText("IGUI_AVCS_User_Permissions_lblAllowInflatTires"), "AllowInflatTires")
     self:addSets(getText("IGUI_AVCS_User_Permissions_lblAllowDeflatTires"), "AllowDeflatTires")
---[[
-
-
-
-    self.lblAllowSiphonFuel = ISLabel:new(lblpadleft, padTop + 1, getTextManager():getFontHeight(UIFont.NewSmall), getText("IGUI_AVCS_User_Permissions_lblAllowSiphonFuel"), 1, 1, 1, 1, UIFont.NewSmall, true)
-    self.lblAllowSiphonFuel:initialise()
-    self.lblAllowSiphonFuel:instantiate()
-    self:addChild(self.lblAllowSiphonFuel)
-
-    self.lblAllowUninstallParts = ISLabel:new(lblpadleft, padTop + 1, getTextManager():getFontHeight(UIFont.NewSmall), getText("IGUI_AVCS_User_Permissions_lblAllowUninstallParts"), 1, 1, 1, 1, UIFont.NewSmall, true)
-    self.lblAllowUninstallParts:initialise()
-    self.lblAllowUninstallParts:instantiate()
-    self:addChild(self.lblAllowUninstallParts)
-
-    self.lblAllowAttachVehicle = ISLabel:new(lblpadleft, padTop + 1, getTextManager():getFontHeight(UIFont.NewSmall), getText("IGUI_AVCS_User_Permissions_lblAllowAttachVehicle"), 1, 1, 1, 1, UIFont.NewSmall, true)
-    self.lblAllowAttachVehicle:initialise()
-    self.lblAllowAttachVehicle:instantiate()
-    self:addChild(self.lblAllowAttachVehicle)
-
-    self.lblAllowDetechVehicle = ISLabel:new(lblpadleft, padTop + 1, getTextManager():getFontHeight(UIFont.NewSmall), getText("IGUI_AVCS_User_Permissions_lblAllowDetechVehicle"), 1, 1, 1, 1, UIFont.NewSmall, true)
-    self.lblAllowDetechVehicle:initialise()
-    self.lblAllowDetechVehicle:instantiate()
-    self:addChild(self.lblAllowDetechVehicle)
-
-    self.lblAllowTakeEngineParts = ISLabel:new(lblpadleft, padTop + 1, getTextManager():getFontHeight(UIFont.NewSmall), getText("IGUI_AVCS_User_Permissions_lblAllowTakeEngineParts"), 1, 1, 1, 1, UIFont.NewSmall, true)
-    self.lblAllowTakeEngineParts:initialise()
-    self.lblAllowTakeEngineParts:instantiate()
-    self:addChild(self.lblAllowTakeEngineParts)
-
-    self.lblAllowInflatTires = ISLabel:new(lblpadleft, padTop + 1, getTextManager():getFontHeight(UIFont.NewSmall), getText("IGUI_AVCS_User_Permissions_lblAllowInflatTires"), 1, 1, 1, 1, UIFont.NewSmall, true)
-    self.lblAllowInflatTires:initialise()
-    self.lblAllowInflatTires:instantiate()
-    self:addChild(self.lblAllowInflatTires)
-
-    self.lblAllowDeflatTires = ISLabel:new(lblpadleft, padTop + 1, getTextManager():getFontHeight(UIFont.NewSmall), getText("IGUI_AVCS_User_Permissions_lblAllowDeflatTires"), 1, 1, 1, 1, UIFont.NewSmall, true)
-    self.lblAllowDeflatTires:initialise()
-    self.lblAllowDeflatTires:instantiate()
-    self:addChild(self.lblAllowDeflatTires)
---]]
 end
 
 function AVCS.UI.UserPermissionPanel:new(x, y, width, height, vehicleID)
