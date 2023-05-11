@@ -49,7 +49,7 @@ function AVCS.UI.AdminManagerMain:listOnSelectionChange()
         self.modDialog = nil
     end
 
-    if self.listData.selected > 0 and (string.lower(getPlayer():getAccessLevel()) == "admin" or (not isClient() and not isServer())) then
+    if self.listData.count > 0 and (string.lower(getPlayer():getAccessLevel()) == "admin" or (not isClient() and not isServer())) then
         self.btnModifyPermissions:setEnable(true)
         self.btnDelete:setEnable(true)
         if SafeHouse.hasSafehouse(self.listData.items[self.listData.selected].item.OwnerPlayerID) then
