@@ -127,6 +127,16 @@ function AVCS.UI.AdminManagerMain:drawData(y, item, alt)
 
 end
 
+function AVCS.UI.AdminManagerMain:drawText(str, x, y, r, g, b, a, font)
+	if self.javaObject ~= nil then
+		if font ~= nil then
+			self.javaObject:DrawText(font, tostring(str), x, y, r, g, b, a);
+		else
+			self.javaObject:DrawText(UIFont.Small, tostring(str), x, y, r, g, b, a);
+		end
+	end
+end
+
 function AVCS.UI.AdminManagerMain:filterStringCompare(mainText, compareText)
     return checkStringPattern(compareText) and string.match(string.lower(mainText), string.lower(compareText))
 end
@@ -164,7 +174,7 @@ function AVCS.UI.AdminManagerMain:initList()
                 if not carFullName  then
                     carFullName = AVCS.dbByVehicleSQLID[ak].CarModel
                 end
-                table.insert(tempTable, {OwnerPlayerID = k, carFullName = carFullName, vehicleID = tostring(ak), ExpireOn = os.date("%d-%b-%y, %H:%M:%S", (AVCS.dbByPlayerID[k].LastKnownLogonTime + (SandboxVars.AVCS.ClaimTimeout * 60 * 60))), Location = AVCS.dbByVehicleSQLID[ak].LastLocationX .. "," .. AVCS.dbByVehicleSQLID[ak].LastLocationY, ClaimDateTime = os.date("%d-%b-%y, %H:%M:%S", AVCS.dbByVehicleSQLID[ak].ClaimDateTime)})
+                table.insert(tempTable, {OwnerPlayerID = k, carFullName = carFullName,  vehicleID = ak, ExpireOn = os.date("%d-%b-%y, %H:%M:%S", (AVCS.dbByPlayerID[k].LastKnownLogonTime + (SandboxVars.AVCS.ClaimTimeout * 60 * 60))), Location = AVCS.dbByVehicleSQLID[ak].LastLocationX .. "," .. AVCS.dbByVehicleSQLID[ak].LastLocationY, ClaimDateTime = os.date("%d-%b-%y, %H:%M:%S", AVCS.dbByVehicleSQLID[ak].ClaimDateTime)})
             end
         end
     end
@@ -199,6 +209,7 @@ function AVCS.UI.AdminManagerMain:createChildren()
     self.listData.joypadParent = self
     self.listData.doDrawItem = self.drawData
     self.listData.onMouseDown = self.listDataOnMouseDown
+    self.listData.drawText = self.drawText
     self.listData.drawBorder = true
     -- Total width 840
     self.listData:addColumn(getText("IGUI_AVCS_Admin_Manager_listUsername"), 0) -- 150 width, 126 width actual text
