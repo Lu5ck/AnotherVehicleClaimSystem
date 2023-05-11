@@ -37,7 +37,7 @@ end
 function AVCS.UI.UserManagerMain:btnUnclaim_onConfirmClick(btn, _, _)
     if btn.internal == "NO" then return end
     local temp = self
-    sendClientCommand(getPlayer(), "AVCS", "unclaimVehicle", { tonumber(self.listVehicles.items[self.listVehicles.selected].item) })
+    sendClientCommand(getPlayer(), "AVCS", "unclaimVehicle", { self.listVehicles.items[self.listVehicles.selected].item })
     self.listVehicles:removeItemByIndex(self.listVehicles.selected)
 
     if self.listVehicles.selected ~= 0 then
@@ -130,7 +130,7 @@ function AVCS.UI.UserManagerMain:updateListVehicles()
     prevListVehiclesSelected = 1
 
     if prevTabBtn.internal == "tabPersonal" then
-        if not AVCS.dbByPlayerID[getPlayer():getUsername()] == nil then
+        if AVCS.dbByPlayerID[getPlayer():getUsername()] then
             for k, v in pairs(AVCS.dbByPlayerID[getPlayer():getUsername()]) do
                 if k ~= "LastKnownLogonTime" then
                     -- Get get rid of the prefix, not all prefix start with "Base." so we look for first dot instead
