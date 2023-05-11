@@ -5,7 +5,6 @@ local padBottom = 10
 local tabBtnSize = 30
 -- Set as global local variable instead of "self" variable because not something meant to be modified by outside codess
 local prevTabBtn
-local prevListVehiclesSelected = 1
 
 AVCS.UI.UserManagerMain = ISCollapsableWindow:derive("AVCS.UI.UserManagerMain")
 
@@ -102,32 +101,45 @@ function AVCS.UI.UserManagerMain:tabBtn_onClick(btn)
 end
 
 function AVCS.UI.UserManagerMain:listVehiclesOnMouseDown(x, y)
-    ISScrollingListBox.onMouseDown(self, x, y)
-    if self.selected ~= prevListVehiclesSelected then
-        prevListVehiclesSelected = self.selected
-        AVCS.UI.UserManagerMain:listVehiclesOnSelectedChange(self.parent, self.items, self.selected)
+	if #self.items == 0 then return end
+	local row = self:rowAt(x, y)
+
+	if row > #self.items then
+		row = #self.items;
+	end
+	if row < 1 then
+        -- In vanilla, they change selection to first item if click on blank place which is silly
+		return
+	end
+
+    -- Ignores if same selection
+    if row == self.selected then
+        return
     end
+
+	getSoundManager():playUISound("UISelectListItem")
+
+	self.selected = row;
+
+	if self.onmousedown then
+		self.onmousedown(self.target, self.items[self.selected].item);
+	end
+
+    self.parent.listVehiclesOnSelectedChange(self.parent)
 end
 
 function AVCS.UI.UserManagerMain:listVehiclesOnJoypadDirUp()
     ISScrollingListBox.onJoypadDirUp(self)
-    if self.selected ~= prevListVehiclesSelected then
-        prevListVehiclesSelected = self.selected
-        AVCS.UI.UserManagerMain:listVehiclesOnSelectedChange(self.parent, self.items, self.selected)
-    end
+    self.parent.listVehiclesOnSelectedChange(self.parent)
 end
 
 function AVCS.UI.UserManagerMain:listVehiclesOnJoypadDirDown()
     ISScrollingListBox.onJoypadDirDown(self)
-    if self.selected ~= prevListVehiclesSelected then
-        prevListVehiclesSelected = self.selected
-        AVCS.UI.UserManagerMain:listVehiclesOnSelectedChange(self.parent, self.items, self.selected)
-    end
+    self.parent.listVehiclesOnSelectedChange(self.parent)
 end
 
 function AVCS.UI.UserManagerMain:updateListVehicles()
     self.listVehicles:clear()
-    prevListVehiclesSelected = 1
 
     if prevTabBtn.internal == "tabPersonal" then
         if AVCS.dbByPlayerID[getPlayer():getUsername()] then
@@ -229,17 +241,17 @@ function AVCS.UI.UserManagerMain:updateListVehicles()
     end
 end
 
-function AVCS.UI.UserManagerMain:listVehiclesOnSelectedChange(parent, items, selected)
+function AVCS.UI.UserManagerMain:listVehiclesOnSelectedChange()
     if self.panelModify ~= nil then
         self.panelModify:close()
         self.panelModify:removeFromUIManager()
         self.panelModify = nil
     end
-
-    local vehicleSQLID = items[selected].item
+    
+    local vehicleSQLID = self.listVehicles.items[self.listVehicles.selected].item
     if vehicleSQLID == nil then return end
 
-    parent.setVehiclePreview(parent, vehicleSQLID)
+    self.setVehiclePreview(self, vehicleSQLID)
 end
 
 -- Create on-demand buttons
