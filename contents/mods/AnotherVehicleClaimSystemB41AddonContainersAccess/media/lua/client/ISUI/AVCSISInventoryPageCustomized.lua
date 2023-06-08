@@ -47,8 +47,15 @@ function ISInventoryPage:refreshBackpacks()
 		for partIndex=1,vehicle:getPartCount() do
 			local vehiclePart = vehicle:getPartByIndex(partIndex-1)
 			if vehiclePart:getItemContainer() and vehicle:canAccessContainer(partIndex-1, playerObj) then
-                local checkResult = AVCS.checkPermission(playerObj, vehicle)
-                checkResult = AVCS.getSimpleBooleanPermission(checkResult)
+				-- Insert AVCS Permission Checking
+				local checkResult = AVCS.getPublicPermission(vehicle, "AllowContainersAccess")
+
+				-- If public allowed, we don't have to check other permissions
+				if not checkResult then
+					checkResult = AVCS.checkPermission(playerObj, vehicle)
+					checkResult = AVCS.getSimpleBooleanPermission(checkResult)
+				end
+
                 if checkResult then
                     local tooltip = getText("IGUI_VehiclePart" .. vehiclePart:getItemContainer():getType())
                     containerButton = self:addContainerButton(vehiclePart:getItemContainer(), nil, tooltip, nil)
@@ -170,8 +177,15 @@ function ISInventoryPage:refreshBackpacks()
 					for partIndex=1,vehicle:getPartCount() do
 						local vehiclePart = vehicle:getPartByIndex(partIndex-1)
 						if vehiclePart:getItemContainer() and vehicle:canAccessContainer(partIndex-1, playerObj) then
-                            local checkResult = AVCS.checkPermission(playerObj, vehicle)
-                            checkResult = AVCS.getSimpleBooleanPermission(checkResult)
+							-- Insert AVCS Permission Checking
+							local checkResult = AVCS.getPublicPermission(vehicle, "AllowContainersAccess")
+
+							-- If public allowed, we don't have to check other permissions
+							if not checkResult then
+								checkResult = AVCS.checkPermission(playerObj, vehicle)
+								checkResult = AVCS.getSimpleBooleanPermission(checkResult)
+							end
+							
                             if checkResult then
                                 local tooltip = getText("IGUI_VehiclePart" .. vehiclePart:getItemContainer():getType())
                                 containerButton = self:addContainerButton(vehiclePart:getItemContainer(), nil, tooltip, nil)
