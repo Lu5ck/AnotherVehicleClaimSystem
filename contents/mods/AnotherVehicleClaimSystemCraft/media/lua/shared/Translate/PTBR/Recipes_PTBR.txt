@@ -1,0 +1,3 @@
+Recipes_PTBR = {
+    Recipe_Craft_Mysterious_Vehicle_Claim_Orb = "Fazer Misterioso Orbe de Propriedade de Veículo",
+}
