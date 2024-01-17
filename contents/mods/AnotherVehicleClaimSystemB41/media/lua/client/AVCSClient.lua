@@ -178,8 +178,11 @@ local function OnLoad()
 	-- Get the latest Global ModData to work with
 	ModData.request("AVCSByVehicleSQLID")
 	ModData.request("AVCSByPlayerID")
+end
 
+local function KWRRUpdateLastKnownLogonTimeOnLogin()
 	sendClientCommand(getPlayer(), "AVCS", "updateLastKnownLogonTime", nil)
+	Events.OnTick.Remove(KWRRUpdateLastKnownLogonTimeOnLogin)
 end
 
 local function OnReceiveGlobalModData(key, modData)
@@ -198,6 +201,7 @@ local function EveryHours()
 end
 
 Events.OnPreFillWorldObjectContextMenu.Add(OnPreFillWorldObjectContextMenu)
+Events.OnTick.Add(KWRRUpdateLastKnownLogonTimeOnLogin)
 Events.EveryHours.Add(EveryHours)
 Events.OnReceiveGlobalModData.Add(OnReceiveGlobalModData)
 Events.OnLoad.Add(OnLoad)
