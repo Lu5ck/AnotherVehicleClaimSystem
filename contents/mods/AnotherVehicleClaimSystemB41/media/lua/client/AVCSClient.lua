@@ -93,11 +93,9 @@ function AVCS.updateClientLastLogon(arg)
 	AVCS.dbByPlayerID[arg.PlayerID].LastKnownLogonTime = arg.LastKnownLogonTime
 end
 
-function AVCS.forcesyncClientGlobalModData(arg)
-	if getPlayer():getUsername() == arg[1] then
-		ModData.request("AVCSByVehicleSQLID")
-		ModData.request("AVCSByPlayerID")
-	end
+function AVCS.forcesyncClientGlobalModData()
+	ModData.request("AVCSByVehicleSQLID")
+	ModData.request("AVCSByPlayerID")
 end
 
 function AVCS.updateClientSpecifyVehicleUserPermission(arg)
@@ -127,7 +125,7 @@ AVCS.OnServerCommand = function(moduleName, command, arg)
 	elseif moduleName == "AVCS" and command == "updateClientLastLogon" then
 		AVCS.updateClientLastLogon(arg)
 	elseif moduleName == "AVCS" and command == "forcesyncClientGlobalModData" then
-		AVCS.forcesyncClientGlobalModData(arg)
+		AVCS.forcesyncClientGlobalModData()
 	elseif moduleName == "AVCS" and command == "updateClientSpecifyVehicleUserPermission" then
 		AVCS.updateClientSpecifyVehicleUserPermission(arg)
 	end

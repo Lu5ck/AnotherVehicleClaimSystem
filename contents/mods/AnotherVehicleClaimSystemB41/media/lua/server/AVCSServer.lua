@@ -71,7 +71,7 @@ function AVCS.claimVehicle(playerObj, vehicleID)
 		-- [26-03-23 22:23:36.671] [1679840616] Warning: Attempting to claim already owned vehicle [Username] [Base.ExtremeCar] [13026,1215]
 		if playerObj ~= nil then
 			writeLog("AVCS", "[" .. getTimestamp() .. "] Warning: Attempting to claim already owned vehicle [" .. playerObj:getUsername() .. "] [" .. vehicleObj:getScript():getFullName() .. "] [" .. math.floor(vehicleObj:getX()) .. "," .. math.floor(vehicleObj:getY()) .. "]")
-			sendServerCommand("AVCS", "forcesyncClientGlobalModData", { playerObj:getUsername() })
+			sendServerCommand(playerObj, "AVCS", "forcesyncClientGlobalModData", {})
 		end
 	else
 		AVCS.dbByVehicleSQLID[vehicleID] = {
@@ -172,7 +172,7 @@ function AVCS.unclaimVehicle(playerObj, vehicleID)
 		sendServerCommand("AVCS", "updateClientUnclaimVehicle", tempArr)
 	else
 		if playerObj ~= nil then
-			sendServerCommand("AVCS", "forcesyncClientGlobalModData", { playerObj:getUsername() })
+			sendServerCommand(playerObj, "AVCS", "forcesyncClientGlobalModData", {})
 		end
 	end
 end
@@ -246,7 +246,7 @@ AVCS.onClientCommand = function(moduleName, command, playerObj, arg)
 					writeLog("AVCS", "[" .. getTimestamp() .. "] Warning: Attempting to unclaim without permission [" .. playerObj:getUsername() .. "] [" .. AVCS.dbByVehicleSQLID[arg[1]].CarModel .. "] [" .. AVCS.dbByVehicleSQLID[arg[1]].LastLocationX .. "," .. AVCS.dbByVehicleSQLID[arg[1]].LastLocationY .. "]")
 
 					-- Possible desync has occurred, force sync the user
-					sendServerCommand("AVCS", "forcesyncClientGlobalModData", { playerObj:getUsername() })
+					sendServerCommand(playerObj, "AVCS", "forcesyncClientGlobalModData", {})
 					return
 				end
 			elseif checkResult.permissions == false then
@@ -256,7 +256,7 @@ AVCS.onClientCommand = function(moduleName, command, playerObj, arg)
 				writeLog("AVCS", "[" .. getTimestamp() .. "] Warning: Attempting to unclaim without permission [" .. playerObj:getUsername() .. "] [" .. AVCS.dbByVehicleSQLID[arg[1]].CarModel .. "] [" .. AVCS.dbByVehicleSQLID[arg[1]].LastLocationX .. "," .. AVCS.dbByVehicleSQLID[arg[1]].LastLocationY .. "]")
 
 				-- Possible desync has occurred, force sync the user
-				sendServerCommand("AVCS", "forcesyncClientGlobalModData", { playerObj:getUsername() })
+				sendServerCommand(playerObj, "AVCS", "forcesyncClientGlobalModData", {})
 				return
 			end
 		end
@@ -278,7 +278,7 @@ AVCS.onClientCommand = function(moduleName, command, playerObj, arg)
 					writeLog("AVCS", "[" .. getTimestamp() .. "] Warning: Attempting to modify specific vehicle permissions without permission [" .. playerObj:getUsername() .. "] [" .. AVCS.dbByVehicleSQLID[arg.VehicleID].CarModel .. "]")
 
 					-- Possible desync has occurred, force sync the user
-					sendServerCommand("AVCS", "forcesyncClientGlobalModData", { playerObj:getUsername() })
+					sendServerCommand(playerObj, "AVCS", "forcesyncClientGlobalModData", {})
 					return
 				end
 			elseif checkResult.permissions == false then
@@ -288,7 +288,7 @@ AVCS.onClientCommand = function(moduleName, command, playerObj, arg)
 				writeLog("AVCS", "[" .. getTimestamp() .. "] Warning: Attempting to modify specific vehicle permissions without permission [" .. playerObj:getUsername() .. "] [" .. AVCS.dbByVehicleSQLID[arg.VehicleID].CarModel .. "]")
 
 				-- Possible desync has occurred, force sync the user
-				sendServerCommand("AVCS", "forcesyncClientGlobalModData", { playerObj:getUsername() })
+				sendServerCommand(playerObj, "AVCS", "forcesyncClientGlobalModData", {})
 				return
 			end
 		end
