@@ -1,7 +1,7 @@
 ContextMenu_PTBR = {
-    ContextMenu_AVCS_ClaimVehicle = "Reivindicar VeÃ­culo",
-	ContextMenu_AVCS_UnclaimVehicle = "Liberar VeÃ­culo",
-    ContextMenu_AVCS_UnsupportedVehicle = "Reivindicar VeÃ­culo [Erro]",
-    ContextMenu_AVCS_ClientUserUI = "Gerenciar VeÃ­culos",
-    ContextMenu_AVCS_AdminUserUI = "Gerenciar VeÃ­culos [admin]",
+    ContextMenu_AVCS_ClaimVehicle = "Reivindicar Veículo",
+	ContextMenu_AVCS_UnclaimVehicle = "Liberar Veículo",
+    ContextMenu_AVCS_UnsupportedVehicle = "Reivindicar Veículo [Erro]",
+    ContextMenu_AVCS_ClientUserUI = "Gerenciar Veículos",
+    ContextMenu_AVCS_AdminUserUI = "Gerenciar Veículos [admin]",
 }
