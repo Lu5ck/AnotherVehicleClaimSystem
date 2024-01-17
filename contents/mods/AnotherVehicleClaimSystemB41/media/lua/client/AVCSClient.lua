@@ -174,7 +174,7 @@ local function OnPreFillWorldObjectContextMenu(player, context, worldObjects, te
 	end
 end
 
-local function OnConnected()
+local function OnLoad()
 	-- Get the latest Global ModData to work with
 	ModData.request("AVCSByVehicleSQLID")
 	ModData.request("AVCSByPlayerID")
@@ -200,5 +200,5 @@ end
 Events.OnPreFillWorldObjectContextMenu.Add(OnPreFillWorldObjectContextMenu)
 Events.EveryHours.Add(EveryHours)
 Events.OnReceiveGlobalModData.Add(OnReceiveGlobalModData)
-Events.OnConnected.Add(OnConnected)
+Events.OnLoad.Add(OnLoad)
 Events.OnServerCommand.Add(AVCS.OnServerCommand)
