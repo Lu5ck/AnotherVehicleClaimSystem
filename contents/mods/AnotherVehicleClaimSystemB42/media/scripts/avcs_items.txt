@@ -1,0 +1,11 @@
+module Base {
+    item AVCSClaimOrb
+    {
+        DisplayCategory = AVCS,
+        Weight  = 0.1,
+        Type    = Normal,
+        Icon    = AVCSClaimOrb,
+        DisplayName = Mysterious Vehicle Claim Orb,
+        WorldStaticModel = AVCS.ClaimOrb,
+    }
+}

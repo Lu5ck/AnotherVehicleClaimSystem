@@ -1,0 +1,67 @@
+VERSION = 1,
+
+option AVCS.AllowFaction
+{
+		type = boolean, default = true,
+		page = AVCS, translation = AVCS_AllowFaction,
+}
+
+option AVCS.AllowSafehouse
+{
+		type = boolean, default = true,
+		page = AVCS, translation = AVCS_AllowSafehouse,
+}
+
+option AVCS.MaxVehicle
+{
+		type = integer, min = 1, max = 999, default = 5,
+		page = AVCS, translation = AVCS_MaxVehicle,
+}
+
+option AVCS.RequireTicket
+{
+		type = boolean, default = true,
+		page = AVCS, translation = AVCS_RequireTicket,
+}
+
+option AVCS.ReturnTicket
+{
+		type = boolean, default = false,
+		page = AVCS, translation = AVCS_ReturnTicket,
+}
+
+option AVCS.UdderlyRespawn
+{
+		type = boolean, default = false,
+		page = AVCS, translation = AVCS_UdderlyRespawn,
+}
+
+option AVCS.ServerSideChecking
+{
+		type = boolean, default = false,
+		page = AVCS, translation = AVCS_ServerSideChecking,
+}
+
+option AVCS.ClaimTimeout
+{
+		type = integer, min = 1, max = 999, default = 240,
+		page = AVCS, translation = AVCS_ClaimTimeout,
+}
+
+option AVCS.MuleParts
+{
+		type = string, default = GloveBox;TruckBed;TruckBedOpen;TrailerTrunk;M101A3Trunk;Engine,
+		page = AVCS, translation = AVCS_MuleParts,
+}
+
+option AVCS.TrunkParts
+{
+		type = string, default = TrunkDoor;DoorRear,
+		page = AVCS, translation = AVCS_TrunkParts,
+}
+
+option AVCS.RebuildDB
+{
+		type = boolean, default = false,
+		page = AVCS, translation = AVCS_RebuildDB,
+}
