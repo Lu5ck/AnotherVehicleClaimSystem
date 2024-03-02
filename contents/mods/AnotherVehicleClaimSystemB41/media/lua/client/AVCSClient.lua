@@ -172,11 +172,11 @@ local function OnPreFillWorldObjectContextMenu(player, context, worldObjects, te
 	end
 end
 
-local function KWRRAfterGameStart()
+local function AVCSAfterGameStart()
 	ModData.request("AVCSByVehicleSQLID")
 	ModData.request("AVCSByPlayerID")
 	sendClientCommand(getPlayer(), "AVCS", "updateLastKnownLogonTime", nil)
-	Events.OnTick.Remove(KWRRAfterGameStart)
+	Events.OnTick.Remove(AVCSAfterGameStart)
 end
 
 local function OnReceiveGlobalModData(key, modData)
@@ -195,7 +195,7 @@ local function EveryHours()
 end
 
 Events.OnPreFillWorldObjectContextMenu.Add(OnPreFillWorldObjectContextMenu)
-Events.OnTick.Add(KWRRAfterGameStart)
+Events.OnTick.Add(AVCSAfterGameStart)
 Events.EveryHours.Add(EveryHours)
 Events.OnReceiveGlobalModData.Add(OnReceiveGlobalModData)
 Events.OnServerCommand.Add(AVCS.OnServerCommand)
