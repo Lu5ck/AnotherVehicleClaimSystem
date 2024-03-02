@@ -41,8 +41,7 @@ function ISAVCSVehicleUnclaimAction:perform()
         self.character:getInventory():AddItem("Base.AVCSClaimOrb")
     end
 
-	local tempPart = AVCS.getMulePart(self.vehicle)
-	sendClientCommand(self.character, "AVCS", "unclaimVehicle", { tempPart:getModData().SQLID })
+	sendClientCommand(self.character, "AVCS", "unclaimVehicle", { self.vehicle:getModData().SQLID })
 
     if UdderlyVehicleRespawn and SandboxVars.AVCS.UdderlyRespawn then
         UdderlyVehicleRespawn.SpawnRandomVehicleAtRandomZoneInRandomCell()

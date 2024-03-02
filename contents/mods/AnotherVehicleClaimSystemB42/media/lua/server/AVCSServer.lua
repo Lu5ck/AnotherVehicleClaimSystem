@@ -50,18 +50,18 @@ function AVCS.claimVehicle(playerObj, vehicleID)
 
 	-- Assign Object ModData, workaround for SQL ID not being consistent for client-side and server-side
 	-- As such, we imprint the server-side SQL ID onto the vehicle parts at this point of time
-	-- Oddly, vehicle itself cannot hold ModData
-	local tempPart = AVCS.getMulePart(vehicleObj)
-	if tempPart == false or tempPart == nil then return end
-	if tempPart:getModData().SQLID == nil then
-		tempPart:getModData().SQLID = tonumber(getTimestamp() .. vehicleObj:getSqlId())
+	if vehicleObj:getModData().SQLID == nil then
+		vehicleObj:getModData().SQLID = tonumber(getTimestamp() .. vehicleObj:getSqlId())
 
 		-- Force sync, users will get fresh mod data as they load into the cell
 		-- But we want users who already in cell to get this data as well
-		vehicleObj:transmitPartModData(tempPart)
+		vehicleObj:transmitModData()
+
+		-- Assuming B42 release did not fix transmitModData() bug for vehicleObj, this is the workaround
+		sendServerCommand("AVCS", "registerClientVehicleSQLID", {vehicleObj:getId(), vehicleObj:getModData().SQLID})
 	end
 
-	vehicleID = tempPart:getModData().SQLID
+	vehicleID = vehicleObj:getModData().SQLID
 
 	-- Make sure is not already claimed
 	-- Only SQL ID is persistent, vehicleID is created on runtime

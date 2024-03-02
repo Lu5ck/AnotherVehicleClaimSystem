@@ -115,6 +115,13 @@ function AVCS.updateClientSpecifyVehicleUserPermission(arg)
 	end
 end
 
+function AVCS.registerClientVehicleSQLID(arg)
+	local vehicleObj = getVehicleById(arg[0])
+	if vehicleObj then
+		vehicleObj:getModData().SQLID = arg[1]
+	end
+end
+
 AVCS.OnServerCommand = function(moduleName, command, arg)
 	if moduleName == "AVCS" and command == "updateClientClaimVehicle" then
 		AVCS.updateClientClaimVehicle(arg)
@@ -128,6 +135,8 @@ AVCS.OnServerCommand = function(moduleName, command, arg)
 		AVCS.forcesyncClientGlobalModData()
 	elseif moduleName == "AVCS" and command == "updateClientSpecifyVehicleUserPermission" then
 		AVCS.updateClientSpecifyVehicleUserPermission(arg)
+	elseif moduleName == "AVCS" and command == "registerClientVehicleSQLID" then
+		AVCS.registerClientVehicleSQLID(arg)
 	end
 end
 

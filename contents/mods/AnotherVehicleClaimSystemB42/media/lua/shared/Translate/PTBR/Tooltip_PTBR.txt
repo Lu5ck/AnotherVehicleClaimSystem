@@ -1,9 +1,8 @@
 Tooltip_PTBR = {
     Tooltip_AVCS_Needs = "Precisa de:",
-    Tooltip_AVCS_ClaimVehicle = "Reivindicar Veículo",
-    Tooltip_AVCS_Unsupported = "Veículo não suportado, relate ao admin!",
-    Tooltip_AVCS_Owner = "Proprietário",
+    Tooltip_AVCS_ClaimVehicle = "Reivindicar Veï¿½culo",
+    Tooltip_AVCS_Owner = "Proprietï¿½rio",
     Tooltip_AVCS_Expire = "Expira em",
-    Tooltip_AVCS_Towed = "Não pode ser rebocado",
-    Tooltip_AVCS_ExceedLimit = "Excede o limite de reivindicações",
+    Tooltip_AVCS_Towed = "Nï¿½o pode ser rebocado",
+    Tooltip_AVCS_ExceedLimit = "Excede o limite de reivindicaï¿½ï¿½es",
 }
