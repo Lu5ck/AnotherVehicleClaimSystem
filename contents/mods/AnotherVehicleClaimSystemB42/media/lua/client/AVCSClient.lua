@@ -116,9 +116,9 @@ function AVCS.updateClientSpecifyVehicleUserPermission(arg)
 end
 
 function AVCS.registerClientVehicleSQLID(arg)
-	local vehicleObj = getVehicleById(arg[0])
+	local vehicleObj = getVehicleById(arg[1])
 	if vehicleObj then
-		vehicleObj:getModData().SQLID = arg[1]
+		vehicleObj:getModData().SQLID = arg[2]
 	end
 end
 
