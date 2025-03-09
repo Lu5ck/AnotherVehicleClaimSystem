@@ -1,4 +1,4 @@
-ContextMenu_EN = {
+ContextMenu_IT = {
     ContextMenu_AVCS_ClaimVehicle = "Reclama Veicolo",
 	ContextMenu_AVCS_UnclaimVehicle = "Abbandona Veicolo",
     ContextMenu_AVCS_UnsupportedVehicle = "Reclama Veicolo [Errore]",

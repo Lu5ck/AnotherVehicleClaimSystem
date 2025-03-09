@@ -1,4 +1,4 @@
-IG_UI_EN = {
+IG_UI_IT = {
 	IGUI_AVCS_User_Manager_Title = "Gestore Veicoli reclamati",
 	IGUI_AVCS_User_Manager_btnUnclaim_Tooltip = "Abbandona Veicolo",
 	IGUI_AVCS_User_Manager_btnModify_Tooltip = "Modifica Permessi",

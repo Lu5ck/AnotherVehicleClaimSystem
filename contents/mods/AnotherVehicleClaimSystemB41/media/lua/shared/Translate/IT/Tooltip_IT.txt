@@ -1,4 +1,4 @@
-Tooltip_EN = {
+Tooltip_IT = {
     Tooltip_AVCS_Needs = "Bisogni",
     Tooltip_AVCS_ClaimVehicle = "Reclama Veicolo",
     Tooltip_AVCS_Unsupported = "Veicolo non Supportato, contatta un Admin",

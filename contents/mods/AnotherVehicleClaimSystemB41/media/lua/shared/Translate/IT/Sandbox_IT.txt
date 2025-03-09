@@ -1,4 +1,4 @@
-Sandbox_EN = {
+Sandbox_IT = {
 	Sandbox_AVCS = "Another Vehicle Claim System",
 	Sandbox_AVCS_AllowFaction = "Permetti Stessa Fazione",
 	Sandbox_AVCS_AllowFaction_tooltip = "Permetti ai membri della stessa fazione di interagire con il veicolo",
