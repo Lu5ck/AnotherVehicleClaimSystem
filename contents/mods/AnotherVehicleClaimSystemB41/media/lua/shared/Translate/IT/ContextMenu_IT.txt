@@ -1,0 +1,7 @@
+ContextMenu_EN = {
+    ContextMenu_AVCS_ClaimVehicle = "Reclama Veicolo",
+	ContextMenu_AVCS_UnclaimVehicle = "Abbandona Veicolo",
+    ContextMenu_AVCS_UnsupportedVehicle = "Reclama Veicolo [Errore]",
+    ContextMenu_AVCS_ClientUserUI = "Gestore Veicoli Reclamati",
+    ContextMenu_AVCS_AdminUserUI = "Admin gestore Veicoli",
+}

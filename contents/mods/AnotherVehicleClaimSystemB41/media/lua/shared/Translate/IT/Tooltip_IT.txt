@@ -1,0 +1,9 @@
+Tooltip_EN = {
+    Tooltip_AVCS_Needs = "Bisogni",
+    Tooltip_AVCS_ClaimVehicle = "Reclama Veicolo",
+    Tooltip_AVCS_Unsupported = "Veicolo non Supportato, contatta un Admin",
+    Tooltip_AVCS_Owner = "Proprietario",
+    Tooltip_AVCS_Expire = "Scade il,
+    Tooltip_AVCS_Towed = "Non può rimorchiare o essere rimorchiato",
+    Tooltip_AVCS_ExceedLimit = "Superato il limite di reclamo",
+}
