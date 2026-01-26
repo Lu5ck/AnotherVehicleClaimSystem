@@ -1,0 +1,3 @@
+ItemName_PTBR = {
+    ItemName_Base.AVCSClaimOrb = "Misterioso Orbe de Propriedade de Veículo",
+}

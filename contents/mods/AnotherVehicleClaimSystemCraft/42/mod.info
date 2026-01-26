@@ -1,6 +1,8 @@
 name=Another Vehicle Claim System Craft
 id=AnotherVehicleClaimSystemCraft
 description=Add crafting for Mysterious Vehicle Claim Orb
-require=AnotherVehicleClaimSystemB41
+require=\AnotherVehicleClaimSystem
+category=vehicle
+author=Lu5ck
+versionMin=42.0
 poster=poster.png
-versionMax=41.78.16

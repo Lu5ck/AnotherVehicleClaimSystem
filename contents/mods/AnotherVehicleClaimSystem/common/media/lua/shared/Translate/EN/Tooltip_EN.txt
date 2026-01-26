@@ -1,0 +1,9 @@
+Tooltip_EN = {
+    Tooltip_AVCS_Needs = "Needs",
+    Tooltip_AVCS_ClaimVehicle = "Claim Vehicle",
+    Tooltip_AVCS_Unsupported = "Vehicle unsupported, report to admin",
+    Tooltip_AVCS_Owner = "Owner",
+    Tooltip_AVCS_Expire = "Expires On",
+    Tooltip_AVCS_Towed = "Cannot be towed or towing",
+    Tooltip_AVCS_ExceedLimit = "Exceed Claim limit",
+}

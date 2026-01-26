@@ -1,0 +1,21 @@
+module Base {
+	craftRecipe CraftMysteriousVehicleClaimOrb
+	{
+		timedAction = Making,
+		time = 60,
+		category = General,
+        inputs
+        {
+            item 1 tags[base:hammer] mode:keep flags[Prop1;MayDegradeVeryLight],
+			item 1 tags[base:write] mode:keep flags[Prop2;MayDegradeVeryLight],
+			item 1 [Base.MetalPipe],
+			item 5 [Base.Screws],
+			item 5 [Base.Thread],
+			item 25 [Base.RippedSheets],
+        }
+        outputs
+        {
+            item 1 Base.AVCSClaimOrb,
+        }
+	}
+}

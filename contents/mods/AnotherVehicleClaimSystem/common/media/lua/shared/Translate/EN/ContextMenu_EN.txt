@@ -1,0 +1,7 @@
+ContextMenu_EN = {
+    ContextMenu_AVCS_ClaimVehicle = "Claim Vehicle",
+	ContextMenu_AVCS_UnclaimVehicle = "Unclaim Vehicle",
+    ContextMenu_AVCS_UnsupportedVehicle = "Claim Vehicle [Error]",
+    ContextMenu_AVCS_ClientUserUI = "Claimed Vehicles Manager",
+    ContextMenu_AVCS_AdminUserUI = "Admin Vehicles Manager",
+}
