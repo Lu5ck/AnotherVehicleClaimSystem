@@ -40,7 +40,7 @@ function ISAVCSVehicleClaimAction:perform()
 	sendClientCommand(self.character, "AVCS", "claimVehicle", { vehicle = self.vehicle:getId() })
     
     if SandboxVars.AVCS.RequireTicket then
-	    local form = self.character:getInventory():getFirstTypeRecurse("AVCSClaimOrb")
+	    local form = self.character:getInventory():getFirstType("AVCSClaimOrb")
 	    form:getContainer():Remove(form)
     end
 
