@@ -38,7 +38,7 @@ function ISAVCSVehicleUnclaimAction:perform()
     end
 
     if SandboxVars.AVCS.ReturnTicket and SandboxVars.AVCS.RequireTicket then
-        self.character:getInventory():AddItem("Base.AVCSClaimOrb")
+        self.character:getInventory():AddItem("AVCS.ClaimOrb")
     end
 
 	sendClientCommand(self.character, "AVCS", "unclaimVehicle", { AVCS.getVehicleID(self.vehicle) })

@@ -3,7 +3,8 @@ module Base {
 	{
 		timedAction = Making,
 		time = 60,
-		category = General,
+		category = Miscellaneous,
+		Tags = InHandCraft,
         inputs
         {
             item 1 tags[base:hammer] mode:keep flags[Prop1;MayDegradeVeryLight],
@@ -15,7 +16,7 @@ module Base {
         }
         outputs
         {
-            item 1 Base.AVCSClaimOrb,
+            item 1 AVCS.ClaimOrb,
         }
 	}
 }
