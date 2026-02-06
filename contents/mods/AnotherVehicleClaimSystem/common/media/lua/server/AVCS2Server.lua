@@ -52,7 +52,8 @@ function AVCS.claimVehicle(playerObj, vehicleID)
 	if not vehicleID then
 		vehicleObj:getModData().SQLID = tonumber(getTimestamp() .. vehicleObj:getSqlId())
 		vehicleID = vehicleObj:getModData().SQLID
-		sendServerCommand("AVCS", "registerClientVehicleSQLID", {vehicleObj:getId(), vehicleObj:getModData().SQLID})
+		--sendServerCommand("AVCS", "registerClientVehicleSQLID", {vehicleObj:getId(), vehicleObj:getModData().SQLID})
+		vehicleObj:transmitModData()
 	end
 
 	-- Make sure is not already claimed
