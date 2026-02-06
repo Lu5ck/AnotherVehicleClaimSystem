@@ -4,6 +4,7 @@ description=Add crafting for Mysterious Vehicle Claim Orb
 require=\AnotherVehicleClaimSystem
 loadModAfter=\AnotherVehicleClaimSystem
 category=vehicle
+url=https://ko-fi.com/zomboidkwrr
 author=Lu5ck
 versionMin=42.0
 poster=poster.png
