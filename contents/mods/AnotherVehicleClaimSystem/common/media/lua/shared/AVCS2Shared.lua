@@ -19,32 +19,6 @@ dbAVCSByPlayerID store the ModData AVRByPlayerID
 AVCS.dbByVehicleSQLID = nil
 AVCS.dbByPlayerID = nil
 
--- Ordered list of parts that cannot be removed by typical means
--- We will store server-side SQL ID in one of those
---[[
-AVCS.muleParts = AVCS.muleParts or {
-	"GloveBox",
-	"TruckBed",
-	"TruckBedOpen",
-	"TrailerTrunk",
-	"M101A3Trunk", -- K15 Vehicles
-	"Engine"
-}
---]]
--- Ingame debugger is unreliable but this does work
-function AVCS.getMulePart(vehicleObj)
-	local tempPart = false
-	-- Split by ";"
-	for s in string.gmatch(SandboxVars.AVCS.MuleParts, "([^;]+)") do
-		-- Trim leading and trailing white spaces
-		tempPart = vehicleObj:getPartById(s:match("^%s*(.-)%s*$"))
-		if tempPart then
-			return tempPart
-		end
-	end
-	return tempPart
-end
-
 function AVCS.matchTrunkPart(strTrunk)
 	if strTrunk == nil then
 		return false
@@ -63,24 +37,6 @@ end
 function AVCS.getVehicleID(vehicleObj)
 	if vehicleObj:getModData().SQLID then
 		return vehicleObj:getModData().SQLID
-	else
-		local tempPart = AVCS.getMulePart(vehicleObj)
-		if tempPart then
-			if tempPart:getModData().SQLID then
-				if not isClient() and isServer() then
-					vehicleObj:getModData().SQLID = tempPart:getModData().SQLID
-					tempPart:getModData().SQLID = nil
-					-- Vehicle ModData does not update immediately thus we need to force this for same cell players
-					sendServerCommand("AVCS", "registerClientVehicleSQLID", {vehicleObj:getId(), vehicleObj:getModData().SQLID})
-					return vehicleObj:getModData().SQLID
-				else
-					local tempID = tempPart:getModData().SQLID
-					-- Vehicle ModData does not update immediately thus we need to use server to force this for same cell players
-					sendClientCommand("AVCS", "relayClientUpdateVehicleSQLID", {vehicleObj:getId()})
-					return tempID -- Workaround to resolve delay between server and client which resulted in "Claim Vehicle" label not reflecting correctly
-				end
-			end
-		end
 	end
 	-- If no SQL ID
 	return nil

@@ -289,19 +289,6 @@ AVCS.onClientCommand = function(moduleName, command, playerObj, arg)
 		if playerObj:getAccessLevel() == "admin" then
 			AVCS.rebuildDB()
 		end
-	elseif moduleName == "AVCS" and command == "relayClientUpdateVehicleSQLID" then
-		-- Transition from Mule Part SQLID to Vehicle SQLID
-		-- Relay ModData changes
-		local vehicleObj = getVehicleById(arg[1])
-		if vehicleObj then
-			-- We removing at server-side because client-side takes time to be updated to the server
-			-- Client-side mod data changes can unfortunately be lost if server shutdown at this very moment
-			-- It just bad game design thus we doing it at server-side in hope that the changes is saved if that happens
-			local tempPart = AVCS.getMulePart(vehicleObj)
-			vehicleObj:getModData().SQLID = tempPart:getModData().SQLID
-			tempPart:getModData().SQLID = nil
-			sendServerCommand("AVCS", "registerClientVehicleSQLID", {vehicleObj:getId(), vehicleObj:getModData().SQLID})
-		end
 	end
 end
 
