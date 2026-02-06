@@ -4,6 +4,10 @@ require "TimedActions/ISBaseTimedAction"
 ISAVCSVehicleClaimAction = ISBaseTimedAction:derive("ISAVCSVehicleClaimAction")
 
 function ISAVCSVehicleClaimAction:isValid()
+    if SandboxVars.AVCS.RequireTicket then
+        local form = self.character:getInventory():getFirstType("AVCS.ClaimOrb")
+        if not form then return false end
+    end
     return self.vehicle and not self.vehicle:isRemovedFromWorld()
 end
 
@@ -36,21 +40,27 @@ function ISAVCSVehicleClaimAction:perform()
     if self.sound ~= 0 then
         self.character:getEmitter():stopSound(self.sound)
     end
-	
-	sendClientCommand(self.character, "AVCS", "claimVehicle", { vehicle = self.vehicle:getId() })
-    
-    if SandboxVars.AVCS.RequireTicket then
-	    local form = self.character:getInventory():getFirstType("AVCS.ClaimOrb")
-	    self.character:getInventory():Remove(form)
-    end
-
-    --[[
-    if UdderlyVehicleRespawn and SandboxVars.AVCS.UdderlyRespawn then
-        UdderlyVehicleRespawn.SpawnRandomVehicleSomewhere()
-    end
-    ]]--
 
     ISBaseTimedAction.perform(self)
+end
+
+function ISAVCSVehicleClaimAction:complete()
+    AVCS.claimVehicle(self.character, { vehicle = self.vehicle:getId() })
+    if SandboxVars.AVCS.RequireTicket then
+	    local invItem = self.character:getInventory():getFirstType("AVCS.ClaimOrb")
+        local invItemContainer = invItem:getContainer()
+	    invItemContainer:Remove(invItem)
+        sendRemoveItemFromContainer(invItemContainer, invItem)
+    end
+
+    return true
+end
+
+function ISAVCSVehicleClaimAction:getDuration()
+    if self.character:isTimedActionInstant() then
+        return 1
+    end
+    return 240
 end
 
 function ISAVCSVehicleClaimAction:new(character, vehicle)
@@ -61,8 +71,7 @@ function ISAVCSVehicleClaimAction:new(character, vehicle)
     o.stopOnRun = true
     o.character = character
     o.vehicle = vehicle
-    o.maxTime = 480
-    
-    if character:isTimedActionInstant() then o.maxTime = 1 end
+    o.maxTime = o:getDuration()
+
     return o
 end
