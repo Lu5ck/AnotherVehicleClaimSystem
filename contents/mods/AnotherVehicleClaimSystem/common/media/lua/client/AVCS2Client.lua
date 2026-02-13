@@ -179,7 +179,26 @@ function AVCS.ClientOnPreFillWorldObjectContextMenu(player, context, worldObject
     context:addOption(getText("ContextMenu_AVCS_ClientUserUI"), worldObjects, openClientUserManager, nil)
 
 	if getPlayer():getRole():hasCapability(Capability.ManipulateVehicle) or (not isClient() and not isServer()) then
-		context:addOption(getText("ContextMenu_AVCS_AdminUserUI"), worldObjects, openClientAdminManager, nil)
+		local contextMenu = nil
+		local subMenu = nil
+
+		if #context.options > 0 then
+			for i = 1, #context.options, 1 do
+				local option = context.options[i];
+				if option.name == "Admin [Mods]" then
+					contextMenu = option
+					subMenu = context:getSubMenu(contextMenu.subOption)
+					break
+				end
+			end
+		end
+
+		if not contextMenu then
+			contextMenu = context:addOption("Admin [Mods]", worldObjects, nil, nil)
+			subMenu = ISContextMenu:getNew(context)
+			context:addSubMenu(contextMenu, subMenu)
+		end
+		subMenu:addOption(getText("ContextMenu_AVCS_AdminUserUI"), worldObjects, openClientAdminManager, nil)
 	end
 end
 
