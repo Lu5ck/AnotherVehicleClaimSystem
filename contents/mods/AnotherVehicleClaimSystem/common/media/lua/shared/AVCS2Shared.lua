@@ -43,9 +43,7 @@ function AVCS.getVehicleID(vehicleObj)
 end
 
 function AVCS.checkMaxClaim(playerObj)
-	-- Privileged users has no limit
-	local avcs_tempAccess = string.lower(getPlayer():getAccessLevel())
-	if (avcs_tempAccess == "gm") or (avcs_tempAccess == "moderator") or (avcs_tempAccess == "admin") then
+	if playerObj:getRole():hasCapability(Capability.ManipulateVehicle) then
 		return true
 	end
 
@@ -108,10 +106,8 @@ function AVCS.checkPermission(playerObj, vehicleObj)
 	if AVCS.dbByVehicleSQLID[vehicleSQL] == nil then
 		return true
 	end
-	
-	-- Privileged users
-	local avcs_tempAccess = string.lower(playerObj:getAccessLevel())
-	if (avcs_tempAccess == "gm") or (avcs_tempAccess == "moderator") or (avcs_tempAccess == "admin") then
+
+	if playerObj:getRole():hasCapability(Capability.ManipulateVehicle) then
 		local details = {
 			permissions = true,
 			ownerid = AVCS.dbByVehicleSQLID[vehicleSQL].OwnerPlayerID,

@@ -287,7 +287,7 @@ AVCS.onClientCommand = function(moduleName, command, playerObj, arg)
 		end
 		AVCS.updateSpecifyVehicleUserPermission(arg)
 	elseif moduleName == "AVCS" and command == "rebuildDB" then
-		if playerObj:getAccessLevel() == "admin" then
+		if string.lower(playerObj:getRole():getName()) == "admin" then
 			AVCS.rebuildDB()
 		end
 	end

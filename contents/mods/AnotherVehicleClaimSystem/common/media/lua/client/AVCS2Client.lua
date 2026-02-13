@@ -177,8 +177,8 @@ end
 
 function AVCS.ClientOnPreFillWorldObjectContextMenu(player, context, worldObjects, test)
     context:addOption(getText("ContextMenu_AVCS_ClientUserUI"), worldObjects, openClientUserManager, nil)
-	local avcs_tempAccess = string.lower(getPlayer():getAccessLevel())
-	if (avcs_tempAccess == "gm") or (avcs_tempAccess == "moderator") or (avcs_tempAccess == "admin") or (not isClient() and not isServer()) then
+
+	if getPlayer():getRole():hasCapability(Capability.ManipulateVehicle) or (not isClient() and not isServer()) then
 		context:addOption(getText("ContextMenu_AVCS_AdminUserUI"), worldObjects, openClientAdminManager, nil)
 	end
 end
