@@ -5,22 +5,6 @@ TODO: Not utilized, WIP
 --]]
 
 -- Ingame debugger is unreliable but this does work
-local function AVCSgetMulePart(vehicleObj)
-    if vehicleObj then
-        -- Split by ";"
-        for s in string.gmatch(SandboxVars.AVCS.MuleParts, "([^;]+)") do
-            -- Trim leading and trailing white spaces
-            local tempPart = vehicleObj:getPartById(s:match("^%s*(.-)%s*$"))
-            if tempPart then
-                return tempPart
-            end
-        end
-        return nil
-    else
-        return nil
-    end
-end
-
 local function AVCSgetVehicleID(muleObj)
     if muleObj then
         return muleObj:getModData().SQLID

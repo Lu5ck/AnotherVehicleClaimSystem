@@ -42,12 +42,6 @@ option AVCS.ClaimTimeout
 		page = AVCS, translation = AVCS_ClaimTimeout,
 }
 
-option AVCS.MuleParts
-{
-		type = string, default =,
-		page = AVCS, translation = AVCS_MuleParts,
-}
-
 option AVCS.TrunkParts
 {
 		type = string, default = TrunkDoor;DoorRear,
