@@ -7,5 +7,4 @@ url=https://ko-fi.com/zomboidkwrr
 author=Lu5ck
 require=\AnotherVehicleClaimSystem
 loadModAfter=\AnotherVehicleClaimSystem
-versionMin=42.0
-versionMax=42.14
+versionMin=42.15
