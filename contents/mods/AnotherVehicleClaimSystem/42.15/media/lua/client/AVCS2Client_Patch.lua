@@ -17,6 +17,20 @@ function AVCS.forcesyncClientGlobalModData()
 	sendClientCommand(getPlayer(), "AVCS", "getAVCSDB", nil)
 end
 
+function AVCS.updateClientLastLogon(arg)
+	if AVCS.dbByPlayerID == nil then
+		sendClientCommand(getPlayer(), "AVCS", "getAVCSDB", nil)
+		return
+	end
+
+	if AVCS.dbByPlayerID[arg.PlayerID] == nil then
+		sendClientCommand(getPlayer(), "AVCS", "getAVCSDB", nil)
+		return
+	end
+
+	AVCS.dbByPlayerID[arg.PlayerID].LastKnownLogonTime = arg.LastKnownLogonTime
+end
+
 Events.OnTick.Remove(AVCS.AfterGameStart)
 function AVCS.AfterGameStart()
 	Events.OnServerCommand.Add(AVCS.patch.OnServerCommand)
