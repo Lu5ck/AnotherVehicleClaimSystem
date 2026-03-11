@@ -353,13 +353,9 @@ function AVCS.doClaimTimeout()
 end
 
 local function OnInitGlobalModData(isNewGame)
-	-- When Mod first added to server
-	if not ModData.exists("AVCSByVehicleSQLID") then ModData.create("AVCSByVehicleSQLID") end
-	if not ModData.exists("AVCSByPlayerID") then ModData.create("AVCSByPlayerID") end
-
 	-- Set global variable as this is frequently accessed
-	AVCS.dbByVehicleSQLID = ModData.get("AVCSByVehicleSQLID")
-	AVCS.dbByPlayerID = ModData.get("AVCSByPlayerID")
+	AVCS.dbByVehicleSQLID = ModData.getOrCreate("AVCSByVehicleSQLID")
+	AVCS.dbByPlayerID = ModData.getOrCreate("AVCSByPlayerID")
 
 	if SandboxVars.AVCS.RebuildDB then
 		AVCS.rebuildDB()
