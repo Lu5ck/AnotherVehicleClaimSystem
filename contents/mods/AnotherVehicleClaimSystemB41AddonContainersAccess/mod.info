@@ -3,4 +3,3 @@ id=AnotherVehicleClaimSystemB41AddonContainersAccess
 description=Another Vehicle Claim System Addon, check for containers access, this will increase client overhead aka consume additional CPU resources
 require=AnotherVehicleClaimSystemB41
 poster=poster.png
-versionMax=41.78.16
