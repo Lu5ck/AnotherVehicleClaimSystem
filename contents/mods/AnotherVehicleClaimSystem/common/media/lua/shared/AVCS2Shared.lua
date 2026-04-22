@@ -35,11 +35,20 @@ function AVCS.matchTrunkPart(strTrunk)
 end
 
 function AVCS.getVehicleID(vehicleObj)
-	if vehicleObj:getModData().SQLID then
-		return vehicleObj:getModData().SQLID
-	end
-	-- If no SQL ID
-	return nil
+    if not vehicleObj then return nil end
+
+    local vehicleID = vehicleObj:getModData().SQLID
+    if vehicleID then
+        return vehicleID
+    elseif isServer() or (not isServer() and not isClient()) then
+        vehicleID = tonumber(getTimestamp() .. vehicleObj:getSqlId())
+        vehicleObj:getModData().SQLID = vehicleID
+        vehicleObj:transmitModData()
+		--sendServerCommand("AVCS", "registerClientVehicleSQLID", {vehicleObj:getId(), vehicleObj:getModData().SQLID})
+        return vehicleID
+    end
+
+    return nil
 end
 
 function AVCS.checkMaxClaim(playerObj)

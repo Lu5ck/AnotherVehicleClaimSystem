@@ -48,13 +48,6 @@ and so on
 function AVCS.claimVehicle(playerObj, vehicleID)
 	local vehicleObj = getVehicleById(vehicleID.vehicle)
 	vehicleID = AVCS.getVehicleID(vehicleObj)
-	-- If no ID, we create one
-	if not vehicleID then
-		vehicleObj:getModData().SQLID = tonumber(getTimestamp() .. vehicleObj:getSqlId())
-		vehicleID = vehicleObj:getModData().SQLID
-		--sendServerCommand("AVCS", "registerClientVehicleSQLID", {vehicleObj:getId(), vehicleObj:getModData().SQLID})
-		vehicleObj:transmitModData()
-	end
 
 	-- Make sure is not already claimed
 	-- Only SQL ID is persistent, vehicleID is created on runtime
