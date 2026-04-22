@@ -337,7 +337,7 @@ function AVCS.doClaimTimeout()
 	local needSort = false
 	-- As we dealing with indexes, we want to control the index value as we increment to avoid removing wrong index
 	while varIndex <= #AVCS.sortedPlayerTimeoutClaim do
-		if getTimestamp() > AVCS.sortedPlayerTimeoutClaim[varIndex].ExpiryTime then
+		if getTimestamp() > AVCS.sortedPlayerTimeoutClaim[varIndex].ExpiryTime + (SandboxVars.AVCS.ClaimTimeout * 60 * 60) then
 			if AVCS.dbByPlayerID[AVCS.sortedPlayerTimeoutClaim[varIndex].OwnerPlayerID] ~= nil then
 				-- Cache is not always up-to-date, validate the actual
 				if getTimestamp() > (AVCS.dbByPlayerID[AVCS.sortedPlayerTimeoutClaim[varIndex].OwnerPlayerID].LastKnownLogonTime + (SandboxVars.AVCS.ClaimTimeout * 60 * 60)) then
