@@ -8,16 +8,6 @@
 if isClient() and not isServer() then
 	return
 end
---[[
-Global variables that is accessed frequently
-sortedPlayerTimeoutClaim is a table sorted in last known logon time timestamp and associoated player id
---]]
-AVCS.sortedPlayerTimeoutClaim = nil
-
--- Common functions
-function AVCS.sortCacheNow()
-	table.sort(AVCS.sortedPlayerTimeoutClaim, function(a, b) return a.ExpiryTime < b.ExpiryTime end)
-end
 
 --[[
 The global modData is basically the database for this vehicle claiming mod
@@ -90,9 +80,8 @@ function AVCS.claimVehicle(playerObj, vehicleID)
 				[vehicleID] = true,
 				LastKnownLogonTime = getTimestamp()
 			}
-
 			-- New player, insert it to the cache, theorically should be the latest entry
-			table.insert(AVCS.sortedPlayerTimeoutClaim, {ExpiryTime = (AVCS.dbByPlayerID[playerObj:getUsername()].LastKnownLogonTime + (SandboxVars.AVCS.ClaimTimeout * 60 * 60)), OwnerPlayerID = playerObj:getUsername()})
+			AVCS.addToClaimTimeoutCache(playerObj:getUsername())
 		else
 			AVCS.dbByPlayerID[playerObj:getUsername()][vehicleID] = true
 			AVCS.dbByPlayerID[playerObj:getUsername()].LastKnownLogonTime = getTimestamp()
@@ -180,7 +169,6 @@ function AVCS.updateLastKnownLogonTime(playerObj)
 end
 
 function AVCS.updateSpecifyVehicleUserPermission(arg)
-
 	if AVCS.dbByVehicleSQLID[arg.VehicleID] then
 		for k, v in pairs(arg) do
 			if k ~= "VehicleID" then
@@ -266,10 +254,7 @@ function AVCS.updateServerVehicleCoordinate(playerObj, args)
 	sendServerCommand("AVCS", "updateClientVehicleCoordinate", args)
 end
 
--- Remove given player ID from DBs completely
--- This hopefully thororughly remove the player from server-side Global ModData
--- We don't really need to care about client-side AVCSByPlayerID Global ModData as client will always get new fresh set onConnected
--- We do need to care about server-side as we don't want the AVCSByPlayerID to be bloated which will slow down other functions
+-- Unclaim all vehicles related to Player
 function AVCS.removePlayerCompletely(playerID)
 	if AVCS.dbByPlayerID[playerID] ~= nil then
 		for k, v in pairs(AVCS.dbByPlayerID[playerID]) do
@@ -280,52 +265,7 @@ function AVCS.removePlayerCompletely(playerID)
 	end
 end
 
---[[
-Transform dbAVCSByPlayerID into array of {LastKnownLogonTime, OwnerPlayerID}
---]]
-local function createSortedPlayerTimeoutClaim()
-	local temp = {}
-	for k, v in pairs(AVCS.dbByPlayerID) do
-		table.insert(temp, {ExpiryTime = (v.LastKnownLogonTime + (SandboxVars.AVCS.ClaimTimeout * 60 * 60)), OwnerPlayerID = k})
-	end
-
-	AVCS.sortedPlayerTimeoutClaim = temp
-	AVCS.sortCacheNow()
-end
-
-function AVCS.doClaimTimeout()
-	local varIndex = 1
-	local needSort = false
-	-- As we dealing with indexes, we want to control the index value as we increment to avoid removing wrong index
-	while varIndex <= #AVCS.sortedPlayerTimeoutClaim do
-		if getTimestamp() > AVCS.sortedPlayerTimeoutClaim[varIndex].ExpiryTime then
-			if AVCS.dbByPlayerID[AVCS.sortedPlayerTimeoutClaim[varIndex].OwnerPlayerID] ~= nil then
-				-- Cache is not always up-to-date, validate the actual
-				if getTimestamp() > (AVCS.dbByPlayerID[AVCS.sortedPlayerTimeoutClaim[varIndex].OwnerPlayerID].LastKnownLogonTime + (SandboxVars.AVCS.ClaimTimeout * 60 * 60)) then
-					AVCS.removePlayerCompletely(AVCS.sortedPlayerTimeoutClaim[varIndex].OwnerPlayerID)
-					table.remove(AVCS.sortedPlayerTimeoutClaim, varIndex)
-				else
-					-- Update the expiry time
-					AVCS.sortedPlayerTimeoutClaim[varIndex].ExpiryTime = (AVCS.dbByPlayerID[AVCS.sortedPlayerTimeoutClaim[varIndex].OwnerPlayerID].LastKnownLogonTime + (SandboxVars.AVCS.ClaimTimeout * 60 * 60))
-					needSort = true
-					varIndex = varIndex + 1
-				end
-			else
-				-- User no longer exist, remove from index
-				table.remove(AVCS.sortedPlayerTimeoutClaim, varIndex)
-			end
-		else
-			-- Since sorted, assume everybody else has not expired
-			break
-		end
-	end
-
-	if needSort then
-		AVCS.sortCacheNow()
-	end
-end
-
-local function OnInitGlobalModData(isNewGame)
+function AVCS.OnServerInitGlobalModData(isNewGame)
 	-- Set global variable as this is frequently accessed
 	AVCS.dbByVehicleSQLID = ModData.getOrCreate("AVCSByVehicleSQLID")
 	AVCS.dbByPlayerID = ModData.getOrCreate("AVCSByPlayerID")
@@ -334,9 +274,9 @@ local function OnInitGlobalModData(isNewGame)
 		AVCS.rebuildDB()
 	end
 
-	createSortedPlayerTimeoutClaim()
+	AVCS.buildClaimTimeoutCache()
 end
 
-Events.OnInitGlobalModData.Add(OnInitGlobalModData)
+Events.OnInitGlobalModData.Add(AVCS.OnServerInitGlobalModData)
 Events.EveryTenMinutes.Add(AVCS.doClaimTimeout)
 Events.OnClientCommand.Add(AVCS.onClientCommand)
