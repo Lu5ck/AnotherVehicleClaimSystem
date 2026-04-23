@@ -14,6 +14,14 @@ if not AVCS.oLowerCondition then
 end
 
 function Vehicles.LowerCondition(vehicle, part, elapsedMinutes)
-    AVCS.updateVehicleCoordinate(vehicle)
+    local vehicleID = AVCS.getVehicleID(vehicle)
+    if vehicleID and AVCS.dbByVehicleSQLID[vehicleID] then
+        local tempArr = AVCS.getUpdateVehicleCoordinate(vehicle, vehicleID)
+        if tempArr then
+            AVCS.updateVehicleCoordinate(tempArr)
+            sendServerCommand("AVCS", "updateClientVehicleCoordinate", tempArr)
+        end
+    end
+
 	return AVCS.oLowerCondition(vehicle, part, elapsedMinutes)
 end

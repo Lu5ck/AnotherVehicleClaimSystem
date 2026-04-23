@@ -208,31 +208,45 @@ function AVCS.getSimpleBooleanPermission(details)
 	return details
 end
 
-function AVCS.updateVehicleCoordinate(vehicleObj)
-	-- Server call, must be extreme efficient as this is called extreme frequently
-	-- Do not use loop here
-	if isServer() and not isClient() then
-		local vehicleID = AVCS.getVehicleID(vehicleObj)
-		if not vehicleID then return end
-		if AVCS.dbByVehicleSQLID[vehicleID] ~= nil then
-			if AVCS.dbByVehicleSQLID[vehicleID].LastLocationX ~= math.floor(vehicleObj:getX()) or AVCS.dbByVehicleSQLID[vehicleID].LastLocationY ~= math.floor(vehicleObj:getY()) then
-				AVCS.dbByVehicleSQLID[vehicleID].LastLocationX = math.floor(vehicleObj:getX())
-				AVCS.dbByVehicleSQLID[vehicleID].LastLocationY = math.floor(vehicleObj:getY())
-				AVCS.dbByVehicleSQLID[vehicleID].LastLocationUpdateDateTime = getTimestamp()
-				ModData.add("AVCSByVehicleSQLID", AVCS.dbByVehicleSQLID)
-				local tempArr = {
-					VehicleID = vehicleID,
-					LastLocationX = math.floor(vehicleObj:getX()),
-					LastLocationY = math.floor(vehicleObj:getY()),
-					LastLocationUpdateDateTime = getTimestamp()
-				}
-				sendServerCommand("AVCS", "updateClientVehicleCoordinate", tempArr)
-			end
-		end
-	-- Client call
-	-- No plan to do client call as server seems sufficient for now
-	else
+function AVCS.getUpdateVehicleCoordinate(vehicle, vehicleID)
+    local curX = math.floor(vehicle:getX())
+    local curY = math.floor(vehicle:getY())
+    local curZ = math.floor(vehicle:getZ())
+
+	if not vehicleID then
+		vehicleID = AVCS.getVehicleID(vehicle)
 	end
+    if AVCS.dbByVehicleSQLID[vehicleID].LastLocationX ~= curX or AVCS.dbByVehicleSQLID[vehicleID].LastLocationY ~= curY or AVCS.dbByVehicleSQLID[vehicleID].LastLocationZ ~= curZ then
+        AVCS.dbByVehicleSQLID[vehicleID].LastLocationX = curX
+        AVCS.dbByVehicleSQLID[vehicleID].LastLocationY = curY
+        AVCS.dbByVehicleSQLID[vehicleID].LastLocationZ = curZ
+        AVCS.dbByVehicleSQLID[vehicleID].LastLocationUpdateDateTime = getTimestamp()
+
+        local tempArr = {
+            VehicleID = vehicleID,
+            LastLocationX = curX,
+            LastLocationY = curY,
+            LastLocationZ = curZ,
+            LastLocationUpdateDateTime = AVCS.dbByVehicleSQLID[vehicleID].LastLocationUpdateDateTime
+        }
+        return tempArr
+    end
+    return nil
+end
+
+function AVCS.updateVehicleCoordinate(args)
+	if not args and not args.VehicleID and not args.LastLocationX and not args.LastLocationY and not args.LastLocationZ and not args.LastLocationUpdateDateTime then return end
+    if AVCS.dbByVehicleSQLID[args.VehicleID] then
+        AVCS.dbByVehicleSQLID[args.VehicleID].LastLocationX = args.LastLocationX
+        AVCS.dbByVehicleSQLID[args.VehicleID].LastLocationY = args.LastLocationY
+        AVCS.dbByVehicleSQLID[args.VehicleID].LastLocationZ = args.LastLocationZ
+        AVCS.dbByVehicleSQLID[args.VehicleID].LastLocationUpdateDateTime = args.LastLocationUpdateDateTime
+
+        -- Exclude client, includes server / sp / self host
+        if not (isClient() and not isServer()) then
+            ModData.add("AVCSByVehicleSQLID", AVCS.dbByVehicleSQLID)
+        end
+    end
 end
 
 function AVCS.getUIFontScale()

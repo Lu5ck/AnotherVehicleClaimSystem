@@ -66,6 +66,7 @@ function AVCS.claimVehicle(playerObj, vehicleID)
 			CarModel = vehicleObj:getScript():getFullName(),
 			LastLocationX = math.floor(vehicleObj:getX()),
 			LastLocationY = math.floor(vehicleObj:getY()),
+			LastLocationZ = math.floor(vehicleObj:getZ()),
 			LastLocationUpdateDateTime = getTimestamp()
 		}
 		
@@ -77,6 +78,7 @@ function AVCS.claimVehicle(playerObj, vehicleID)
 			CarModel = vehicleObj:getScript():getFullName(),
 			LastLocationX = math.floor(vehicleObj:getX()),
 			LastLocationY = math.floor(vehicleObj:getY()),
+			LastLocationZ = math.floor(vehicleObj:getZ()),
 			LastLocationUpdateDateTime = getTimestamp()
 		}
 		
@@ -283,7 +285,15 @@ AVCS.onClientCommand = function(moduleName, command, playerObj, arg)
 		if string.lower(playerObj:getRole():getName()) == "admin" then
 			AVCS.rebuildDB()
 		end
+	elseif moduleName == "AVCS" and command == "updateServerVehicleCoordinate" then
+		AVCS.updateServerVehicleCoordinate(playerObj, arg)
 	end
+end
+
+function AVCS.updateServerVehicleCoordinate(playerObj, args)
+	if not args then return end
+	AVCS.updateVehicleCoordinate(args)
+	sendServerCommand("AVCS", "updateClientVehicleCoordinate", args)
 end
 
 -- Remove given player ID from DBs completely

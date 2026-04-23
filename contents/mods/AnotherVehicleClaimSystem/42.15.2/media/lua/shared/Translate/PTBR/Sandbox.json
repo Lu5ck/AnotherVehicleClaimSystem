@@ -29,5 +29,8 @@
     "Sandbox_AVCS_TrunkParts_help": "Cont�iner de ve�culo que possui uma tampa que armazena carga, adicione ao final para incluir cont�ineres de ve�culos de mod n�o suportados.",
     "Sandbox_AVCS_RebuildDB": "Reconstruir base de dados",
     "Sandbox_AVCS_RebuildDB_tooltip": "O banco de dados pode se tornar inconsistente devido a falhas catastr�ficas.",
-    "Sandbox_AVCS_RebuildDB_help": "O banco de dados pode se tornar inconsistente devido a falhas catastr�ficas."
+    "Sandbox_AVCS_RebuildDB_help": "O banco de dados pode se tornar inconsistente devido a falhas catastr�ficas.",
+    "Sandbox_AVCS_VehicleCoordinateUpdateThrottle": "Frequência de Atualização do Veículo Cliente",
+    "Sandbox_AVCS_VehicleCoordinateUpdateThrottle_tooltip": "Taxa de polling para atualização das coordenadas do veículo pelo lado do cliente, em segundos",
+    "Sandbox_AVCS_VehicleCoordinateUpdateThrottle_help": "Taxa de polling para atualização das coordenadas do veículo pelo lado do cliente, em segundos"
 }

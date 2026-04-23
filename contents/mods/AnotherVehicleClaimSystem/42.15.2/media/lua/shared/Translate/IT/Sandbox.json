@@ -29,5 +29,8 @@
     "Sandbox_AVCS_TrunkParts_help": "Contenitore del veicolo con copertura per trasportare carico, aggiungere per supportare veicoli di mod non supportati",
     "Sandbox_AVCS_RebuildDB": "Ricostruisci Database",
     "Sandbox_AVCS_RebuildDB_tooltip": "Il database può diventare incoerente a causa di guasti catastrofici",
-    "Sandbox_AVCS_RebuildDB_help": "Il database può diventare incoerente a causa di guasti catastrofici"
+    "Sandbox_AVCS_RebuildDB_help": "Il database può diventare incoerente a causa di guasti catastrofici",
+    "Sandbox_AVCS_VehicleCoordinateUpdateThrottle": "Frequenza Aggiornamento Veicolo Client",
+    "Sandbox_AVCS_VehicleCoordinateUpdateThrottle_tooltip": "Frequenza di polling per l'aggiornamento delle coordinate del veicolo lato client, in secondi",
+    "Sandbox_AVCS_VehicleCoordinateUpdateThrottle_help": "Frequenza di polling per l'aggiornamento delle coordinate del veicolo lato client, in secondi"
 }

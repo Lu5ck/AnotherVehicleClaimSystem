@@ -53,3 +53,9 @@ option AVCS.RebuildDB
 		type = boolean, default = false,
 		page = AVCS, translation = AVCS_RebuildDB,
 }
+
+option AVCS.VehicleCoordinateUpdateThrottle
+{
+		type = integer, min = 1, max = 60, default = 1,
+		page = AVCS, translation = AVCS_VehicleCoordinateUpdateThrottle,
+}

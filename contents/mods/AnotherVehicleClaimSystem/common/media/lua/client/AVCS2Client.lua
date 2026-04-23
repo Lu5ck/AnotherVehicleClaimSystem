@@ -9,6 +9,8 @@ if not isClient() and isServer() then
 	return
 end
 
+AVCS.trackVehicleCoordinateDateTime = AVCS.trackVehicleCoordinateDateTime or nil
+
 function AVCS.updateClientClaimVehicle(arg)
 	-- A desync has occurred, this shouldn't happen
 	-- We will request full data from server
@@ -24,6 +26,7 @@ function AVCS.updateClientClaimVehicle(arg)
 		CarModel = arg.CarModel,
 		LastLocationX = arg.LastLocationX,
 		LastLocationY = arg.LastLocationY,
+		LastLocationZ = arg.LastLocationZ,
 		LastLocationUpdateDateTime = arg.LastLocationUpdateDateTime
 	}
 
@@ -72,9 +75,7 @@ function AVCS.updateClientVehicleCoordinate(arg)
 		return
 	end
 
-	AVCS.dbByVehicleSQLID[arg.VehicleID].LastLocationX = arg.LastLocationX
-	AVCS.dbByVehicleSQLID[arg.VehicleID].LastLocationY = arg.LastLocationY
-	AVCS.dbByVehicleSQLID[arg.VehicleID].LastLocationUpdateDateTime = arg.LastLocationUpdateDateTime
+	AVCS.updateVehicleCoordinate(arg)
 end
 
 function AVCS.updateClientLastLogon(arg)
@@ -93,7 +94,7 @@ function AVCS.updateClientLastLogon(arg)
 	AVCS.dbByPlayerID[arg.PlayerID].LastKnownLogonTime = arg.LastKnownLogonTime
 end
 
-function AVCS.forcesyncClientGlobalModData()
+function AVCS.forcesyncClientGlobalModData(arg)
 	ModData.request("AVCSByVehicleSQLID")
 	ModData.request("AVCSByPlayerID")
 end
@@ -123,22 +124,12 @@ function AVCS.registerClientVehicleSQLID(arg)
 	end
 end
 
-AVCS.OnServerCommand = function(moduleName, command, arg)
-	if moduleName == "AVCS" and command == "updateClientClaimVehicle" then
-		AVCS.updateClientClaimVehicle(arg)
-	elseif moduleName == "AVCS" and command == "updateClientUnclaimVehicle" then
-		AVCS.updateClientUnclaimVehicle(arg)
-	elseif moduleName == "AVCS" and command == "updateClientVehicleCoordinate" then
-		AVCS.updateClientVehicleCoordinate(arg)
-	elseif moduleName == "AVCS" and command == "updateClientLastLogon" then
-		AVCS.updateClientLastLogon(arg)
-	elseif moduleName == "AVCS" and command == "forcesyncClientGlobalModData" then
-		AVCS.forcesyncClientGlobalModData()
-	elseif moduleName == "AVCS" and command == "updateClientSpecifyVehicleUserPermission" then
-		AVCS.updateClientSpecifyVehicleUserPermission(arg)
-	elseif moduleName == "AVCS" and command == "registerClientVehicleSQLID" then
-		AVCS.registerClientVehicleSQLID(arg)
-	end
+AVCS.OnServerCommand = function(moduleName, command, playerObj, args)
+    if moduleName == "AVCS" then
+        if AVCS[command] then
+            AVCS[command](playerObj, args)
+        end
+    end
 end
 
 local function openClientUserManager()
@@ -211,6 +202,32 @@ function AVCS.ClientOnReceiveGlobalModData(key, modData)
 	end
 end
 
+function AVCS.trackVehicleCoordinateTick()
+    local player = getPlayer()
+    if player:isDriving() and getTimestamp() - AVCS.trackVehicleCoordinateDateTime >= SandboxVars.AVCS.VehicleCoordinateUpdateThrottle then
+        local vehicle = player:getVehicle()
+        local vehicleID = AVCS.getVehicleID(vehicle)
+        if vehicle then
+            if vehicleID and AVCS.dbByVehicleSQLID[vehicleID] then
+                local tempArr = AVCS.getUpdateVehicleCoordinate(vehicle, vehicleID)
+                if tempArr then
+                    sendClientCommand(player, "AVCS", "updateServerVehicleCoordinate", tempArr)
+                end
+            end
+
+            vehicle = vehicle:getVehicleTowing()
+            vehicleID = AVCS.getVehicleID(vehicle)
+            if vehicleID and AVCS.dbByVehicleSQLID[vehicleID] then
+                local tempArr = AVCS.getUpdateVehicleCoordinate(vehicle, vehicleID)
+                if tempArr then
+                    sendClientCommand(player, "AVCS", "updateServerVehicleCoordinate", tempArr)
+                end
+            end
+        end
+        AVCS.trackVehicleCoordinateDateTime = getTimestamp()
+    end
+end
+
 function AVCS.ClientEveryHours()
 	if AVCS.dbByPlayerID[getPlayer():getUsername()] ~= nil then
 		sendClientCommand(getPlayer(), "AVCS", "updateLastKnownLogonTime", nil)
@@ -222,6 +239,8 @@ function AVCS.AfterGameStart()
 	ModData.request("AVCSByPlayerID")
 	sendClientCommand(getPlayer(), "AVCS", "updateLastKnownLogonTime", nil)
 	Events.OnServerCommand.Add(AVCS.OnServerCommand)
+    AVCS.trackVehicleCoordinateDateTime = getTimestamp()
+    Events.OnTick.Add(AVCS.trackVehicleCoordinateTick)
 	Events.OnTick.Remove(AVCS.AfterGameStart)
 end
 
