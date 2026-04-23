@@ -27,7 +27,7 @@ The clients will do most of the checking which help keep the server light
 There are two ModData which is storing it by Vehicle SQL ID or Player ID
 I have both because I want to minimize looping to perform differnt things
 
-ModData AVRByVehicleID is stored like this
+ModData AVCSByVehicleSQLID is stored like this
 <Vehicle SQL ID>
 - <OwnerPlayerID>
 - <ClaimDateTime>
@@ -36,7 +36,7 @@ ModData AVRByVehicleID is stored like this
 - <LastLocationY>
 - <LastLocationUpdateDateTime>
 
-ModData AVRByPlayerID is stored like this
+ModData AVCSByPlayerID is stored like this
 <OwnerPlayerID>
 - <LastKnownLogonTime>
 - <Vehicle SQL ID 1>
@@ -337,7 +337,7 @@ function AVCS.doClaimTimeout()
 	local needSort = false
 	-- As we dealing with indexes, we want to control the index value as we increment to avoid removing wrong index
 	while varIndex <= #AVCS.sortedPlayerTimeoutClaim do
-		if getTimestamp() > AVCS.sortedPlayerTimeoutClaim[varIndex].ExpiryTime + (SandboxVars.AVCS.ClaimTimeout * 60 * 60) then
+		if getTimestamp() > AVCS.sortedPlayerTimeoutClaim[varIndex].ExpiryTime then
 			if AVCS.dbByPlayerID[AVCS.sortedPlayerTimeoutClaim[varIndex].OwnerPlayerID] ~= nil then
 				-- Cache is not always up-to-date, validate the actual
 				if getTimestamp() > (AVCS.dbByPlayerID[AVCS.sortedPlayerTimeoutClaim[varIndex].OwnerPlayerID].LastKnownLogonTime + (SandboxVars.AVCS.ClaimTimeout * 60 * 60)) then
