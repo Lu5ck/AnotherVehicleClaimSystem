@@ -11,14 +11,24 @@ end
 
 AVCS.trackVehicleCoordinateDateTime = AVCS.trackVehicleCoordinateDateTime or nil
 
-function AVCS.updateClientClaimVehicle(arg)
-	-- A desync has occurred, this shouldn't happen
-	-- We will request full data from server
-	if AVCS.dbByVehicleSQLID == nil then
+function AVCS.checkClientGlobalDbExist()
+	if not AVCS.dbByVehicleSQLID then
 		ModData.request("AVCSByVehicleSQLID")
 		ModData.request("AVCSByPlayerID")
-		return
+		return false
 	end
+
+	if not AVCS.dbByPlayerID then
+		ModData.request("AVCSByVehicleSQLID")
+		ModData.request("AVCSByPlayerID")
+		return false
+	end
+
+	return true
+end
+
+function AVCS.updateClientClaimVehicle(arg)
+	if not AVCS.checkClientGlobalDbExist() then return end
 
 	AVCS.dbByVehicleSQLID[arg.VehicleID] = {
 		OwnerPlayerID = arg.OwnerPlayerID,
@@ -42,56 +52,30 @@ function AVCS.updateClientClaimVehicle(arg)
 end
 
 function AVCS.updateClientUnclaimVehicle(arg)
-	-- A desync has occurred, this shouldn't happen
-	-- We will request full data from server
-	if AVCS.dbByVehicleSQLID == nil then
-		ModData.request("AVCSByVehicleSQLID")
-		ModData.request("AVCSByPlayerID")
-		return
+	if not AVCS.checkClientGlobalDbExist() then return end
+
+	if AVCS.dbByVehicleSQLID[arg.VehicleID] and AVCS.dbByPlayerID[arg.OwnerPlayerID][arg.VehicleID] then
+		AVCS.dbByVehicleSQLID[arg.VehicleID] = nil
+		AVCS.dbByPlayerID[arg.OwnerPlayerID][arg.VehicleID] = nil
+	else
+		AVCS.forcesyncClientGlobalModData(nil)
 	end
-	
-	if AVCS.dbByVehicleSQLID[arg.VehicleID] == nil then
-		ModData.request("AVCSByVehicleSQLID")
-		ModData.request("AVCSByPlayerID")
-		return
-	end
-	
-	AVCS.dbByVehicleSQLID[arg.VehicleID] = nil
-	AVCS.dbByPlayerID[arg.OwnerPlayerID][arg.VehicleID] = nil
 end
 
 function AVCS.updateClientVehicleCoordinate(arg)
-	-- A desync has occurred, this shouldn't happen
-	-- We will request full data from server
-	if AVCS.dbByVehicleSQLID == nil then
-		ModData.request("AVCSByVehicleSQLID")
-		ModData.request("AVCSByPlayerID")
-		return
-	end
-
-	if AVCS.dbByVehicleSQLID[arg.VehicleID] == nil then
-		ModData.request("AVCSByVehicleSQLID")
-		ModData.request("AVCSByPlayerID")
-		return
-	end
+	if not AVCS.checkClientGlobalDbExist() then return end
 
 	AVCS.updateVehicleCoordinate(arg)
 end
 
 function AVCS.updateClientLastLogon(arg)
-	if AVCS.dbByPlayerID == nil then
-		ModData.request("AVCSByVehicleSQLID")
-		ModData.request("AVCSByPlayerID")
-		return
-	end
+	if not AVCS.checkClientGlobalDbExist() then return end
 
-	if AVCS.dbByPlayerID[arg.PlayerID] == nil then
-		ModData.request("AVCSByVehicleSQLID")
-		ModData.request("AVCSByPlayerID")
-		return
+	if AVCS.dbByPlayerID[arg.PlayerID] then
+		AVCS.dbByPlayerID[arg.PlayerID].LastKnownLogonTime = arg.LastKnownLogonTime
+	else
+		AVCS.forcesyncClientGlobalModData(nil)
 	end
-
-	AVCS.dbByPlayerID[arg.PlayerID].LastKnownLogonTime = arg.LastKnownLogonTime
 end
 
 function AVCS.forcesyncClientGlobalModData(arg)
@@ -100,6 +84,8 @@ function AVCS.forcesyncClientGlobalModData(arg)
 end
 
 function AVCS.updateClientSpecifyVehicleUserPermission(arg)
+	if not AVCS.checkClientGlobalDbExist() then return end
+
 	if AVCS.dbByVehicleSQLID[arg.VehicleID] then
 		for k, v in pairs(arg) do
 			if k ~= "VehicleID" then
@@ -111,11 +97,11 @@ function AVCS.updateClientSpecifyVehicleUserPermission(arg)
 			end
 		end
 	else
-		ModData.request("AVCSByVehicleSQLID")
-		ModData.request("AVCSByPlayerID")
+		AVCS.forcesyncClientGlobalModData(nil)
 	end
 end
 
+-- B41 workaround, unused code incase B42 broken again
 -- Vehicle ModData does not update immediately, workaround to force sync
 function AVCS.registerClientVehicleSQLID(arg)
 	local vehicleObj = getVehicleById(arg[1])
@@ -132,7 +118,7 @@ AVCS.OnServerCommand = function(moduleName, command, playerObj, args)
     end
 end
 
-local function openClientUserManager()
+function AVCS.openClientUserManager()
 	if AVCS.UI.UserInstance ~= nil then
 		AVCS.UI.UserInstance:close()
 	end
@@ -149,7 +135,7 @@ local function openClientUserManager()
     AVCS.UI.UserInstance:setVisible(true)
 end
 
-local function openClientAdminManager()
+function AVCS.openClientAdminManager()
 	if AVCS.UI.AdminInstance ~= nil then
 		AVCS.UI.AdminInstance:close()
 	end
@@ -167,7 +153,7 @@ local function openClientAdminManager()
 end
 
 function AVCS.ClientOnPreFillWorldObjectContextMenu(player, context, worldObjects, test)
-    context:addOption(getText("ContextMenu_AVCS_ClientUserUI"), worldObjects, openClientUserManager, nil)
+    context:addOption(getText("ContextMenu_AVCS_ClientUserUI"), worldObjects, AVCS.openClientUserManager, nil)
 
 	if getPlayer():getRole():hasCapability(Capability.ManipulateVehicle) or (not isClient() and not isServer()) then
 		local contextMenu = nil
@@ -189,7 +175,7 @@ function AVCS.ClientOnPreFillWorldObjectContextMenu(player, context, worldObject
 			subMenu = ISContextMenu:getNew(context)
 			context:addSubMenu(contextMenu, subMenu)
 		end
-		subMenu:addOption(getText("ContextMenu_AVCS_AdminUserUI"), worldObjects, openClientAdminManager, nil)
+		subMenu:addOption(getText("ContextMenu_AVCS_AdminUserUI"), worldObjects, AVCS.openClientAdminManager, nil)
 	end
 end
 
@@ -206,8 +192,8 @@ function AVCS.trackVehicleCoordinateTick()
     local player = getPlayer()
     if player:isDriving() and getTimestamp() - AVCS.trackVehicleCoordinateDateTime >= SandboxVars.AVCS.VehicleCoordinateUpdateThrottle then
         local vehicle = player:getVehicle()
-        local vehicleID = AVCS.getVehicleID(vehicle)
         if vehicle then
+			local vehicleID = AVCS.getVehicleID(vehicle)
             if vehicleID and AVCS.dbByVehicleSQLID[vehicleID] then
                 local tempArr = AVCS.getUpdateVehicleCoordinate(vehicle, vehicleID)
                 if tempArr then

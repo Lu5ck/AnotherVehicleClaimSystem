@@ -225,25 +225,12 @@ AVCS.onClientCommand = function(moduleName, command, playerObj, arg)
 		-- So we do arg[1] to get SQL ID
 		if SandboxVars.AVCS.ServerSideChecking then
 			local checkResult = AVCS.checkPermission(playerObj, arg[1])
-
-			if type(checkResult) == "boolean" then
-				if checkResult == false then
-					-- Using vanilla logging function, write to a log with suffix AVCS
-					-- Datetime, Unix Time, Warning message, offender username, vehicle full name, coordinate
-					-- [26-03-23 22:23:36.671] [1679840616] Warning: Attempting to unclaim without permission [Username] [Base.ExtremeCar] [13026,1215]
-					writeLog("AVCS", "[" .. getTimestamp() .. "] Warning: Attempting to unclaim without permission [" .. playerObj:getUsername() .. "] [" .. AVCS.dbByVehicleSQLID[arg[1]].CarModel .. "] [" .. AVCS.dbByVehicleSQLID[arg[1]].LastLocationX .. "," .. AVCS.dbByVehicleSQLID[arg[1]].LastLocationY .. "]")
-
-					-- Possible desync has occurred, force sync the user
-					sendServerCommand(playerObj, "AVCS", "forcesyncClientGlobalModData", {})
-					return
-				end
-			elseif checkResult.permissions == false then
+			checkResult = AVCS.getSimpleBooleanPermission(checkResult)
+			if not checkResult then
 				-- Using vanilla logging function, write to a log with suffix AVCS
 				-- Datetime, Unix Time, Warning message, offender username, vehicle full name, coordinate
 				-- [26-03-23 22:23:36.671] [1679840616] Warning: Attempting to unclaim without permission [Username] [Base.ExtremeCar] [13026,1215]
 				writeLog("AVCS", "[" .. getTimestamp() .. "] Warning: Attempting to unclaim without permission [" .. playerObj:getUsername() .. "] [" .. AVCS.dbByVehicleSQLID[arg[1]].CarModel .. "] [" .. AVCS.dbByVehicleSQLID[arg[1]].LastLocationX .. "," .. AVCS.dbByVehicleSQLID[arg[1]].LastLocationY .. "]")
-
-				-- Possible desync has occurred, force sync the user
 				sendServerCommand(playerObj, "AVCS", "forcesyncClientGlobalModData", {})
 				return
 			end
@@ -257,34 +244,17 @@ AVCS.onClientCommand = function(moduleName, command, playerObj, arg)
 		-- Permission types like AllowDrive, AllowPassenger
 		if SandboxVars.AVCS.ServerSideChecking then
 			local checkResult = AVCS.checkPermission(playerObj, arg.VehicleID)
-
-			if type(checkResult) == "boolean" then
-				if checkResult == false then
-					-- Using vanilla logging function, write to a log with suffix AVCS
-					-- Datetime, Unix Time, Warning message, offender username, vehicle full name, coordinate
-					-- [26-03-23 22:23:36.671] [1679840616] Warning: Attempting to unclaim without permission [Username] [Base.ExtremeCar] [13026,1215]
-					writeLog("AVCS", "[" .. getTimestamp() .. "] Warning: Attempting to modify specific vehicle permissions without permission [" .. playerObj:getUsername() .. "] [" .. AVCS.dbByVehicleSQLID[arg.VehicleID].CarModel .. "]")
-
-					-- Possible desync has occurred, force sync the user
-					sendServerCommand(playerObj, "AVCS", "forcesyncClientGlobalModData", {})
-					return
-				end
-			elseif checkResult.permissions == false then
+			checkResult = AVCS.getSimpleBooleanPermission(checkResult)
+			if not checkResult then
 				-- Using vanilla logging function, write to a log with suffix AVCS
 				-- Datetime, Unix Time, Warning message, offender username, vehicle full name, coordinate
 				-- [26-03-23 22:23:36.671] [1679840616] Warning: Attempting to unclaim without permission [Username] [Base.ExtremeCar] [13026,1215]
 				writeLog("AVCS", "[" .. getTimestamp() .. "] Warning: Attempting to modify specific vehicle permissions without permission [" .. playerObj:getUsername() .. "] [" .. AVCS.dbByVehicleSQLID[arg.VehicleID].CarModel .. "]")
-
-				-- Possible desync has occurred, force sync the user
 				sendServerCommand(playerObj, "AVCS", "forcesyncClientGlobalModData", {})
 				return
 			end
 		end
 		AVCS.updateSpecifyVehicleUserPermission(arg)
-	elseif moduleName == "AVCS" and command == "rebuildDB" then
-		if string.lower(playerObj:getRole():getName()) == "admin" then
-			AVCS.rebuildDB()
-		end
 	elseif moduleName == "AVCS" and command == "updateServerVehicleCoordinate" then
 		AVCS.updateServerVehicleCoordinate(playerObj, arg)
 	end

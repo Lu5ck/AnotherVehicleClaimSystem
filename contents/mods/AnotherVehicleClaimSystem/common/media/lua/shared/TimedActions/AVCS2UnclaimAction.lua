@@ -44,25 +44,13 @@ function ISAVCSVehicleUnclaimAction:complete()
     local vehicleID = AVCS.getVehicleID(self.vehicle)
     if SandboxVars.AVCS.ServerSideChecking then
         local checkResult = AVCS.checkPermission(self.character, vehicleID)
+        checkResult = AVCS.getSimpleBooleanPermission(checkResult)
 
-        if type(checkResult) == "boolean" then
-            if checkResult == false then
-                -- Using vanilla logging function, write to a log with suffix AVCS
-                -- Datetime, Unix Time, Warning message, offender username, vehicle full name, coordinate
-                -- [26-03-23 22:23:36.671] [1679840616] Warning: Attempting to unclaim without permission [Username] [Base.ExtremeCar] [13026,1215]
-                writeLog("AVCS", "[" .. getTimestamp() .. "] Warning: Attempting to unclaim without permission [" .. self.character:getUsername() .. "] [" .. AVCS.dbByVehicleSQLID[vehicleID].CarModel .. "] [" .. AVCS.dbByVehicleSQLID[vehicleID].LastLocationX .. "," .. AVCS.dbByVehicleSQLID[vehicleID].LastLocationY .. "]")
-
-                -- Possible desync has occurred, force sync the user
-                sendServerCommand(self.character, "AVCS", "forcesyncClientGlobalModData", {})
-                return true
-            end
-        elseif checkResult.permissions == false then
+        if not checkResult then
             -- Using vanilla logging function, write to a log with suffix AVCS
             -- Datetime, Unix Time, Warning message, offender username, vehicle full name, coordinate
             -- [26-03-23 22:23:36.671] [1679840616] Warning: Attempting to unclaim without permission [Username] [Base.ExtremeCar] [13026,1215]
             writeLog("AVCS", "[" .. getTimestamp() .. "] Warning: Attempting to unclaim without permission [" .. self.character:getUsername() .. "] [" .. AVCS.dbByVehicleSQLID[vehicleID].CarModel .. "] [" .. AVCS.dbByVehicleSQLID[vehicleID].LastLocationX .. "," .. AVCS.dbByVehicleSQLID[vehicleID].LastLocationY .. "]")
-
-            -- Possible desync has occurred, force sync the user
             sendServerCommand(self.character, "AVCS", "forcesyncClientGlobalModData", {})
             return true
         end
