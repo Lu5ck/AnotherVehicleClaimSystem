@@ -194,7 +194,7 @@ function AVCS.trackVehicleCoordinateTick()
         local vehicle = player:getVehicle()
         if vehicle then
 			local vehicleID = AVCS.getVehicleID(vehicle)
-            if vehicleID and AVCS.dbByVehicleSQLID[vehicleID] then
+            if vehicleID and AVCS.dbByVehicleSQLID and AVCS.dbByVehicleSQLID[vehicleID] then
                 local tempArr = AVCS.getUpdateVehicleCoordinate(vehicle, vehicleID)
                 if tempArr then
                     sendClientCommand(player, "AVCS", "updateServerVehicleCoordinate", tempArr)
@@ -203,7 +203,7 @@ function AVCS.trackVehicleCoordinateTick()
 
             vehicle = vehicle:getVehicleTowing()
             vehicleID = AVCS.getVehicleID(vehicle)
-            if vehicleID and AVCS.dbByVehicleSQLID[vehicleID] then
+            if vehicleID and AVCS.dbByVehicleSQLID and AVCS.dbByVehicleSQLID[vehicleID] then
                 local tempArr = AVCS.getUpdateVehicleCoordinate(vehicle, vehicleID)
                 if tempArr then
                     sendClientCommand(player, "AVCS", "updateServerVehicleCoordinate", tempArr)
