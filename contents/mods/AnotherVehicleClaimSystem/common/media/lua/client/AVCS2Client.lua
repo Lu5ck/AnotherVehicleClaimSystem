@@ -155,7 +155,7 @@ end
 function AVCS.ClientOnPreFillWorldObjectContextMenu(player, context, worldObjects, test)
     context:addOption(getText("ContextMenu_AVCS_ClientUserUI"), worldObjects, AVCS.openClientUserManager, nil)
 
-	if getPlayer():getRole():hasCapability(Capability.ManipulateVehicle) or (not isClient() and not isServer()) then
+	if (not isClient() and not isServer()) or getPlayer():getRole():hasCapability(Capability.ManipulateVehicle) then
 		local contextMenu = nil
 		local subMenu = nil
 

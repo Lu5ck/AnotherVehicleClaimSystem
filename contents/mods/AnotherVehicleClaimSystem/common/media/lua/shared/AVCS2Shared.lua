@@ -52,7 +52,7 @@ function AVCS.getVehicleID(vehicleObj)
 end
 
 function AVCS.checkMaxClaim(playerObj)
-	if playerObj:getRole():hasCapability(Capability.ManipulateVehicle) then
+	if (not isClient() and not isServer()) or playerObj:getRole():hasCapability(Capability.ManipulateVehicle) then
 		return true
 	end
 
@@ -116,7 +116,7 @@ function AVCS.checkPermission(playerObj, vehicleObj)
 		return true
 	end
 
-	if playerObj:getRole():hasCapability(Capability.ManipulateVehicle) then
+	if (not isClient() and not isServer()) or playerObj:getRole():hasCapability(Capability.ManipulateVehicle) then
 		local details = {
 			permissions = true,
 			ownerid = AVCS.dbByVehicleSQLID[vehicleSQL].OwnerPlayerID,
