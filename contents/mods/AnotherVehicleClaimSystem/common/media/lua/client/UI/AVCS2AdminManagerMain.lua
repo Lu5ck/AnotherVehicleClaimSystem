@@ -49,7 +49,7 @@ function AVCS.UI.AdminManagerMain:listOnSelectionChange()
         self.modDialog = nil
     end
 
-    if self.listData.count > 0 and (not isClient() and not isServer()) or (getPlayer():getRole():hasCapability(Capability.ManipulateVehicle)) then
+    if self.listData.count > 0 and ((not isClient() and not isServer()) or getPlayer():getRole():hasCapability(Capability.ManipulateVehicle)) then
         self.btnModifyPermissions:setEnable(true)
         self.btnDelete:setEnable(true)
         if SafeHouse.hasSafehouse(self.listData.items[self.listData.selected].item.OwnerPlayerID) then
