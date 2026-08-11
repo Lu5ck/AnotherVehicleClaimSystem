@@ -1,7 +1,7 @@
 {
-    "ContextMenu_AVCS_ClaimVehicle": "Reivindicar Ve�culo",
-    "ContextMenu_AVCS_UnclaimVehicle": "Liberar Ve�culo",
-    "ContextMenu_AVCS_UnsupportedVehicle": "Reivindicar Ve�culo [Erro]",
-    "ContextMenu_AVCS_ClientUserUI": "Gerenciar Ve�culos",
-    "ContextMenu_AVCS_AdminUserUI": "Gerenciar Ve�culos [admin]"
+    "ContextMenu_AVCS_ClaimVehicle": "Reivindicar Veículo",
+    "ContextMenu_AVCS_UnclaimVehicle": "Liberar Veículo",
+    "ContextMenu_AVCS_UnsupportedVehicle": "Reivindicar Veículo [Erro]",
+    "ContextMenu_AVCS_ClientUserUI": "Gerenciar Veículos",
+    "ContextMenu_AVCS_AdminUserUI": "Gerenciar Veículos [admin]"
 }
