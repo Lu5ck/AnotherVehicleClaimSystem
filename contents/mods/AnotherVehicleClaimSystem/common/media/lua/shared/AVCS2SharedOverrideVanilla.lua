@@ -135,26 +135,25 @@ function ISDeflateTire:new(character, part, psiTarget)
 	return temp
 end
 
--- Copy and override the vanilla ISSmashVehicleWindow to block unauthorized users
-if not AVCS.oISSmashVehicleWindow then
-    AVCS.oISSmashVehicleWindow = ISSmashVehicleWindow.new
+-- Copy and override the vanilla ISSmashWindow to block unauthorized users
+if not AVCS.oISSmashWindow then
+    AVCS.oISSmashWindow = ISSmashWindow.new
 end
 
-function ISSmashVehicleWindow:new(character, part)
-	local checkResult = AVCS.checkPermission(character, part:getVehicle())
+function ISSmashWindow:new(character, window, vehiclePart)
+	local checkResult = AVCS.checkPermission(character, vehiclePart:getVehicle())
 	checkResult = AVCS.getSimpleBooleanPermission(checkResult)
 
 	if checkResult then
-		return AVCS.oISSmashVehicleWindow(self, character, part)
-	else
-		if isClient() then
-			character:setHaloNote(getText("IGUI_AVCS_Vehicle_No_Permission"), 250, 250, 250, 300)
-		end
-		local temp = {
-			ignoreAction = true
-		}
-		return temp
+		return AVCS.oISSmashWindow(self, character, window, vehiclePart)
 	end
+	if isClient() then
+		character:setHaloNote(getText("IGUI_AVCS_Vehicle_No_Permission"), 250, 250, 250, 300)
+	end
+	local temp = {
+		ignoreAction = true
+	}
+	return temp
 end
 
 -- Copy and override the vanilla ISOpenVehicleDoor to block unauthorized users
