@@ -74,7 +74,7 @@ end
 function AVCS.getPublicPermission(vehicleObj, type)
 	local vehicleSQL = AVCS.getVehicleID(vehicleObj)
 	if vehicleSQL then
-		if AVCS.dbByVehicleSQLID[vehicleSQL] then
+		if AVCS.dbByVehicleSQLID and AVCS.dbByVehicleSQLID[vehicleSQL] then
 			if AVCS.dbByVehicleSQLID[vehicleSQL][type] then
 				return AVCS.dbByVehicleSQLID[vehicleSQL][type]
 			else
