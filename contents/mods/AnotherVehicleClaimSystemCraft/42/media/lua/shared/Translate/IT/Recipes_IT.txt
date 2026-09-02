@@ -1,3 +1,0 @@
-Recipes_IT = {
-    CraftMysteriousVehicleClaimOrb = "Sfera Misteriosa di reclamo Veicolo",
-}

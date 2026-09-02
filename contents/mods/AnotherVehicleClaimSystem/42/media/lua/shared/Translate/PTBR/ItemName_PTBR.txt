@@ -1,3 +1,0 @@
-ItemName_PTBR = {
-    ItemName_AVCS.ClaimOrb = "Misterioso Orbe de Propriedade de Ve�culo",
-}

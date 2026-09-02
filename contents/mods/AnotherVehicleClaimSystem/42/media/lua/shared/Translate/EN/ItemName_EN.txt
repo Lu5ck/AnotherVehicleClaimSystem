@@ -1,3 +1,0 @@
-ItemName_EN = {
-    ItemName_AVCS.ClaimOrb = "Mysterious Vehicle Claim Orb",
-}
