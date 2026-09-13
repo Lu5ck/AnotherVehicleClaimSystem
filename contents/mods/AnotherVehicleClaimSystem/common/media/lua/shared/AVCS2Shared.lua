@@ -36,6 +36,7 @@ end
 
 function AVCS.getVehicleID(vehicleObj)
     if not vehicleObj then return nil end
+	if instanceof(vehicleObj, "VirtualVehicle") then return nil end
 
     local vehicleID = vehicleObj:getModData().SQLID
     if vehicleID then
