@@ -112,6 +112,14 @@ function AVCS.checkPermission(playerObj, vehicleObj)
 		return true
 	end
 
+	-- New game check
+	if not AVCS.dbByVehicleSQLID then
+		if AVCS.forcesyncClientGlobalModData then
+			AVCS.forcesyncClientGlobalModData(nil)
+		end
+		return true
+	end
+
 	-- Ownerless
 	if AVCS.dbByVehicleSQLID[vehicleSQL] == nil then
 		return true
